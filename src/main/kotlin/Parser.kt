@@ -1,4 +1,5 @@
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
+import java.io.File
 
 data class Group(val name: String)
 
@@ -48,3 +49,9 @@ fun readSingleTeamFromFile(fileName: String): Team {
     return Team(teamName, competitors)
 }
 
+fun readListOfTeamsFromDirectory(dir: String): List<Team> {
+    require(File(dir).exists()) {"Applications directory don't exists"}
+    val listFromPath = File(dir).list()
+    require(listFromPath != null) { "Unknown state with directory $dir" }
+    return listFromPath.map { it -> readSingleTeamFromFile(dir + it) }
+}
