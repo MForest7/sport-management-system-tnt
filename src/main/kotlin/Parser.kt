@@ -53,5 +53,5 @@ fun readListOfTeamsFromDirectory(dir: String): List<Team> {
     require(File(dir).exists()) {"Applications directory don't exists"}
     val listFromPath = File(dir).list()
     require(listFromPath != null) { "Unknown state with directory $dir" }
-    return listFromPath.map { it -> readSingleTeamFromFile(dir + it) }
+    return listFromPath.map { readSingleTeamFromFile(dir + it) }
 }
