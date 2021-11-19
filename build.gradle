@@ -11,13 +11,16 @@ repositories {
 }
 
 dependencies {
-
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+    implementation 'com.github.doyaaaaaken:kotlin-csv-jvm:1.2.0'
 
     testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
     testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
+
     testImplementation "junit:junit:4.13.2"
+
+    api group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.25'
 }
 
 test {
