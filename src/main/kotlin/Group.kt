@@ -1,0 +1,1 @@
+data class Group(val name: String)
