@@ -20,6 +20,7 @@ fun getCompetitorFromListOfStrings(competitorInfo: List<String>): Competitor {
     logger.debug { "getCompetitorFromListOfStrings starts" }
     logger.debug { "competitorInfo = $competitorInfo" }
     require(competitorInfo.size <= 7) { "Too many records in line $competitorInfo" }
+
     val competitor = Competitor(
         Group(competitorInfo.elementAtOrElse(0) { "" }),
         competitorInfo.elementAtOrElse(1) { "" },
@@ -29,39 +30,45 @@ fun getCompetitorFromListOfStrings(competitorInfo: List<String>): Competitor {
         competitorInfo.elementAtOrElse(5) { "" },
         competitorInfo.elementAtOrElse(6) { "" }
     )
-    logger.debug {"Competitor = $competitor"}
+
+    logger.debug { "Competitor = $competitor" }
     return competitor
+}
+
+fun getTeamNameFromRecord(record: List<String>?, fileName: String) : String {
+    require(record != null) { "No records" }
+    require(record[0].isNotBlank()) { "Team name($fileName application) is blank" }
+    return record[0]
 }
 
 fun readSingleTeamFromFile(fileName: String): Team {
     logger.info { "readSingleTeamFromFile starts" }
     var teamName = ""
-    val competitors = mutableListOf<Competitor>()
+    var competitors = listOf<Competitor>()
+
     csvReader().open(fileName) {
-        var currentRecord = readNext()
-        logger.debug {"$fileName line contains \"$currentRecord\""}
 
-        require(currentRecord != null) { "No records" }
-        teamName = currentRecord[0]
-        require(teamName.isNotBlank()) { "Team name($fileName application) is blank" }
-
-        currentRecord = readNext() // Skip definition line
-        logger.debug {"$fileName line contains \"$currentRecord\""}
-
-        currentRecord = readNext()
-        logger.debug {"$fileName line contains \"$currentRecord\""}
-        while (currentRecord != null) {
-            competitors.add(
-                getCompetitorFromListOfStrings(
-                    currentRecord.toMutableList().dropLastWhile { it.isBlank() })
-            )
-
-            currentRecord = readNext()
-            logger.debug {"$fileName line contains \"$currentRecord\""}
+        val readSingleRecord = {
+            val record = readNext()
+            logger.debug { "$fileName line contains \"$record\"" }
+            record
         }
+
+        val firstRecord = readSingleRecord()
+        teamName = getTeamNameFromRecord(firstRecord, fileName)
+
+        readSingleRecord() // skip definition line
+
+        val fromListOfStringToListCompetitors = { list: List<String> ->
+            getCompetitorFromListOfStrings(list.toMutableList().dropLastWhile { it.isBlank() })
+        }
+
+        competitors = this.readAllAsSequence().toList()
+            .map(fromListOfStringToListCompetitors)
+        logger.debug { competitors }
     }
     val team = Team(teamName, competitors)
-    logger.debug {"team = $team"}
+    logger.debug { "team = $team" }
     return team
 }
 

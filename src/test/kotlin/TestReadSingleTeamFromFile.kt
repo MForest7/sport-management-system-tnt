@@ -12,7 +12,7 @@ internal class TestReadSingleTeamFromFile {
         assertEquals("ПСКОВ,РУСЬ", team.name)
         val need = listOf(
             Competitor(Group("VIP"), "НИКИТИН", "ВАЛЕНТИН", "1941", "", "", ""),
-            Competitor(Group("VIP"), "НИКИТИНА", "АЛЛА", "1939", "КМС", "1 группа крови", "СОГАЗ МЕД"),
+            Competitor(Group("VIP"), "НИКИТИНА", "АЛЛА", "1939", "КМС", "", ""),
             Competitor(Group("М14"), "ТИХОМИРОВ", "ИВАН", "2007", "", "", ""),
             Competitor(Group("М14"), "ЖЕЛЕЗНЫЙ", "МИХАИЛ", "2007", "", "", "")
         )
