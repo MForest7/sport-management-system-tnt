@@ -18,6 +18,10 @@ dependencies {
     testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
     testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
 
+
+    implementation(
+            "io.github.microutils:kotlin-logging-jvm:2.0.11")
+
     testImplementation "junit:junit:4.13.2"
 
     api group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.25'
