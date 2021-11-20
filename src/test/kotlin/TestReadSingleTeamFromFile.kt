@@ -11,10 +11,10 @@ internal class TestReadSingleTeamFromFile {
         val team = readSingleTeamFromFile(dirPath + "testSimpleApplication.csv")
         assertEquals("ПСКОВ,РУСЬ", team.name)
         val need = listOf(
-            Competitor(Group("VIP"), "НИКИТИН", "ВАЛЕНТИН", "1941", "", "", ""),
-            Competitor(Group("VIP"), "НИКИТИНА", "АЛЛА", "1939", "КМС", "", ""),
-            Competitor(Group("М14"), "ТИХОМИРОВ", "ИВАН", "2007", "", "", ""),
-            Competitor(Group("М14"), "ЖЕЛЕЗНЫЙ", "МИХАИЛ", "2007", "", "", "")
+            Competitor("VIP", "НИКИТИН", "ВАЛЕНТИН", "1941", "", "", ""),
+            Competitor("VIP", "НИКИТИНА", "АЛЛА", "1939", "КМС", "", ""),
+            Competitor("М14", "ТИХОМИРОВ", "ИВАН", "2007", "", "", ""),
+            Competitor("М14", "ЖЕЛЕЗНЫЙ", "МИХАИЛ", "2007", "", "", "")
         )
         assertContentEquals(need, team.competitors)
     }

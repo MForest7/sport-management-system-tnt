@@ -3,7 +3,7 @@ import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
-internal class ReadListOfTeamsFromDirectory {
+internal class TestReadListOfTeamsFromDirectory {
     private val dirPath = "testData/testReadListOfTeamsFromDirectory/"
 
     @Test
@@ -13,17 +13,17 @@ internal class ReadListOfTeamsFromDirectory {
             listOf(
                 Team(
                     "ПСКОВ,РУСЬ", listOf(
-                        Competitor(Group("VIP"), "НИКИТИН", "ВАЛЕНТИН", "1941", "", "", ""),
-                        Competitor(Group("VIP"), "НИКИТИНА", "АЛЛА", "1939", "КМС", "", ""),
-                        Competitor(Group("М14"), "ТИХОМИРОВ", "ИВАН", "2007", "", "", ""),
-                        Competitor(Group("М14"), "ЖЕЛЕЗНЫЙ", "МИХАИЛ", "2007", "", "", "")
+                        Competitor("VIP", "НИКИТИН", "ВАЛЕНТИН", "1941", "", "", ""),
+                        Competitor("VIP", "НИКИТИНА", "АЛЛА", "1939", "КМС", "", ""),
+                        Competitor("М14", "ТИХОМИРОВ", "ИВАН", "2007", "", "", ""),
+                        Competitor("М14", "ЖЕЛЕЗНЫЙ", "МИХАИЛ", "2007", "", "", "")
                     )
                 ), Team(
                     "ПИТЕР",
-                    listOf(Competitor(Group("VIP"), "ПУПКИН", "ВАСЯ", "2013", "КМС", "", ""))
+                    listOf(Competitor("VIP", "ПУПКИН", "ВАСЯ", "2013", "КМС", "", ""))
                 ), Team(
                     "МОСКВА",
-                    listOf(Competitor(Group("М14"), "ПУПКИН", "ВАСЯ", "2013", "КМС", "", ""))
+                    listOf(Competitor("М14", "ПУПКИН", "ВАСЯ", "2013", "КМС", "", ""))
                 )
             ), listOfTeams
         )
