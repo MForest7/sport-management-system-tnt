@@ -1,3 +1,5 @@
+package classes
+
 open class Competitor(
     val wishGroup: String,
     val surname: String,

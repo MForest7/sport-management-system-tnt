@@ -1,3 +1,5 @@
+package classes
+
 open class CompetitorInCompetition(
     competitor: Competitor,
     val number: String,
