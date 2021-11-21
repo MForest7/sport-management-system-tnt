@@ -1,3 +1,8 @@
+package testsForReaderOfTeamsFromApplications
+
+import classes.Competitor
+import classes.Team
+import parsers.readListOfTeamsFromDirectory
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals

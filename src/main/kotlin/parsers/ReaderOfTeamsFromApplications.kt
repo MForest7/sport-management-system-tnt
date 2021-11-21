@@ -1,6 +1,10 @@
+package parsers
+
+import classes.Competitor
+import classes.Team
 import com.github.doyaaaaaken.kotlincsv.client.CsvFileReader
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
-import ru.emkn.kotlin.sms.logger
+import logger
 import java.io.File
 import kotlin.reflect.full.memberProperties
 
