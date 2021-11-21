@@ -1,9 +1,10 @@
+import com.github.doyaaaaaken.kotlincsv.client.CsvFileReader
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import ru.emkn.kotlin.sms.logger
 import java.io.File
 import kotlin.reflect.full.memberProperties
 
-fun getCompetitorFromListOfStrings(competitorInfo: List<String>): Competitor {
+private fun getCompetitorFromListOfStrings(competitorInfo: List<String>): Competitor {
     val properties = Competitor::class.memberProperties.size
     logger.debug { "getCompetitorFromListOfStrings starts" }
     logger.debug { "competitorInfo = $competitorInfo" }
@@ -19,7 +20,17 @@ private operator fun <E> List<E>.component7() = this[6]
 
 private operator fun <E> List<E>.component6() = this[5]
 
-fun getTeamNameFromRecord(record: List<String>?, fileName: String): String {
+private class CsvFileReaderWithFileName(val fileName: String, val reader: CsvFileReader) {
+    fun createTeamFromFile(): Team {
+        val teamName = getTeamNameFromRecord(readSingleRecord())
+        readSingleRecord() // skip definition line
+        val competitors = readAllRemainingRecords().map(::fromListOfStringToListCompetitors)
+        logger.debug { competitors }
+        return Team(teamName, competitors)
+    }
+}
+
+private fun CsvFileReaderWithFileName.getTeamNameFromRecord(record: List<String>?): String {
     require(record != null) { "No records" }
     require(record[0].isNotBlank()) { "Team name($fileName application) is blank" }
     return record[0]
@@ -27,32 +38,23 @@ fun getTeamNameFromRecord(record: List<String>?, fileName: String): String {
 
 fun readSingleTeamFromFile(fileName: String): Team {
     logger.info { "readSingleTeamFromFile starts" }
-
-    val (teamName, competitors) = csvReader().open(fileName) {
-        val readSingleRecord = {
-            val record = readNext()
-            logger.debug { "$fileName line contains \"$record\"" }
-            record
-        }
-
-        val firstRecord = readSingleRecord()
-        val teamName = getTeamNameFromRecord(firstRecord, fileName)
-
-        readSingleRecord() // skip definition line
-
-        val fromListOfStringToListCompetitors = { list: List<String> ->
-            getCompetitorFromListOfStrings(list.toMutableList().dropLastWhile { it.isBlank() })
-        }
-
-        val competitors = this.readAllAsSequence().toList().map(fromListOfStringToListCompetitors)
-        logger.debug { competitors }
-
-        return@open Pair(teamName, competitors)
+    val createTeam = { csvFileReader: CsvFileReader ->
+        CsvFileReaderWithFileName(fileName, csvFileReader).createTeamFromFile()
     }
-
-    val team = Team(teamName, competitors)
+    val team = csvReader().open(fileName, createTeam)
     logger.debug { "team = $team" }
     return team
+}
+
+private fun fromListOfStringToListCompetitors(list: List<String>) =
+    getCompetitorFromListOfStrings(list.toMutableList().dropLastWhile { it.isBlank() })
+
+private fun CsvFileReaderWithFileName.readAllRemainingRecords() = reader.readAllAsSequence().toList()
+
+private fun CsvFileReaderWithFileName.readSingleRecord(): List<String>? {
+    val record = reader.readNext()
+    logger.debug { "$fileName line contains \"$record\"" }
+    return record
 }
 
 fun readListOfTeamsFromDirectory(dir: String): List<Team> {
