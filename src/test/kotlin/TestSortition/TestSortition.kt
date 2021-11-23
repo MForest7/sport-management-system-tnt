@@ -1,4 +1,4 @@
-package testsForReaderOfTeamsFromApplications
+package TestSortition
 
 
 import classes.Competitor
