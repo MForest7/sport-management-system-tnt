@@ -1,3 +1,3 @@
 package classes
 
-data class Time(val time: String)
+data class Time(val time: Int)
