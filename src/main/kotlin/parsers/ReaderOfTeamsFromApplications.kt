@@ -22,7 +22,7 @@ private fun getCompetitorFromListOfStrings(competitorInfo: List<String>): Compet
     logger.debug { "getCompetitorFromListOfStrings starts" }
     logger.debug { "competitorInfo = $competitorInfo" }
     require(competitorInfo.size <= properties) { "Too many records in line $competitorInfo" }
-    
+
     val competitor = Competitor(
         competitorInfo.elementAtOrElse(0) { "" },
         competitorInfo.elementAtOrElse(1) { "" },
