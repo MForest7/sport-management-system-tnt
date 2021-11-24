@@ -9,7 +9,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
 internal class TestReadListOfTeamsFromDirectory {
-    private val dirPath = "testData/testReadListOfTeamsFromDirectory/"
+    private val dirPath = "testData/testsDataFolderForReaderOfTeamsFromApplications/testReadListOfTeamsFromDirectory/"
 
     @Test
     fun testThreeApplications() {
