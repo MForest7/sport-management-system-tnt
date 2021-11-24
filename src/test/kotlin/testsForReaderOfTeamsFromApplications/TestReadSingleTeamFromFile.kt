@@ -8,7 +8,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
 internal class TestReadSingleTeamFromFile {
-    private val dirPath = "testData/testReadSingleTeamFromFile/"
+    private val dirPath = "testData/testsDataFolderForReaderOfTeamsFromApplications/testReadSingleTeamFromFile/"
 
     @Test
     fun testSimpleApplication() {
