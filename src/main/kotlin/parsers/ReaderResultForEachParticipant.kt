@@ -5,7 +5,6 @@ import com.github.doyaaaaaken.kotlincsv.client.CsvFileReader
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import logger
 
-data class CheckpointsForParticipant(val personNumber: String, val timeMatching: Map<String, Time>)
 
 private fun CsvFileReaderWithFileName.getPersonNumberFromRecord(record: List<String>?): String =
     getFirstFieldFromRecord(record)
@@ -18,6 +17,8 @@ private fun convertRecordsToTimeMatching(list: List<List<String>>): Map<String, 
     }
     return timeMatching
 }
+
+data class CheckpointsForParticipant(val personNumber: String, val timeMatching: Map<String, Time>)
 
 private fun CsvFileReaderWithFileName.createCheckpointsFromFile(): CheckpointsForParticipant {
     val personNumber = getPersonNumberFromRecord(readSingleRecord())
@@ -45,15 +46,16 @@ fun readListOfCheckpointsFromDirectoryWithParticipantsResults(
 
     val checkPointsForParticipant = getMappedListOfFilesFromDir(dir, ::readCheckpointsFromOneParticipant)
 
+    //merge checkpoints
     val checkpoints = List(countOfCheckpoints) { index ->
-        val currentCheckpointName = checkpointNames[index]
+        val checkpointName = checkpointNames[index]
         val timeMatching = mutableMapOf<String, Time>()
         checkPointsForParticipant.forEach { participant ->
-            participant.timeMatching[currentCheckpointName]?.let { time ->
+            participant.timeMatching[checkpointName]?.let { time ->
                 timeMatching[participant.personNumber] = time
             }
         }
-        IncompleteCheckpoint(currentCheckpointName, timeMatching)
+        IncompleteCheckpoint(checkpointName, timeMatching)
     }
     return checkpoints
 }
