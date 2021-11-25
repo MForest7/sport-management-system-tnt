@@ -1,8 +1,6 @@
 package standings
 
 import classes.*
-import com.github.doyaaaaaken.kotlincsv.client.CsvFileReader
-import com.github.doyaaaaaken.kotlincsv.client.CsvFileWriter
 import com.github.doyaaaaaken.kotlincsv.client.CsvWriter
 import com.github.doyaaaaaken.kotlincsv.client.ICsvFileWriter
 import java.io.File
@@ -22,9 +20,7 @@ private fun Time?.gapFrom(other: Time?): String? {
     if (this == null) return null
     if (other == null) return null
     if (this.time <= other.time) return null
-
-    fun Time.formatToGap() = "+" + time.take(4).dropWhile { (it == '0') or (it == ':') } + time.drop(4)
-    return (this - other).formatToGap()
+    return (this - other).formatToGap
 }
 
 class StandingsOfGroup(val competition: Competition, val group: Group, competitors: List<CompetitorInCompetition>) {
@@ -41,7 +37,7 @@ class StandingsOfGroup(val competition: Competition, val group: Group, competito
 
         records = finalOrder.map { RecordInStandings(
             it,
-            competition.timeOf(it)?.time,
+            competition.timeOf(it)?.stringRepresentation,
             places[it],
             competition.timeOf(it).gapFrom(timeOfFirst) ?: ""
         ) }.plus(notFinishedCompetitors.map { RecordInStandings(it) } )
@@ -71,7 +67,7 @@ fun printStandingsByGroups(file: File, standingsInGroups: List<StandingsOfGroup>
 private fun StandingsOfGroup.pointsOf(competitor: CompetitorInCompetition): Double {
     val time = competition.timeOf(competitor)
     return if (time != null)
-        max(0.0, 100.0 * (2 - time.intRepresentation.toDouble() / timeOfFirst.intRepresentation.toDouble()))
+        max(0.0, 100.0 * (2 - time.time.toDouble() / timeOfFirst.time.toDouble()))
     else 0.0
 }
 
