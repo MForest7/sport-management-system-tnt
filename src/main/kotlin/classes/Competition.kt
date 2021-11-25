@@ -5,5 +5,6 @@ class Competition(
     val competitors: List<CompetitorInCompetition>,
     val numberMatching: Map<String, CompetitorInCompetition>
 ) {
+    val start = checkpoints.first()
     val finish = checkpoints.last()
 }
