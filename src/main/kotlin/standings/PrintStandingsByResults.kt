@@ -23,7 +23,7 @@ private fun Time?.gapFrom(other: Time?): String? {
     if (other == null) return null
     if (this.time <= other.time) return null
 
-    fun Time.formatToGap() = "+" + time.dropWhile { it == '0' || it == ':' }
+    fun Time.formatToGap() = "+" + time.take(4).dropWhile { (it == '0') or (it == ':') } + time.drop(4)
     return (this - other).formatToGap()
 }
 
