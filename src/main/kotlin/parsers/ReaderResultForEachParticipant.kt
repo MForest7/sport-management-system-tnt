@@ -38,13 +38,16 @@ fun readCheckpointsFromOneParticipant(fileName: String): CheckpointsForParticipa
 
 data class IncompleteCheckpoint(val name: String, val timeMatching: Map<String, Time>)
 
-fun readListOfCheckpointsFromDirectoryWithParticipantsResults(
+fun readListOfIncompleteCheckpointsFromDirectoryWithParticipantsResults(
     dir: String,
     checkpointNames: List<String>
 ): List<IncompleteCheckpoint> {
     val countOfCheckpoints = checkpointNames.size
 
     val checkPointsForParticipant = getMappedListOfFilesFromDir(dir, ::readCheckpointsFromOneParticipant)
+
+    require(checkPointsForParticipant.distinctBy { it.personNumber } == checkPointsForParticipant) {
+        "One or more participants are repeated in several files"}
 
     //merge checkpoints
     val checkpoints = List(countOfCheckpoints) { index ->

@@ -1,14 +1,10 @@
 package testsForReaderResultForEachParticipant
 
-import classes.Competitor
-import classes.Team
 import classes.Time
 import parsers.IncompleteCheckpoint
-import parsers.readListOfCheckpointsFromDirectoryWithParticipantsResults
-import parsers.readListOfTeamsFromDirectory
+import parsers.readListOfIncompleteCheckpointsFromDirectoryWithParticipantsResults
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
-import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
 internal class ReadListOfCheckpointsFromDirectoryWithParticipantsResults {
@@ -17,7 +13,7 @@ internal class ReadListOfCheckpointsFromDirectoryWithParticipantsResults {
 
     @Test
     fun testThreeParticipants() {
-        val listOfCheckpoints = readListOfCheckpointsFromDirectoryWithParticipantsResults(
+        val listOfCheckpoints = readListOfIncompleteCheckpointsFromDirectoryWithParticipantsResults(
             dirPath + "testThreeParticipants/",
             listOf("1km", "2km", "finish")
         )
@@ -45,7 +41,7 @@ internal class ReadListOfCheckpointsFromDirectoryWithParticipantsResults {
     @Test
     fun testDirectoryDoesntExist() {
         assertFailsWith<IllegalArgumentException> {
-            readListOfCheckpointsFromDirectoryWithParticipantsResults(
+            readListOfIncompleteCheckpointsFromDirectoryWithParticipantsResults(
                 "",
                 listOf("1km", "2km")
             )
@@ -54,7 +50,7 @@ internal class ReadListOfCheckpointsFromDirectoryWithParticipantsResults {
 
     @Test
     fun testEmptyDirectory() {
-        val listOfCheckpoints = readListOfCheckpointsFromDirectoryWithParticipantsResults(
+        val listOfCheckpoints = readListOfIncompleteCheckpointsFromDirectoryWithParticipantsResults(
             dirPath + "testEmptyDirectory/",
             listOf("1km", "2km", "finish")
         )
@@ -65,6 +61,17 @@ internal class ReadListOfCheckpointsFromDirectoryWithParticipantsResults {
                 IncompleteCheckpoint("finish", mapOf()),
             ), listOfCheckpoints
         )
+    }
+
+
+    @Test
+    fun testRepeatedParticipants() {
+        assertFailsWith<IllegalArgumentException> {
+            readListOfIncompleteCheckpointsFromDirectoryWithParticipantsResults(
+                dirPath + "testRepeatedParticipants/",
+                listOf("1km", "2km", "Finish")
+            )
+        }
     }
 
 }
