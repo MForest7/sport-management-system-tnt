@@ -23,7 +23,7 @@ private fun Time?.gapFrom(other: Time?): String? {
     if (other == null) return null
     if (this.time <= other.time) return null
 
-    fun Time.formatToGap() = "+" + time.dropWhile { it == '0' || it == ':' }
+    fun Time.formatToGap() = "+" + time.take(4).dropWhile { (it == '0') or (it == ':') } + time.drop(4)
     return (this - other).formatToGap()
 }
 
@@ -63,7 +63,7 @@ private fun printStandingsForSingleGroup(writer: ICsvFileWriter, standings: Stan
 
 fun printStandingsByGroups(file: File, standingsInGroups: List<StandingsOfGroup>) {
     CsvWriter().open(file, append = true) {
-        this.writeRow(listOf("Протокол результатов.") + List(10){""})
+        this.writeRow(listOf("Протокол результатов.") + List(9){""})
         standingsInGroups.forEach { standings -> printStandingsForSingleGroup(this, standings) }
     }
 }

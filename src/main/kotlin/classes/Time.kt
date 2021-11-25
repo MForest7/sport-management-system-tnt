@@ -7,7 +7,7 @@ class Time(val time: String) : Comparable<Time> {
         get() = time.split(':').map { it.toInt() }.let { it[0]*3600 + it[1]*60 + it[2] }
 
     constructor(value: Int) : this(
-        listOf<Int>(value % 60, (value / 60) % 60, value / 3600)
+        listOf<Int>(value / 3600, (value / 60) % 60, value % 60)
             .joinToString(":") { it.toString().padStart(2, '0') }
     )
 
