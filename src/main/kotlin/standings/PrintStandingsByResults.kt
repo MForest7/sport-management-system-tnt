@@ -76,19 +76,19 @@ private fun StandingsOfGroup.pointsOf(competitor: CompetitorInCompetition): Doub
 }
 
 private fun printStandingsForTeams(writer: ICsvFileWriter, resultOfTeams: MutableMap<Team, Double>) {
-    val finalOrder = resultOfTeams.keys.sortedBy { resultOfTeams[it] }
+    val finalOrder = resultOfTeams.keys.sortedByDescending { resultOfTeams[it] }
     val places = finalOrder.associateWith { team ->
         1 + finalOrder.count { resultOfTeams.getOrDefault(it, 0.0) > resultOfTeams.getOrDefault(team, 0.0) }
     }
     writer.writeRows(finalOrder.mapIndexed { index, team ->
-        listOf(index + 1, team.name, resultOfTeams[team], places[team])
+        listOf(index + 1, team.name, resultOfTeams[team]?.toInt(), places[team])
     } )
 }
 
 fun printStandingsByTeams(file: File, standingsInGroups: List<StandingsOfGroup>) {
     val resultOfTeams = mutableMapOf<Team, Double>()
     standingsInGroups.forEach { standings -> standings.records.forEach {
-        resultOfTeams.replace(it.competitor.team, resultOfTeams[it.competitor.team]?.plus(standings.pointsOf(it.competitor)) ?: 0.0)
+        resultOfTeams[it.competitor.team] = (resultOfTeams[it.competitor.team] ?: 0.0) + standings.pointsOf(it.competitor)
     } }
     CsvWriter().open(file, append = false) {
         writeRow(listOf("Протокол результатов команд.") + List(3){""})
