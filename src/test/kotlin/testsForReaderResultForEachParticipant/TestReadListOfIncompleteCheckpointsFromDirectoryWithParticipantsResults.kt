@@ -7,9 +7,9 @@ import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertFailsWith
 
-internal class ReadListOfCheckpointsFromDirectoryWithParticipantsResults {
+internal class ReadListOfIncompleteCheckpointsFromDirectoryWithParticipantsResults {
     private val dirPath =
-        "testData/testDataFolderReaderResultForEachParticipant/testReadListOfCheckpointsFromDirectoryWithParticipantsResults/"
+        "testData/testDataFolderReaderResultForEachParticipant/testReadListOfIncompleteCheckpointsFromDirectoryWithParticipantsResults/"
 
     @Test
     fun testThreeParticipants() {
