@@ -1,0 +1,10 @@
+{
+  "mode": "Results in teams",
+  "applicationsFolder": "sampleTest/applications",
+  "sortitionFolder": "sampleTest/sortition",
+  "splitsFolder": "sampleTest/participantsDistanceRecord",
+  "typeOfSplits": "participant's distance record",
+  "resultsInTeams": "sampleTest/resultsInTeams.csv",
+  "resultsInGroups": "sampleTest/resultsInGroups.csv",
+  "checkPoints": ["1km", "2km", "Finish"]
+}

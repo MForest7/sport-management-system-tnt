@@ -17,10 +17,13 @@ internal class TestReadJSONConfig {
         assertEquals(
             Config(
                 mode="Sortition",
-                applications="testData/testsDataFolderForReaderOfTeamsFromApplications/testReadListOfTeamsFromDirectory/testThreeApplications/",
-                splits="/",
-                results="/",
-                checkPoints=listOf("1km")
+                applicationsFolder="testData/testsDataFolderForReaderOfTeamsFromApplications/testReadListOfTeamsFromDirectory/testThreeApplications/",
+                sortitionFolder="/",
+                splitsFolder="/",
+                typeOfSplits="",
+                resultsInTeams="",
+                resultsInGroups="",
+                checkPoints=listOf("1km"),
             ),
             readJSONConfig("testData/testJSONReader/config.json")
         )

@@ -5,6 +5,7 @@ import classes.CompetitorInCompetition
 import classes.Group
 import com.github.doyaaaaaken.kotlincsv.client.ICsvFileWriter
 import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
+import parsers.createDir
 
 fun groupToCompetitorMatching(competition: Competition): Map<Group, List<CompetitorInCompetition>> =
     competition.competitors.groupBy { competitor -> competitor.group }
@@ -32,7 +33,8 @@ fun writeCompetitorsInGroup(
     }
 }
 
-fun printSortitoin(dir: String, competition: Competition) {
+fun printSortition(dir: String, competition: Competition) {
+    createDir(dir)
     groupToCompetitorMatching(competition).forEach { (group, competitors) ->
         writeCompetitorsInGroup(dir, group, competitors, competition)
     }

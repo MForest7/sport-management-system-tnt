@@ -47,7 +47,7 @@ class StandingsOfGroup(val competition: Competition, val group: Group, competito
 private fun getFinalSingleRecord(index: Int, record: RecordInStandings): List<Any> {
     fun CompetitorInCompetition.getInfo() = listOf(number, surname, name, birth, title, team.name)
     return listOf<Any>(index + 1) + record.competitor.getInfo() +
-           listOf(record.time ?: "снят", record.place ?: "", record.gap ?: "")
+            listOf(record.time ?: "снят", record.place ?: "", record.gap ?: "")
 }
 
 private fun printStandingsForSingleGroup(writer: ICsvFileWriter, standings: StandingsOfGroup) {
@@ -93,12 +93,19 @@ fun printStandingsByTeams(file: File, standingsInGroups: List<StandingsOfGroup>)
     }
 }
 
-fun printStandingsOfCompetition(dir: String, competition: Competition) {
-    val standingsInGroups = competition.competitors.groupBy { it.group }.map {
-        StandingsOfGroup(competition, it.key, it.value)
+private fun Competition.getResultsInGroups() : List<StandingsOfGroup> {
+    val standingsInGroups = this.competitors.groupBy { it.group }.map {
+        StandingsOfGroup(this, it.key, it.value)
     }
+    return standingsInGroups
+}
 
-    if (!File("$dir/results/").exists()) File("$dir/results/").mkdir()
-    printStandingsByTeams(File("$dir/results/teams.csv"), standingsInGroups)
-    printStandingsByGroups(File("$dir/results/results.csv"), standingsInGroups)
+fun printStandingsInGroupsToDir(path: String, competition: Competition) {
+    val standingsInGroups = competition.getResultsInGroups()
+    printStandingsByGroups(File(path), standingsInGroups)
+}
+
+fun printStandingsInTeamsToDir(path: String, competition: Competition) {
+    val standingsInGroups = competition.getResultsInGroups()
+    printStandingsByTeams(File(path), standingsInGroups)
 }
