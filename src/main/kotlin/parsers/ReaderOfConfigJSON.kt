@@ -8,11 +8,11 @@ import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.decodeFromJsonElement
 import java.io.FileNotFoundException
 
-fun normalizePath(path: String?): String {
+private fun normalizePath(path: String?): String {
     return if (path?.isEmpty() == true) "/" else if (path?.last() == '/') path else "$path/"
 }
 
-fun normalizeConfig(config: Config): Config {
+private fun normalizeConfig(config: Config): Config {
     val mode = config.mode
     val applications = normalizePath(config.applications)
     val splits = normalizePath(config.splits)
@@ -24,7 +24,7 @@ fun normalizeConfig(config: Config): Config {
         }
         "Competition" -> {
             require(File(splits).isDirectory) { "Directory $splits for splits does not exist" }
-            require(File(results).isDirectory) { "Directory $results for results does not exist" }
+            createDir(results)
         }
         else -> {
             throw IllegalArgumentException("Mode $mode is not defined. Use Mode 'Sortition' or 'Competition'")
