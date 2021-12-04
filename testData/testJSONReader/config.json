@@ -1,7 +1,10 @@
 {
   "mode": "Sortition",
-  "applications": "testData/testReadListOfTeamsFromDirectory/testThreeApplications/",
-  "splits": "",
-  "results": "",
-  "checkPoints": []
+  "applicationsFolder": "testData/testsDataFolderForReaderOfTeamsFromApplications/testReadListOfTeamsFromDirectory/testThreeApplications",
+  "sortitionFolder": "",
+  "splitsFolder": "",
+  "typeOfSplits": "",
+  "resultsInTeams": "",
+  "resultsInGroups": "",
+  "checkPoints": ["1km"]
 }

@@ -15,4 +15,13 @@ class Time(val time: Int) : Comparable<Time> {
     )
 
     operator fun minus(other: Time) = Time(time - other.time)
+
+    override fun equals(other: Any?): Boolean {
+        if (other !is Time) return false
+        return time == other.time
+    }
+
+    override fun hashCode(): Int {
+        return time
+    }
 }
