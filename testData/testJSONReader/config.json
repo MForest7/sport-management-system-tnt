@@ -1,0 +1,7 @@
+{
+  "mode": "Sortition",
+  "applications": "testData/testReadListOfTeamsFromDirectory/testThreeApplications/",
+  "splits": "",
+  "results": "",
+  "checkPoints": []
+}

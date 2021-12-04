@@ -1,11 +1,8 @@
 package parsers
 
-import classes.Time
 import com.github.doyaaaaaken.kotlincsv.client.CsvFileReader
 import logger
 import java.io.File
-
-data class IncompleteCheckpoint(val name: String, val timeMatching: Map<String, Time>)
 
 class CsvFileReaderWithFileName(val fileName: String, private val reader: CsvFileReader) {
 
@@ -34,14 +31,4 @@ fun <T> getMappedListOfFilesFromDir(dir: String, mapFunction: (fileName: String)
     val listFromPath = File(dir).list()
     require(listFromPath != null) { "Unknown state with directory $dir" }
     return listFromPath.sorted().map { mapFunction(dir + it) }
-}
-
-
-fun convertRecordsToTimeMatching(list: List<List<String>>): Map<String, Time> {
-    val timeMatching = mutableMapOf<String, Time>()
-    for (record in list) {
-        require(record.size == 2) { "Record($record) size is not 2" }
-        timeMatching[record[0]] = Time(record[1])
-    }
-    return timeMatching
 }
