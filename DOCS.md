@@ -8,11 +8,11 @@
 
 ## Описание форматов работы
 
-* `Sortition` - сгенерировать жеребьевку
+* `SORTITION` - сгенерировать жеребьевку
 
-* `Results in teams` - сгенерировать результаты по коммандам
+* `RESULTS_TEAMS` - сгенерировать результаты по коммандам
 
-* `Results in groups` - сгенерировать результаты по группам
+* `RESULTS_GROUPS` - сгенерировать результаты по группам
 
 ## Описание конфигурационного файла
 
@@ -24,7 +24,7 @@
 
 * `splitsFolder` - папка с результатами по дистанциям
 
-* `typeOfSplits` - тип результатов (`participant's distance record OR checkpoint protocol`)
+* `typeOfSplits` - тип результатов (`PARTICIPANTS, CHECKPOINTS`)
 
 * `resultsInTeams` - файл, в который выводятся результаты в командах
 
