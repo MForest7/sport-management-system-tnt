@@ -9,7 +9,7 @@ import logger
 private fun CsvFileReaderWithFileName.getPersonNumberFromRecord(record: List<String>?): String =
     getFirstFieldFromRecord(record)
 
-private fun convertRecordsToTimeMatching(list: List<List<String>>): Map<String, Time> {
+fun convertRecordsToTimeMatching(list: List<List<String>>): Map<String, Time> {
     val timeMatching = mutableMapOf<String, Time>()
     for (record in list) {
         require(record.size == 2) { "Record($record) size is not 2" }
