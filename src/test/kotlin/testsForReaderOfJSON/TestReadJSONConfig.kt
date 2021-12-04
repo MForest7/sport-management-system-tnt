@@ -15,7 +15,7 @@ internal class TestReadJSONConfig {
                 applicationsFolder = "testData/testsDataFolderForReaderOfTeamsFromApplications/testReadListOfTeamsFromDirectory/testThreeApplications/",
                 sortitionFolder = "/",
                 splitsFolder = "/",
-                typeOfSplits = "",
+                typeOfSplits = null,
                 resultsInTeams = "",
                 resultsInGroups = "",
                 checkPoints = listOf("1km"),

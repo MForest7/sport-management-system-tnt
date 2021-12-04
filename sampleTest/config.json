@@ -3,9 +3,9 @@
   "applicationsFolder": "sampleTest/applications",
   "sortitionFolder": "sampleTest/sortition",
   "splitsFolder": "sampleTest/participantsDistanceRecord",
-  "typeOfSplits": "participant's distance record",
+  "typeOfSplits": "PARTICIPANTS",
   "resultsInTeams": "sampleTest/resultsInTeams.csv",
-  "resultsInGroups": "sampleTest/resultsInGroups.csv",
+  "resultsInGroups": null,
   "checkPoints": [
     "1km",
     "2km",

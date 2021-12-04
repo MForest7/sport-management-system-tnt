@@ -24,7 +24,7 @@
 
 * `splitsFolder` - папка с результатами по дистанциям
 
-* `typeOfSplits` - тип результатов (`participant's distance record OR checkpoint protocol`)
+* `typeOfSplits` - тип результатов (`PARTICIPANTS, CHECKPOINTS`)
 
 * `resultsInTeams` - файл, в который выводятся результаты в командах
 
