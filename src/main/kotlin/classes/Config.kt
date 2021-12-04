@@ -2,9 +2,13 @@ package classes
 
 import kotlinx.serialization.Serializable
 
+enum class Mode {
+    SORTITION, RESULTS_TEAMS, RESULTS_GROUPS
+}
+
 @Serializable
 data class Config(
-    val mode: String,
+    val mode: Mode,
     val applicationsFolder: String?,
     val sortitionFolder: String?,
     val splitsFolder: String?,

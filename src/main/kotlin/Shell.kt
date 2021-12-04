@@ -1,4 +1,5 @@
 import classes.Config
+import classes.Mode
 import mu.KotlinLogging
 import parsers.readJSONConfig
 import parsers.readListOfTeamsFromDirectory
@@ -42,17 +43,17 @@ fun startExecutingConfig(config : Config) {
     val competition = generateSortition(listOfTeams)
     logger.debug { "${config.mode} mode" }
     when(config.mode) {
-        "Sortition" -> {
+        Mode.SORTITION -> {
             printSortition(config.sortitionFolder, competition)
         }
-        "Results in teams" -> {
+        Mode.RESULTS_TEAMS -> {
             require(config.resultsInTeams != null) { "resultsInTeamsFolder is null" }
-            require(config.resultsInTeams.endsWith(".csv")) {"resultsInTeamsFolder not a .csv file"}
+            require(config.resultsInTeams.endsWith(".csv")) { "resultsInTeamsFolder not a .csv file" }
             printStandingsInTeamsToDir(config.resultsInTeams, competition)
         }
-        "Results in groups" -> {
+        Mode.RESULTS_GROUPS -> {
             require(config.resultsInGroups != null) { "resultsInGroupsFolder is null" }
-            require(config.resultsInGroups.endsWith(".csv")) {"resultsInGroupsFolder not a .csv file"}
+            require(config.resultsInGroups.endsWith(".csv")) { "resultsInGroupsFolder not a .csv file" }
             printStandingsInGroupsToDir(config.resultsInGroups, competition)
         }
     }
