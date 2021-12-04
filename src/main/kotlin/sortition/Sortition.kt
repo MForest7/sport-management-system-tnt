@@ -109,7 +109,7 @@ fun generateSortition(listOfTeams: List<Team>): Competition {
 
     val competitorToTimeMatching = appointTime(competitorsInCompetition)
 
-    val checkpoints = listOf(CheckPoint("0km", competitorToTimeMatching))
+    val checkpoints = listOf(CheckPoint("0km", competitorToTimeMatching.toMutableMap()))
 
     val invertCompetitorToNumberMatching = competitorsInCompetition.associateBy { competitor -> competitor.number }
 

@@ -17,32 +17,35 @@ fun outputStringWithColor(string: String) {
 }
 
 fun startShell() {
-    logger.info {"Start shell"}
+    logger.info { "Start shell" }
     outputStringWithColor("Enter path to config(.json) file")
     outputStringWithColor("For example: myData/myconfig.json")
     val pathToConfig = getPathToConfig()
     val config = readJSONConfig(pathToConfig)
-    logger.debug {"config = $config"}
+    logger.debug { "config = $config" }
     startExecutingConfig(config)
     outputStringWithColor("Done!")
-    logger.info {"End shell"}
+    logger.info { "End shell" }
 }
 
 
-fun getPathToConfig() : String {
+fun getPathToConfig(): String {
     val pathToConfig = readLine()
-    require(pathToConfig != null) {"path is null"}
-    require(pathToConfig.endsWith(".json")) {"Not a .json file"}
+    require(pathToConfig != null) { "path is null" }
+    require(pathToConfig.endsWith(".json")) { "Not a .json file" }
     return pathToConfig
 }
 
-fun startExecutingConfig(config : Config) {
+fun startExecutingConfig(config: Config) {
     require(config.applicationsFolder != null) { "applicationsFolder is null" }
     require(config.sortitionFolder != null) { "sortitionFolder is null" }
     val listOfTeams = readListOfTeamsFromDirectory(config.applicationsFolder)
     val competition = generateSortition(listOfTeams)
     logger.debug { "${config.mode} mode" }
-    when(config.mode) {
+    if (config.mode != Mode.SORTITION) {
+        competition.loadResults(config)
+    }
+    when (config.mode) {
         Mode.SORTITION -> {
             printSortition(config.sortitionFolder, competition)
         }
