@@ -42,6 +42,7 @@ fun startExecutingConfig(config : Config) {
     val listOfTeams = readListOfTeamsFromDirectory(config.applicationsFolder)
     val competition = generateSortition(listOfTeams)
     logger.debug { "${config.mode} mode" }
+
     when(config.mode) {
         Mode.SORTITION -> {
             printSortition(config.sortitionFolder, competition)

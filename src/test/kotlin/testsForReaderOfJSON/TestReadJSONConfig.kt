@@ -12,12 +12,12 @@ internal class TestReadJSONConfig {
         assertEquals(
             Config(
                 mode = Mode.SORTITION,
-                applicationsFolder = "testData/testsDataFolderForReaderOfTeamsFromApplications/testReadListOfTeamsFromDirectory/testThreeApplications/",
-                sortitionFolder = "/",
-                splitsFolder = "/",
+                _applicationsFolder = "testData/testsDataFolderForReaderOfTeamsFromApplications/testReadListOfTeamsFromDirectory/testThreeApplications/",
+                _sortitionFolder = "/",
+                _splitsFolder = "/",
                 typeOfSplits = null,
-                resultsInTeams = "",
-                resultsInGroups = "",
+                _resultsInTeams = "",
+                _resultsInGroups = "",
                 checkPoints = listOf("1km"),
             ),
             readJSONConfig("testData/testJSONReader/config.json")

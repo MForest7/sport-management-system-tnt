@@ -14,6 +14,9 @@ private fun CsvFileReaderWithFileName.createTeamFromFile(): Team {
     return Team(teamName, competitors)
 }
 
+private fun fromListOfStringToCheckpoints(list: List<String>) =
+    getCompetitorFromListOfStrings(list.toMutableList().dropLastWhile { it.isBlank() })
+
 private fun CsvFileReaderWithFileName.getTeamNameFromRecord(record: List<String>?): String =
     getFirstFieldFromRecord(record)
 
@@ -44,12 +47,6 @@ fun readSingleTeamFromFile(fileName: String): Team {
     return team
 }
 
-private fun fromListOfStringToCheckpoints(list: List<String>) =
-    getCompetitorFromListOfStrings(list.toMutableList().dropLastWhile { it.isBlank() })
 
 fun readListOfTeamsFromDirectory(dir: String): List<Team> =
     getMappedListOfFilesFromDir(dir, ::readSingleTeamFromFile)
-
-private operator fun <E> List<E>.component7() = this[6]
-
-private operator fun <E> List<E>.component6() = this[5]
