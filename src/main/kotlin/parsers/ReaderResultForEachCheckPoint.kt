@@ -5,7 +5,6 @@ import com.github.doyaaaaaken.kotlincsv.client.CsvFileReader
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import logger
 
-
 private fun CsvFileReaderWithFileName.getCheckpointNameFromRecord(record: List<String>?): String =
     getFirstFieldFromRecord(record)
 

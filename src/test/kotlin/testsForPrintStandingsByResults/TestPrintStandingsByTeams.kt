@@ -5,10 +5,8 @@ import standings.StandingsOfGroup
 import standings.printStandingsByGroups
 import standings.printStandingsByTeams
 import java.io.File
-import java.nio.charset.Charset
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
-import kotlin.test.assertEquals
 
 internal class TestPrintStandingsByTeams {
     private fun generateCompetition(): Competition {
@@ -34,9 +32,14 @@ internal class TestPrintStandingsByTeams {
 
         var acc = 0
         val competitors = teams.map { team ->
-            team.competitors.map { it ->
+            team.competitors.map {
                 acc++
-                CompetitorInCompetition(it, acc.toString(), groups.getOrDefault(it.wishGroup, Group(it.wishGroup)), team)
+                CompetitorInCompetition(
+                    it,
+                    acc.toString(),
+                    groups.getOrDefault(it.wishGroup, Group(it.wishGroup)),
+                    team
+                )
             }
         }.flatten()
 
@@ -56,7 +59,7 @@ internal class TestPrintStandingsByTeams {
             Time("16:35:54"),
         )
 
-        val checkPoints = listOf(
+        val checkPoints = mutableListOf(
             CheckPoint("start", competitors.associateWith { startTimes[it.number.toInt() - 1] }),
             CheckPoint(
                 "finish",
@@ -92,7 +95,8 @@ internal class TestPrintStandingsByTeams {
 
     @Test
     fun testEmptyCompetition() {
-        val competition = Competition(listOf(CheckPoint("start", mapOf()), CheckPoint("finish", mapOf())), listOf(), mapOf())
+        val competition =
+            Competition(mutableListOf(CheckPoint("start", mapOf()), CheckPoint("finish", mapOf())), listOf(), mapOf())
 
         val standingsInGroups = competition.competitors.groupBy { it.group }.map {
             StandingsOfGroup(competition, it.key, it.value)

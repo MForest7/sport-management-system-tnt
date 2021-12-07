@@ -1,10 +1,13 @@
 package classes
 
 class Competition(
-    val checkpoints: List<CheckPoint>,
+    val checkpoints: MutableList<CheckPoint>,
     val competitors: List<CompetitorInCompetition>,
     val numberMatching: Map<String, CompetitorInCompetition>
 ) {
-    val start = checkpoints.first()
+    val start: CheckPoint
+        get() {
+            return checkpoints.first()
+        }
     val finish = checkpoints.last()
 }
