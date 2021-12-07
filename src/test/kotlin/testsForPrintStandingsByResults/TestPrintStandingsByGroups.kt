@@ -31,9 +31,14 @@ internal class TestPrintStandingsByGroups {
 
         var acc = 0
         val competitors = teams.map { team ->
-            team.competitors.map { it ->
+            team.competitors.map {
                 acc++
-                CompetitorInCompetition(it, acc.toString(), groups.getOrDefault(it.wishGroup, Group(it.wishGroup)), team)
+                CompetitorInCompetition(
+                    it,
+                    acc.toString(),
+                    groups.getOrDefault(it.wishGroup, Group(it.wishGroup)),
+                    team
+                )
             }
         }.flatten()
 
@@ -54,7 +59,7 @@ internal class TestPrintStandingsByGroups {
         )
 
         val checkPoints = listOf(
-            CheckPoint("start", competitors.associateWith { startTimes[it.number.toInt() - 1] }.toMutableMap()),
+            CheckPoint("start", competitors.associateWith { startTimes[it.number.toInt() - 1] }),
             CheckPoint(
                 "finish",
                 competitors.dropLast(1).associateWith { finishTimes[it.number.toInt() - 1] }.toMutableMap()
@@ -90,11 +95,8 @@ internal class TestPrintStandingsByGroups {
 
     @Test
     fun testEmptyGroup() {
-        val competition = Competition(
-            listOf(CheckPoint("start", mutableMapOf()), CheckPoint("finish", mutableMapOf())),
-            listOf(),
-            mapOf()
-        )
+        val competition =
+            Competition(mutableListOf(CheckPoint("start", mutableMapOf()), CheckPoint("finish", mutableMapOf())), listOf(), mapOf())
 
         val standingsInGroups = competition.competitors.groupBy { it.group }.map {
             StandingsOfGroup(competition, it.key, it.value)

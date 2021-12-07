@@ -5,7 +5,7 @@ import parsers.readListOfIncompleteCheckpointsFromDirectoryWithCheckPointsResult
 import parsers.readListOfIncompleteCheckpointsFromDirectoryWithParticipantsResults
 
 class Competition(
-    var checkpoints: List<CheckPoint>,
+    val checkpoints: MutableList<CheckPoint>,
     val competitors: List<CompetitorInCompetition>,
     val numberMatching: Map<String, CompetitorInCompetition>
 ) {

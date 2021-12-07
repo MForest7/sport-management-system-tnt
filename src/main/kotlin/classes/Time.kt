@@ -4,7 +4,7 @@ class Time(val time: Int) : Comparable<Time> {
     override operator fun compareTo(other: Time) = time.compareTo(other.time)
 
     val stringRepresentation: String
-        get() = listOf<Int>(time / 3600, (time / 60) % 60, time % 60)
+        get() = listOf(time / 3600, (time / 60) % 60, time % 60)
             .joinToString(":") { it.toString().padStart(2, '0') }
 
     val formatToGap: String

@@ -32,9 +32,14 @@ internal class TestPrintStandingsByTeams {
 
         var acc = 0
         val competitors = teams.map { team ->
-            team.competitors.map { it ->
+            team.competitors.map {
                 acc++
-                CompetitorInCompetition(it, acc.toString(), groups.getOrDefault(it.wishGroup, Group(it.wishGroup)), team)
+                CompetitorInCompetition(
+                    it,
+                    acc.toString(),
+                    groups.getOrDefault(it.wishGroup, Group(it.wishGroup)),
+                    team
+                )
             }
         }.flatten()
 
@@ -92,7 +97,7 @@ internal class TestPrintStandingsByTeams {
     @Test
     fun testEmptyCompetition() {
         val competition = Competition(
-            listOf(CheckPoint("start", mutableMapOf()), CheckPoint("finish", mutableMapOf())),
+            mutableListOf(CheckPoint("start", mutableMapOf()), CheckPoint("finish", mutableMapOf())),
             listOf(),
             mapOf()
         )
