@@ -14,8 +14,7 @@ class Competition(
 
     fun setCheckpointsFromIncomplete(incompleteCheckpoints: List<IncompleteCheckpoint>) {
         val checkpoints = incompleteCheckpoints.map(::convertIncompleteToCheckpoint).toMutableList()
-        checkpoints.add(0, this.checkpoints[0])
-        this.checkpoints = checkpoints
+        this.checkpoints.addAll(checkpoints)
         start = this.checkpoints.first()
         finish = this.checkpoints.last()
     }
@@ -31,7 +30,6 @@ class Competition(
 
     fun loadResults(config: Config) {
         val listOfCheckpointNames = config.checkPoints
-        require(config.splitsFolder != null) { "splits folder is null" }
         require(listOfCheckpointNames != null) { "no checkpoints" }
         require(config.typeOfSplits != null) { "type of splits is null" }
         this.setCheckpointsFromIncomplete(

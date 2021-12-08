@@ -1,8 +1,8 @@
 {
   "mode": "RESULTS_GROUPS",
-  "applicationsFolder": "sampleTest/applications",
-  "sortitionFolder": "sampleTest/sortition",
-  "splitsFolder": "sampleTest/checkpointsRecord",
+  "_applicationsFolder": "sampleTest/applications",
+  "_sortitionFolder": "sampleTest/sortition",
+  "_splitsFolder": "sampleTest/checkpointsRecord",
   "typeOfSplits": "CHECKPOINTS",
   "resultsInTeams": "sampleTest/resultsInTeams.csv",
   "resultsInGroups": "sampleTest/resultsInGroups.csv",

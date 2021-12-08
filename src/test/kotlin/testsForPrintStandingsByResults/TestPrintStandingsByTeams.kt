@@ -68,7 +68,7 @@ internal class TestPrintStandingsByTeams {
         )
 
         return Competition(
-            checkPoints,
+            checkPoints.toMutableList(),
             competitors,
             listOf("1", "2", "3", "4", "5", "6").associateWith { competitors[it.toInt() - 1] }
         )

@@ -37,8 +37,6 @@ fun getPathToConfig(): String {
 }
 
 fun startExecutingConfig(config: Config) {
-    require(config.applicationsFolder != null) { "applicationsFolder is null" }
-    require(config.sortitionFolder != null) { "sortitionFolder is null" }
     val listOfTeams = readListOfTeamsFromDirectory(config.applicationsFolder)
     val competition = generateSortition(listOfTeams)
     logger.debug { "${config.mode} mode" }
@@ -50,12 +48,12 @@ fun startExecutingConfig(config: Config) {
             printSortition(config.sortitionFolder, competition)
         }
         Mode.RESULTS_TEAMS -> {
-            require(config.resultsInTeams != null) { "resultsInTeamsFolder is null" }
+            require(config.resultsInTeams != null) { "Results in teams file is null" }
             require(config.resultsInTeams.endsWith(".csv")) { "resultsInTeamsFolder not a .csv file" }
             printStandingsInTeamsToDir(config.resultsInTeams, competition)
         }
         Mode.RESULTS_GROUPS -> {
-            require(config.resultsInGroups != null) { "resultsInGroupsFolder is null" }
+            require(config.resultsInGroups != null) { "Results in groups file is null" }
             require(config.resultsInGroups.endsWith(".csv")) { "resultsInGroupsFolder not a .csv file" }
             printStandingsInGroupsToDir(config.resultsInGroups, competition)
         }

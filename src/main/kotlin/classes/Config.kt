@@ -17,15 +17,13 @@ class Config(
     private val _sortitionFolder: String?,
     private val _splitsFolder: String?,
     val typeOfSplits: TypeOfSplits?,
-    private val _resultsInTeams: String?,
-    private val _resultsInGroups: String?,
+    val resultsInTeams: String?,
+    val resultsInGroups: String?,
     val checkPoints: List<String>?
 ) {
     val applicationsFolder = normalizePath(_applicationsFolder)
     val sortitionFolder = normalizePath(_sortitionFolder)
     val splitsFolder = normalizePath(_splitsFolder)
-    val resultsInTeams = normalizePath(_resultsInTeams)
-    val resultsInGroups = normalizePath(_resultsInGroups)
 
     private fun normalizePath(path: String?): String {
         return if (path?.isEmpty() == true) "/" else if (path?.last() == '/') path else "$path/"

@@ -59,7 +59,7 @@ internal class TestPrintStandingsByGroups {
         )
 
         val checkPoints = listOf(
-            CheckPoint("start", competitors.associateWith { startTimes[it.number.toInt() - 1] }),
+            CheckPoint("start", competitors.associateWith { startTimes[it.number.toInt() - 1] }.toMutableMap()),
             CheckPoint(
                 "finish",
                 competitors.dropLast(1).associateWith { finishTimes[it.number.toInt() - 1] }.toMutableMap()
@@ -67,7 +67,7 @@ internal class TestPrintStandingsByGroups {
         )
 
         return Competition(
-            checkPoints,
+            checkPoints.toMutableList(),
             competitors,
             listOf("1", "2", "3", "4", "5", "6").associateWith { competitors[it.toInt() - 1] }
         )
