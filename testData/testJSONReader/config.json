@@ -4,8 +4,8 @@
   "_sortitionFolder": "",
   "_splitsFolder": "",
   "typeOfSplits": null,
-  "_resultsInTeams": "",
-  "_resultsInGroups": "",
+  "resultsInTeams": "",
+  "resultsInGroups": "",
   "checkPoints": [
     "1km"
   ]

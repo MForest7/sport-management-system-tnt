@@ -1,11 +1,11 @@
 {
-  "mode": "RESULTS_TEAMS",
+  "mode": "RESULTS_GROUPS",
   "_applicationsFolder": "sampleTest/applications",
   "_sortitionFolder": "sampleTest/sortition",
-  "_splitsFolder": "sampleTest/participantsDistanceRecord",
-  "typeOfSplits": "PARTICIPANTS",
-  "_resultsInTeams": "sampleTest/resultsInTeams.csv",
-  "_resultsInGroups": null,
+  "_splitsFolder": "sampleTest/checkpointsRecord",
+  "typeOfSplits": "CHECKPOINTS",
+  "resultsInTeams": "sampleTest/resultsInTeams.csv",
+  "resultsInGroups": "sampleTest/resultsInGroups.csv",
   "checkPoints": [
     "1km",
     "2km",

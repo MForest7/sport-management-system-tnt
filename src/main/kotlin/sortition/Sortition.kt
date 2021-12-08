@@ -29,7 +29,7 @@ private fun getRealGroup(wishedGroup: String, groupForUngrouped: String): String
 
 
 private fun createCompetitorNumberGenerator(numberOfCompetitors: Int) =
-    (1..numberOfCompetitors).map { it.toString() }.shuffled().iterator()
+    (1..numberOfCompetitors).map { it.toString() }.iterator()
 
 
 private fun numberInsideTeam(competitorNumbersGenerator: Iterator<String>) = { team: Team ->
@@ -109,7 +109,7 @@ fun generateSortition(listOfTeams: List<Team>): Competition {
 
     val competitorToTimeMatching = appointTime(competitorsInCompetition)
 
-    val checkpoints = mutableListOf(CheckPoint("0km", competitorToTimeMatching))
+    val checkpoints = mutableListOf(CheckPoint("0km", competitorToTimeMatching.toMutableMap()))
 
     val invertCompetitorToNumberMatching = competitorsInCompetition.associateBy { competitor -> competitor.number }
 

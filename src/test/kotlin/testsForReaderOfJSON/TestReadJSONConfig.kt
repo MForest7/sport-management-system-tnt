@@ -16,8 +16,8 @@ internal class TestReadJSONConfig {
                 _sortitionFolder = "/",
                 _splitsFolder = "/",
                 typeOfSplits = null,
-                _resultsInTeams = "",
-                _resultsInGroups = "",
+                resultsInTeams = "",
+                resultsInGroups = "",
                 checkPoints = listOf("1km"),
             ),
             readJSONConfig("testData/testJSONReader/config.json")
