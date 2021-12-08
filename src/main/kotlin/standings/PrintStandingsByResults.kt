@@ -12,7 +12,12 @@ private fun Competition.timeOf(competitor: CompetitorInCompetition): Time? {
     return if (timeAtStart != null) timeAtFinish?.minus(timeAtStart) else null
 }
 
-data class RecordInStandings(val competitor: CompetitorInCompetition, val time: String?, val place: Int?, val gap: String?) {
+data class RecordInStandings(
+    val competitor: CompetitorInCompetition,
+    val time: String?,
+    val place: Int?,
+    val gap: String?
+) {
     constructor(competitor: CompetitorInCompetition) : this(competitor, null, null, null)
 }
 
@@ -26,6 +31,7 @@ private fun Time?.gapFrom(other: Time?): String? {
 class StandingsOfGroup(val competition: Competition, val group: Group, competitors: List<CompetitorInCompetition>) {
     val records: List<RecordInStandings>
     val timeOfFirst: Time
+
     init {
         val (finishedCompetitors, notFinishedCompetitors) = competitors.partition { competition.timeOf(it) != null }
         val finalOrder = finishedCompetitors.sortedBy { competition.timeOf(it) }
@@ -35,12 +41,14 @@ class StandingsOfGroup(val competition: Competition, val group: Group, competito
             1 + finalOrder.count { competition.timeOf(competitor).gapFrom(competition.timeOf(it)) != null }
         }
 
-        records = finalOrder.map { RecordInStandings(
-            it,
-            competition.timeOf(it)?.stringRepresentation,
-            places[it],
-            competition.timeOf(it).gapFrom(timeOfFirst) ?: ""
-        ) }.plus(notFinishedCompetitors.map { RecordInStandings(it) } )
+        records = finalOrder.map {
+            RecordInStandings(
+                it,
+                competition.timeOf(it)?.stringRepresentation,
+                places[it],
+                competition.timeOf(it).gapFrom(timeOfFirst) ?: ""
+            )
+        }.plus(notFinishedCompetitors.map { RecordInStandings(it) })
     }
 }
 
@@ -51,15 +59,16 @@ private fun getFinalSingleRecord(index: Int, record: RecordInStandings): List<An
 }
 
 private fun printStandingsForSingleGroup(writer: ICsvFileWriter, standings: StandingsOfGroup) {
-    writer.writeRow(listOf(standings.group.name) + List(10){""})
-    val topLine = listOf("№ п/п","Номер","Фамилия","Имя","Г.р.","Разр.","Команда","Результат","Место","Отставание")
+    writer.writeRow(listOf(standings.group.name) + List(10) { "" })
+    val topLine =
+        listOf("№ п/п", "Номер", "Фамилия", "Имя", "Г.р.", "Разр.", "Команда", "Результат", "Место", "Отставание")
     writer.writeRow(topLine)
     writer.writeRows(standings.records.mapIndexed { index, it -> getFinalSingleRecord(index, it) })
 }
 
 fun printStandingsByGroups(file: File, standingsInGroups: List<StandingsOfGroup>) {
     CsvWriter().open(file, append = true) {
-        this.writeRow(listOf("Протокол результатов.") + List(9){""})
+        this.writeRow(listOf("Протокол результатов.") + List(9) { "" })
         standingsInGroups.forEach { standings -> printStandingsForSingleGroup(this, standings) }
     }
 }
@@ -78,27 +87,39 @@ private fun printStandingsForTeams(writer: ICsvFileWriter, resultOfTeams: Mutabl
     }
     writer.writeRows(finalOrder.mapIndexed { index, team ->
         listOf(index + 1, team.name, resultOfTeams[team]?.toInt(), places[team])
-    } )
+    })
 }
 
 fun printStandingsByTeams(file: File, standingsInGroups: List<StandingsOfGroup>) {
     val resultOfTeams = mutableMapOf<Team, Double>()
-    standingsInGroups.forEach { standings -> standings.records.forEach {
-        resultOfTeams[it.competitor.team] = (resultOfTeams[it.competitor.team] ?: 0.0) + standings.pointsOf(it.competitor)
-    } }
+    standingsInGroups.forEach { standings ->
+        standings.records.forEach {
+            resultOfTeams[it.competitor.team] =
+                (resultOfTeams[it.competitor.team] ?: 0.0) + standings.pointsOf(it.competitor)
+        }
+    }
     CsvWriter().open(file, append = false) {
-        writeRow(listOf("Протокол результатов команд.") + List(3){""})
+        writeRow(listOf("Протокол результатов команд.") + List(3) { "" })
         writeRow(listOf("№ п/п", "Команда", "Результат", "Место"))
         printStandingsForTeams(this, resultOfTeams)
     }
 }
 
-private fun Competition.getResultsInGroups() : List<StandingsOfGroup> {
+private fun Competition.getResultsInGroups(): List<StandingsOfGroup> {
     val standingsInGroups = this.competitors.groupBy { it.group }.map {
         StandingsOfGroup(this, it.key, it.value)
     }
     return standingsInGroups
 }
+
+class StandingsInGroups {}
+class StandingsInTeams {}
+
+fun generateStandingsInGroups(competition: Competition): StandingsInGroups = TODO()
+fun generateStandingsInTeams(competition: Competition): StandingsInTeams = TODO()
+
+fun printStandingsInGroups(standings: StandingsInGroups): Unit = TODO()
+fun printStandingsInTeams(standings: StandingsInTeams): Unit = TODO()
 
 fun printStandingsInGroupsToDir(path: String, competition: Competition) {
     val standingsInGroups = competition.getResultsInGroups()
