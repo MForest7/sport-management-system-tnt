@@ -6,4 +6,4 @@ import kotlinx.serialization.json.Json
 import java.io.File
 
 
-fun readJSONConfig(fileName: String): Config = Json.decodeFromString(File(fileName).readText())
+fun readJSONConfig(fileName: String): Config = Json.decodeFromString<Config>(File(fileName).readText()).normalize()
