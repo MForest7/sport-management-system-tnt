@@ -7,8 +7,8 @@ interface ModelViewer {
     fun applicationsUploaded()
     fun sortitionGenerated(competition: Competition)
     fun resultsUploaded()
-    fun standingsInTeamsGenerated(competition: Competition)
-    fun standingsInGroupsGenerated(competition: Competition)
+    fun standingsInTeamsGenerated(standingsInTeams: StandingsInTeams)
+    fun standingsInGroupsGenerated(standingsInGroups: StandingsInGroups)
 }
 
 
@@ -21,12 +21,12 @@ class ShellViewer(private val config: Config) : ModelViewer {
 
     override fun resultsUploaded() {}
 
-    override fun standingsInTeamsGenerated(competition: Competition) {
-        printStandingsInTeamsToDir(competition, config.resultsInTeams)
+    override fun standingsInTeamsGenerated(standingsInTeams: StandingsInTeams) {
+        printStandingsInTeamsToFile(standingsInTeams, config.resultsInTeams)
     }
 
-    override fun standingsInGroupsGenerated(competition: Competition) {
-        printStandingsInGroupsToDir(competition, config.resultsInGroups)
+    override fun standingsInGroupsGenerated(standingsInGroups: StandingsInGroups) {
+        printStandingsInGroupsToFile(standingsInGroups, config.resultsInGroups)
     }
 }
 

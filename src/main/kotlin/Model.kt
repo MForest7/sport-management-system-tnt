@@ -1,9 +1,10 @@
 import classes.Competition
+import classes.IncompleteCompetition
 import classes.Team
-import parsers.IncompleteCheckpoint
 import sortition.generateSortition
 import standings.StandingsInGroups
 import standings.StandingsInTeams
+import java.lang.Exception
 
 class Model {
     private val viewers = mutableSetOf<ModelViewer>()
@@ -27,26 +28,29 @@ class Model {
     }
 
     fun generateSortition() {
-        requireNotNull(applications) { "Empty applications!" }
-        competition = generateSortition(applications!!)
-        notifyViewers { it.sortitionGenerated() }
+        val newCompetition = generateSortition(applications ?: throw Exception("Empty applications!"))
+        competition = newCompetition
+        notifyViewers { it.sortitionGenerated(newCompetition) }
     }
 
-    fun uploadResults(results: List<IncompleteCheckpoint>) {
-        requireNotNull(competition) { "Competition was not generated yet!" }
-        competition!!.setCheckpointsFromIncomplete(results)
+    fun uploadResults(results: IncompleteCompetition) {
+        competition?.setCheckpointsFromIncomplete(results) ?: throw Exception("Competition was not generated yet!")
         notifyViewers { it.resultsUploaded() }
     }
 
     fun generateStandingsInTeams() {
-        requireNotNull(competition) { "Competition was not generated yet!" }
-        standingsInTeams = StandingsInTeams(competition!!)
-        notifyViewers { it.standingsInTeamsGenerated() }
+        val newStandings = StandingsInTeams(
+            competition ?: throw Exception("Competition was not generated yet!")
+        )
+        standingsInTeams = newStandings
+        notifyViewers { it.standingsInTeamsGenerated(newStandings) }
     }
 
     fun generateStandingsInGroups() {
-        requireNotNull(competition) { "Competition was not generated yet!" }
-        standingsInGroups = StandingsInGroups(competition!!)
-        notifyViewers { it.standingsInGroupsGenerated() }
+        val newStandings = StandingsInGroups(
+            competition ?: throw Exception("Competition was not generated yet!")
+        )
+        standingsInGroups = newStandings
+        notifyViewers { it.standingsInGroupsGenerated(newStandings) }
     }
 }

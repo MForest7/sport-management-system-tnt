@@ -1,9 +1,6 @@
 package standings
 
 import classes.*
-import com.github.doyaaaaaken.kotlincsv.client.CsvWriter
-import com.github.doyaaaaaken.kotlincsv.client.ICsvFileWriter
-import java.io.File
 import kotlin.math.max
 
 private fun Competition.timeOf(competitor: CompetitorInCompetition): Time? {

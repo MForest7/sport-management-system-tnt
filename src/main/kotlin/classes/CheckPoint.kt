@@ -1,7 +1,5 @@
 package classes
 
-import javax.print.attribute.standard.MediaSize
-
 data class CheckPoint(
     val name: String,
     val timeMatching: MutableMap<CompetitorInCompetition, Time>

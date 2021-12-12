@@ -16,7 +16,6 @@ abstract class Controller(protected val model: Model) {
     }
 }
 
-
 class ShellController(model: Model, private val config: Config) : Controller(model) {
     fun downloadApplications() {
         val listOfTeams = readListOfTeamsFromDirectory(config.applicationsFolder)
