@@ -1,9 +1,9 @@
 {
   "mode": "SORTITION",
-  "_applicationsFolder": "testData/testsDataFolderForReaderOfTeamsFromApplications/testReadListOfTeamsFromDirectory/testThreeApplications",
-  "_sortitionFolder": "",
-  "_splitsFolder": "",
-  "typeOfSplits": null,
+  "applicationsFolder": "testData/testsDataFolderForReaderOfTeamsFromApplications/testReadListOfTeamsFromDirectory/testThreeApplications",
+  "sortitionFolder": "",
+  "splitsFolder": "",
+  "typeOfSplits": "PARTISIPANTS",
   "resultsInTeams": "",
   "resultsInGroups": "",
   "checkPoints": [

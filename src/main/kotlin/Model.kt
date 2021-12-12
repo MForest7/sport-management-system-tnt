@@ -1,19 +1,17 @@
 import classes.Competition
-import classes.IncompleteCheckpoint
-import classes.IncompleteCompetition
 import classes.Team
+import parsers.IncompleteCheckpoint
 import sortition.generateSortition
-//import standings.StandingsInGroups
-//import standings.StandingsInTeams
-import java.lang.Exception
+import standings.StandingsInGroups
+import standings.StandingsInTeams
 
 class Model {
     private val viewers = mutableSetOf<ModelViewer>()
 
     private var competition: Competition? = null
     private var applications: List<Team>? = null
-//    private var standingsInTeams: StandingsInTeams? = null
-//    private var standingsInGroups: StandingsInGroups? = null
+    private var standingsInTeams: StandingsInTeams? = null
+    private var standingsInGroups: StandingsInGroups? = null
 
     fun addViewer(viewer: ModelViewer) {
         viewers.add(viewer)
@@ -29,29 +27,26 @@ class Model {
     }
 
     fun generateSortition() {
-        val newCompetition = generateSortition(applications ?: throw Exception("Empty applications!"))
-        this.competition = newCompetition
-        notifyViewers { it.sortitionGenerated(newCompetition) }
+        requireNotNull(applications) { "Empty applications!" }
+        competition = generateSortition(applications!!)
+        notifyViewers { it.sortitionGenerated() }
     }
 
-    fun uploadResults(results: IncompleteCompetition) {
-        competition?.setCheckpointsFromIncomplete(results) ?: throw Exception("Competition empty!")
+    fun uploadResults(results: List<IncompleteCheckpoint>) {
+        requireNotNull(competition) { "Competition was not generated yet!" }
+        competition!!.setCheckpointsFromIncomplete(results)
         notifyViewers { it.resultsUploaded() }
     }
 
     fun generateStandingsInTeams() {
-//        val newStandings = standings.generateStandingsInTeams(
-//            competition ?: throw Exception("Competition empty!")
-//        )
-//        standingsInTeams = newStandings
-        notifyViewers { it.standingsInTeamsGenerated(competition!!) }
+        requireNotNull(competition) { "Competition was not generated yet!" }
+        standingsInTeams = StandingsInTeams(competition!!)
+        notifyViewers { it.standingsInTeamsGenerated() }
     }
 
     fun generateStandingsInGroups() {
-//        val newStandings = standings.generateStandingsInGroups(
-//            competition ?: throw Exception("Competition empty!")
-//        )
-//        standingsInGroups = newStandings
-        notifyViewers { it.standingsInGroupsGenerated(competition!!) }
+        requireNotNull(competition) { "Competition was not generated yet!" }
+        standingsInGroups = StandingsInGroups(competition!!)
+        notifyViewers { it.standingsInGroupsGenerated() }
     }
 }

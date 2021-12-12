@@ -1,9 +1,7 @@
 package testsForPrintStandingsByResults
 
 import classes.*
-import standings.StandingsOfGroup
-import standings.printStandingsByGroups
-import standings.printStandingsByTeams
+import standings.*
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
@@ -78,14 +76,11 @@ internal class TestPrintStandingsByTeams {
     fun testSimpleTeams() {
         val competition = generateCompetition()
 
-        val standingsInGroups = competition.competitors.groupBy { it.group }.map {
-            StandingsOfGroup(competition, it.key, it.value)
-        }
 
         File("./testData/testPrintStandingsByTeams/standingsSimpleTeams.csv").bufferedWriter().use { print("") }
-        printStandingsByTeams(
-            File("./testData/testPrintStandingsByTeams/standingsSimpleTeams.csv"),
-            standingsInGroups
+        printStandingsInTeamsToFile(
+            StandingsInTeams(competition),
+            "./testData/testPrintStandingsByTeams/standingsSimpleTeams.csv"
         )
 
         assertContentEquals(
@@ -107,9 +102,9 @@ internal class TestPrintStandingsByTeams {
         }
 
         File("./testData/testPrintStandingsByTeams/standingsEmptyTeams.csv").bufferedWriter().use { print("") }
-        printStandingsByGroups(
-            File("./testData/testPrintStandingsByTeams/standingsEmptyTeams.csv"),
-            standingsInGroups
+        printStandingsInGroupsToFile(
+            StandingsInGroups(competition),
+            "./testData/testPrintStandingsByTeams/standingsEmptyTeams.csv"
         )
 
         assertContentEquals(
