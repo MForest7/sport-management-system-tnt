@@ -40,13 +40,13 @@ class Model {
 
     fun generateStandingsInTeams() {
         requireNotNull(competition) { "Competition was not generated yet!" }
-        standingsInTeams = standings.generateStandingsInTeams(competition!!)
+        standingsInTeams = StandingsInTeams(competition!!)
         notifyViewers { it.standingsInTeamsGenerated() }
     }
 
     fun generateStandingsInGroups() {
         requireNotNull(competition) { "Competition was not generated yet!" }
-        standingsInGroups = standings.generateStandingsInGroups(competition!!)
+        standingsInGroups = StandingsInGroups(competition!!)
         notifyViewers { it.standingsInGroupsGenerated() }
     }
 }

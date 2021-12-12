@@ -5,8 +5,10 @@ import parsers.readJSONConfig
 import parsers.readListOfTeamsFromDirectory
 import sortition.generateSortition
 import sortition.printSortition
-import standings.printStandingsInGroupsToDir
-import standings.printStandingsInTeamsToDir
+import standings.StandingsInGroups
+import standings.StandingsInTeams
+import standings.printStandingsInGroupsToFile
+import standings.printStandingsInTeamsToFile
 
 val logger = KotlinLogging.logger { }
 
@@ -50,12 +52,12 @@ fun startExecutingConfig(config: Config) {
         Mode.RESULTS_TEAMS -> {
             require(config.resultsInTeams != null) { "Results in teams file is null" }
             require(config.resultsInTeams.endsWith(".csv")) { "resultsInTeamsFolder not a .csv file" }
-            printStandingsInTeamsToDir(config.resultsInTeams, competition)
+            printStandingsInTeamsToFile(StandingsInTeams(competition), config.resultsInTeams)
         }
         Mode.RESULTS_GROUPS -> {
             require(config.resultsInGroups != null) { "Results in groups file is null" }
             require(config.resultsInGroups.endsWith(".csv")) { "resultsInGroupsFolder not a .csv file" }
-            printStandingsInGroupsToDir(config.resultsInGroups, competition)
+            printStandingsInGroupsToFile(StandingsInGroups(competition), config.resultsInGroups)
         }
     }
 }

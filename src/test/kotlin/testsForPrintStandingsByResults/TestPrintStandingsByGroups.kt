@@ -2,7 +2,6 @@ package testsForPrintStandingsByResults
 
 import classes.*
 import standings.StandingsOfGroup
-import standings.printStandingsByGroups
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
@@ -70,47 +69,6 @@ internal class TestPrintStandingsByGroups {
             checkPoints.toMutableList(),
             competitors,
             listOf("1", "2", "3", "4", "5", "6").associateWith { competitors[it.toInt() - 1] }
-        )
-    }
-
-    @Test
-    fun testSimpleGroup() {
-        val competition = generateCompetition()
-
-        val standingsInGroups = competition.competitors.groupBy { it.group }.map {
-            StandingsOfGroup(competition, it.key, it.value)
-        }
-
-        File("./testData/testPrintStandingsByGroups/standingsSimpleGroup.csv").bufferedWriter().use { print("") }
-        printStandingsByGroups(
-            File("./testData/testPrintStandingsByGroups/standingsSimpleGroup.csv"),
-            standingsInGroups
-        )
-
-        assertContentEquals(
-            File("./testData/testPrintStandingsByGroups/expectedStandingsSimpleGroup.csv").readLines(),
-            File("./testData/testPrintStandingsByGroups/standingsSimpleGroup.csv").readLines()
-        )
-    }
-
-    @Test
-    fun testEmptyGroup() {
-        val competition =
-            Competition(mutableListOf(CheckPoint("start", mutableMapOf()), CheckPoint("finish", mutableMapOf())), listOf(), mapOf())
-
-        val standingsInGroups = competition.competitors.groupBy { it.group }.map {
-            StandingsOfGroup(competition, it.key, it.value)
-        }
-
-        File("./testData/testPrintStandingsByGroups/standingsEmptyGroup.csv").bufferedWriter().use { print("") }
-        printStandingsByGroups(
-            File("./testData/testPrintStandingsByGroups/standingsEmptyGroup.csv"),
-            standingsInGroups
-        )
-
-        assertContentEquals(
-            File("./testData/testPrintStandingsByGroups/expectedStandingsEmptyGroup.csv").readLines(),
-            File("./testData/testPrintStandingsByGroups/standingsEmptyGroup.csv").readLines()
         )
     }
 }

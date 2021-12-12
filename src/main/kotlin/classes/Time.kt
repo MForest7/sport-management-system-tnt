@@ -16,6 +16,12 @@ class Time(val time: Int) : Comparable<Time> {
 
     operator fun minus(other: Time) = Time(time - other.time)
 
+    fun gapFrom(other: Time?): String? {
+        if (other == null) return null
+        if (this.time <= other.time) return null
+        return (this - other).formatToGap
+    }
+
     override fun equals(other: Any?): Boolean {
         if (other !is Time) return false
         return time == other.time

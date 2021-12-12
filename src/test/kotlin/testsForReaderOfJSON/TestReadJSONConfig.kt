@@ -2,6 +2,7 @@ package testsForReaderOfJSON
 
 import classes.Config
 import classes.Mode
+import classes.TypeOfSplits
 import parsers.readJSONConfig
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -12,10 +13,10 @@ internal class TestReadJSONConfig {
         assertEquals(
             Config(
                 mode = Mode.SORTITION,
-                _applicationsFolder = "testData/testsDataFolderForReaderOfTeamsFromApplications/testReadListOfTeamsFromDirectory/testThreeApplications/",
-                _sortitionFolder = "/",
-                _splitsFolder = "/",
-                typeOfSplits = null,
+                applicationsFolder = "testData/testsDataFolderForReaderOfTeamsFromApplications/testReadListOfTeamsFromDirectory/testThreeApplications/",
+                sortitionFolder = "/",
+                splitsFolder = "/",
+                typeOfSplits = TypeOfSplits.PARTICIPANTS,
                 resultsInTeams = "",
                 resultsInGroups = "",
                 checkPoints = listOf("1km"),

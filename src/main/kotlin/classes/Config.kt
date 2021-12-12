@@ -12,6 +12,7 @@ enum class TypeOfSplits {
 
 @Serializable
 class Config(
+    val mode: Mode,
     val applicationsFolder: String,
     val sortitionFolder: String,
     val splitsFolder: String,
@@ -21,14 +22,15 @@ class Config(
     val checkPoints: List<String>
 ) {
 
-    private fun normalizePath(path: String) = path.dropLastWhile { it == '/' }.plus("/")
+    private fun normalizedPath(path: String) = path.dropLastWhile { it == '/' }.plus("/")
 
-    fun normalize() = Config(
-        normalizePath(applicationsFolder),
-        normalizePath(sortitionFolder),
-        normalizePath(splitsFolder),
-        normalizePath(resultsInTeams),
-        normalizePath(resultsInGroups),
+    fun normalized() = Config(
+        mode,
+        normalizedPath(applicationsFolder),
+        normalizedPath(sortitionFolder),
+        normalizedPath(splitsFolder),
+        normalizedPath(resultsInTeams),
+        normalizedPath(resultsInGroups),
         typeOfSplits,
         checkPoints
     )
