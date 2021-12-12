@@ -112,21 +112,21 @@ private fun Competition.getResultsInGroups(): List<StandingsOfGroup> {
     return standingsInGroups
 }
 
-class StandingsInGroups {}
-class StandingsInTeams {}
+//class StandingsInGroups
+//class StandingsInTeams
 
-fun generateStandingsInGroups(competition: Competition): StandingsInGroups = TODO()
-fun generateStandingsInTeams(competition: Competition): StandingsInTeams = TODO()
+//fun generateStandingsInGroups(competition: Competition): StandingsInGroups = TODO()
+//fun generateStandingsInTeams(competition: Competition): StandingsInTeams = TODO()
+//
+//fun printStandingsInGroupsToDir(standings: StandingsInGroups, path: String): Unit = TODO()
+//fun printStandingsInTeamsToDir(standings: StandingsInTeams, path: String): Unit = TODO()
 
-fun printStandingsInGroups(standings: StandingsInGroups): Unit = TODO()
-fun printStandingsInTeams(standings: StandingsInTeams): Unit = TODO()
-
-fun printStandingsInGroupsToDir(path: String, competition: Competition) {
+fun printStandingsInGroupsToDir(competition: Competition, path: String) {
     val standingsInGroups = competition.getResultsInGroups()
     printStandingsByGroups(File(path), standingsInGroups)
 }
 
-fun printStandingsInTeamsToDir(path: String, competition: Competition) {
+fun printStandingsInTeamsToDir(competition: Competition, path: String) {
     val standingsInGroups = competition.getResultsInGroups()
     printStandingsByTeams(File(path), standingsInGroups)
 }

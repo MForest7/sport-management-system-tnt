@@ -7,10 +7,10 @@ import com.github.doyaaaaaken.kotlincsv.client.ICsvFileWriter
 import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
 import parsers.createDir
 
-fun groupToCompetitorMatching(competition: Competition): Map<Group, List<CompetitorInCompetition>> =
+private fun groupToCompetitorMatching(competition: Competition): Map<Group, List<CompetitorInCompetition>> =
     competition.competitors.groupBy { competitor -> competitor.group }
 
-fun writeCompetitor(csvFileWriter: ICsvFileWriter, competitor: CompetitorInCompetition, competition: Competition) {
+private fun writeCompetitor(csvFileWriter: ICsvFileWriter, competitor: CompetitorInCompetition, competition: Competition) {
     val startTime = competition.checkpoints[0].timeMatching[competitor]
     requireNotNull(startTime)
     csvFileWriter.writeRow(
@@ -19,7 +19,7 @@ fun writeCompetitor(csvFileWriter: ICsvFileWriter, competitor: CompetitorInCompe
     )
 }
 
-fun writeCompetitorsInGroup(
+private fun writeCompetitorsInGroup(
     dir: String,
     group: Group,
     competitors: List<CompetitorInCompetition>,

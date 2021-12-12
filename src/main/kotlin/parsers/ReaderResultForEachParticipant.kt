@@ -1,5 +1,6 @@
 package parsers
 
+import classes.IncompleteCheckpoint
 import classes.Time
 import com.github.doyaaaaaken.kotlincsv.client.CsvFileReader
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
@@ -9,14 +10,7 @@ import logger
 private fun CsvFileReaderWithFileName.getPersonNumberFromRecord(record: List<String>?): String =
     getFirstFieldFromRecord(record)
 
-fun convertRecordsToTimeMatching(list: List<List<String>>): Map<String, Time> {
-    val timeMatching = mutableMapOf<String, Time>()
-    for (record in list) {
-        require(record.size == 2) { "Record($record) size is not 2" }
-        timeMatching[record[0]] = Time(record[1])
-    }
-    return timeMatching
-}
+
 
 data class CheckpointsForParticipant(val personNumber: String, val timeMatching: Map<String, Time>)
 
@@ -36,7 +30,6 @@ fun readCheckpointsFromOneParticipant(fileName: String): CheckpointsForParticipa
     return checkpointsForParticipant
 }
 
-data class IncompleteCheckpoint(val name: String, val timeMatching: Map<String, Time>)
 
 fun readListOfIncompleteCheckpointsFromDirectoryWithParticipantsResults(
     dir: String,
