@@ -1,5 +1,4 @@
 import classes.Config
-import classes.mergeResultsTogether
 import parsers.readListOfIncompleteCheckpointsFromDirectoryWithCheckPointsResults
 import parsers.readListOfTeamsFromDirectory
 
@@ -31,7 +30,7 @@ class ShellController(model: Model, private val config: Config) : Controller(mod
         val participantResults = readListOfIncompleteCheckpointsFromDirectoryWithCheckPointsResults(
             config.participantsFolder, config.checkPoints
         )
-        val finalResults = mergeResultsTogether(checkpointsResults, participantResults)
+        val finalResults = checkpointsResults + participantResults
         model.uploadResults(finalResults)
     }
 }

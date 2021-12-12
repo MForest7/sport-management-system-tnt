@@ -1,6 +1,7 @@
 package parsers
 
 import classes.IncompleteCheckpoint
+import classes.IncompleteCompetition
 import classes.Time
 import com.github.doyaaaaaken.kotlincsv.client.CsvFileReader
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
@@ -9,7 +10,6 @@ import logger
 
 private fun CsvFileReaderWithFileName.getPersonNumberFromRecord(record: List<String>?): String =
     getFirstFieldFromRecord(record)
-
 
 
 data class CheckpointsForParticipant(val personNumber: String, val timeMatching: Map<String, Time>)
@@ -34,13 +34,14 @@ fun readCheckpointsFromOneParticipant(fileName: String): CheckpointsForParticipa
 fun readListOfIncompleteCheckpointsFromDirectoryWithParticipantsResults(
     dir: String,
     checkpointNames: List<String>
-): List<IncompleteCheckpoint> {
+): IncompleteCompetition {
     val countOfCheckpoints = checkpointNames.size
 
     val checkPointsForParticipant = getMappedListOfFilesFromDir(dir, ::readCheckpointsFromOneParticipant)
 
     require(checkPointsForParticipant.distinctBy { it.personNumber } == checkPointsForParticipant) {
-        "One or more participants are repeated in several files"}
+        "One or more participants are repeated in several files"
+    }
 
     //merge checkpoints
     val checkpoints = List(countOfCheckpoints) { index ->
@@ -53,5 +54,5 @@ fun readListOfIncompleteCheckpointsFromDirectoryWithParticipantsResults(
         }
         IncompleteCheckpoint(checkpointName, timeMatching)
     }
-    return checkpoints
+    return IncompleteCompetition(checkpoints)
 }

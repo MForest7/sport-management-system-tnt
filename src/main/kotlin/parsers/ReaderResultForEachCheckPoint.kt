@@ -2,6 +2,7 @@ package parsers
 
 
 import classes.IncompleteCheckpoint
+import classes.IncompleteCompetition
 import com.github.doyaaaaaken.kotlincsv.client.CsvFileReader
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import logger
@@ -37,8 +38,8 @@ private fun checkCheckPoints(checkpointNames: List<String>, checkpoints: List<In
 fun readListOfIncompleteCheckpointsFromDirectoryWithCheckPointsResults(
     dir: String,
     checkpointNames: List<String>
-): List<IncompleteCheckpoint> {
+): IncompleteCompetition {
     val checkpoints = getMappedListOfFilesFromDir(dir, ::readCheckpoint)
     checkCheckPoints(checkpointNames, checkpoints)
-    return checkpoints
+    return IncompleteCompetition(checkpoints)
 }

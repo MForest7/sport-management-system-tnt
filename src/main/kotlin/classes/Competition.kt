@@ -8,8 +8,8 @@ class Competition(
     var start = checkpoints.first()
     var finish = checkpoints.last()
 
-    fun setCheckpointsFromIncomplete(incompleteCheckpoints: List<IncompleteCheckpoint>) {
-        val checkpoints = incompleteCheckpoints.map {
+    fun setCheckpointsFromIncomplete(incompleteCompetition: IncompleteCompetition) {
+        val checkpoints = incompleteCompetition.checkpoints.map {
             it.convertIncompleteToCheckpoint(numberMatching)
         }.toMutableList()
         this.checkpoints.addAll(checkpoints)

@@ -1,5 +1,7 @@
 package classes
 
+import javax.print.attribute.standard.MediaSize
+
 data class CheckPoint(
     val name: String,
     val timeMatching: MutableMap<CompetitorInCompetition, Time>
@@ -17,12 +19,12 @@ data class IncompleteCheckpoint(val name: String, val timeMatching: Map<String, 
         )
 }
 
-fun mergeResultsTogether(
-    list1: List<IncompleteCheckpoint>,
-    list2: List<IncompleteCheckpoint>
-): List<IncompleteCheckpoint> {
-    if (list1.map { it.name }.intersect(list2.map { it.name }.toSet()).isNotEmpty()) {
-        throw(IllegalArgumentException("Results intersects"))
+
+class IncompleteCompetition(val checkpoints: List<IncompleteCheckpoint>) {
+    operator fun plus(other: IncompleteCompetition): IncompleteCompetition {
+        if (this.checkpoints.map { it.name }.intersect(other.checkpoints.map { it.name }.toSet()).isNotEmpty()) {
+            throw(IllegalArgumentException("Results intersects"))
+        }
+        return IncompleteCompetition(this.checkpoints + other.checkpoints)
     }
-    return list1 + list2
 }

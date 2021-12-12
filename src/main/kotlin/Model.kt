@@ -1,5 +1,6 @@
 import classes.Competition
 import classes.IncompleteCheckpoint
+import classes.IncompleteCompetition
 import classes.Team
 import sortition.generateSortition
 //import standings.StandingsInGroups
@@ -33,7 +34,7 @@ class Model {
         notifyViewers { it.sortitionGenerated(newCompetition) }
     }
 
-    fun uploadResults(results: List<IncompleteCheckpoint>) {
+    fun uploadResults(results: IncompleteCompetition) {
         competition?.setCheckpointsFromIncomplete(results) ?: throw Exception("Competition empty!")
         notifyViewers { it.resultsUploaded() }
     }
