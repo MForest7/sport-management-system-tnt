@@ -2,7 +2,7 @@ import classes.Applications
 import classes.Competition
 import classes.IncompleteCompetition
 import classes.Team
-import sortition.generateSortition
+import sortition.Sortition
 import standings.StandingsInGroups
 import standings.StandingsInTeams
 import java.lang.Exception
@@ -29,7 +29,7 @@ class Model {
     }
 
     fun generateSortition() {
-        val newCompetition = generateSortition(applications ?: throw Exception("Empty applications!"))
+        val newCompetition = Sortition(applications ?: throw Exception("Empty applications!")).generateCompetition()
         competition = newCompetition
         notifyViewers { it.sortitionGenerated(newCompetition) }
     }

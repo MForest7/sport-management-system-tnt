@@ -11,11 +11,11 @@ private fun Competition.timeOf(competitor: CompetitorInCompetition): Time? {
 
 data class RecordInStandings(
     val competitor: CompetitorInCompetition,
-    val time: String?,
-    val place: Int?,
-    val gap: String?
+    val time: String,
+    val place: String,
+    val gap: String
 ) {
-    constructor(competitor: CompetitorInCompetition) : this(competitor, null, null, null)
+    constructor(competitor: CompetitorInCompetition) : this(competitor, "", "", "")
 }
 
 class StandingsOfGroup(val competition: Competition, val group: Group, competitors: List<CompetitorInCompetition>) {
@@ -33,10 +33,10 @@ class StandingsOfGroup(val competition: Competition, val group: Group, competito
 
         records = finalOrder.map {
             RecordInStandings(
-                it,
-                competition.timeOf(it)?.stringRepresentation,
-                places[it],
-                competition.timeOf(it)?.gapFrom(timeOfFirst) ?: ""
+                competitor = it,
+                time = competition.timeOf(it)?.stringRepresentation ?: "",
+                place = places[it].toString(),
+                gap = competition.timeOf(it)?.gapFrom(timeOfFirst) ?: ""
             )
         }.plus(notFinishedCompetitors.map { RecordInStandings(it) })
     }

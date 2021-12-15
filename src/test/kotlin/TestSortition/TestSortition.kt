@@ -1,10 +1,9 @@
 package TestSortition
 
 
-import classes.Applications
 import classes.Competitor
 import classes.Team
-import sortition.generateSortition
+import sortition.Sortition
 import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertContentEquals
@@ -48,7 +47,7 @@ internal class TestSortition {
         )
     )
 
-    private val competition = generateSortition(Applications( teams))
+    private val competition = Sortition(teams).generateCompetition()
 
 
     @Test
