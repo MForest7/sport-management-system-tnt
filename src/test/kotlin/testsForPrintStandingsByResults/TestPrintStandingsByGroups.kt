@@ -8,7 +8,6 @@ import kotlin.test.assertContentEquals
 
 internal class TestPrintStandingsByGroups {
     private fun generateCompetition(): Competition {
-
         val teams = listOf(
             Team(
                 "ПСКОВ,РУСЬ", listOf(

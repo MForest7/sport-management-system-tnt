@@ -1,10 +1,12 @@
 package testsForReaderResultForEachParticipant
 
 import classes.Time
-import parsers.IncompleteCheckpoint
+import classes.IncompleteCheckpoint
+import classes.IncompleteCompetition
 import parsers.readListOfIncompleteCheckpointsFromDirectoryWithParticipantsResults
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
+import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
 internal class ReadListOfIncompleteCheckpointsFromDirectoryWithParticipantsResults {
@@ -17,7 +19,7 @@ internal class ReadListOfIncompleteCheckpointsFromDirectoryWithParticipantsResul
             dirPath + "testThreeParticipants/",
             listOf("1km", "2km", "finish")
         )
-        assertContentEquals(
+        val competition = IncompleteCompetition(
             listOf(
                 IncompleteCheckpoint(
                     "1km", mapOf(
@@ -33,8 +35,12 @@ internal class ReadListOfIncompleteCheckpointsFromDirectoryWithParticipantsResul
                 ),
                 IncompleteCheckpoint(
                     "finish", mapOf()
-                ),
-            ), listOfCheckpoints
+                )
+            )
+        )
+
+        assertEquals(
+            competition.checkpoints, listOfCheckpoints.checkpoints
         )
     }
 
@@ -54,12 +60,15 @@ internal class ReadListOfIncompleteCheckpointsFromDirectoryWithParticipantsResul
             dirPath + "testEmptyDirectory/",
             listOf("1km", "2km", "finish")
         )
-        assertContentEquals(
+        val competition = IncompleteCompetition(
             listOf(
                 IncompleteCheckpoint("1km", mapOf()),
                 IncompleteCheckpoint("2km", mapOf()),
                 IncompleteCheckpoint("finish", mapOf()),
-            ), listOfCheckpoints
+            )
+        )
+        assertEquals(
+            competition.checkpoints, listOfCheckpoints.checkpoints
         )
     }
 

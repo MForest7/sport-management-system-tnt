@@ -18,4 +18,20 @@ open class Competitor(
         competitor.MedicalExamination,
         competitor.MedicalInsurance
     )
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+
+        other as Competitor
+
+        if (wishGroup != other.wishGroup) return false
+        if (surname != other.surname) return false
+        if (name != other.name) return false
+        if (birth != other.birth) return false
+        if (title != other.title) return false
+        if (MedicalExamination != other.MedicalExamination) return false
+        if (MedicalInsurance != other.MedicalInsurance) return false
+
+        return true
+    }
 }

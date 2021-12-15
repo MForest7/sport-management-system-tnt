@@ -1,5 +1,6 @@
 import classes.Config
 import parsers.readListOfIncompleteCheckpointsFromDirectoryWithCheckPointsResults
+import parsers.readListOfIncompleteCheckpointsFromDirectoryWithParticipantsResults
 import parsers.readListOfTeamsFromDirectory
 
 abstract class Controller(protected val model: Model) {
@@ -26,7 +27,7 @@ class ShellController(model: Model, private val config: Config) : Controller(mod
         val checkpointsResults = readListOfIncompleteCheckpointsFromDirectoryWithCheckPointsResults(
             config.checkpointsFolder, config.checkPoints
         )
-        val participantResults = readListOfIncompleteCheckpointsFromDirectoryWithCheckPointsResults(
+        val participantResults = readListOfIncompleteCheckpointsFromDirectoryWithParticipantsResults(
             config.participantsFolder, config.checkPoints
         )
         val finalResults = checkpointsResults + participantResults

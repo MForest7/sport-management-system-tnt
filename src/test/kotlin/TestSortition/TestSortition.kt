@@ -5,6 +5,7 @@ import classes.Competitor
 import classes.Team
 import sortition.generateSortition
 import kotlin.test.Test
+import kotlin.test.assertContains
 import kotlin.test.assertContentEquals
 
 internal class TestSortition {
@@ -60,7 +61,7 @@ internal class TestSortition {
     @Test
     fun checkAllCompetitorsInCompetition() {
         competition.competitors.forEach { competitorInCompetition ->
-            assert(competitorInCompetition in competitors)
+            assertContains(competitors, competitorInCompetition)
         }
     }
 

@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 
 @Serializable
-class Config(
+data class Config(
     val applicationsFolder: String,
     val sortitionFolder: String,
     val participantsFolder: String,
