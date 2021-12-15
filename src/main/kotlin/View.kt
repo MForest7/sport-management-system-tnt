@@ -1,7 +1,7 @@
 import classes.Competition
-import classes.Config
 import classes.FileManager
-import standings.*
+import standings.StandingsInGroups
+import standings.StandingsInTeams
 
 interface ModelViewer {
     fun groupsUploaded()
