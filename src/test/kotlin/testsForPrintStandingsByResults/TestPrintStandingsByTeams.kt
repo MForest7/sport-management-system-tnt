@@ -76,7 +76,6 @@ internal class TestPrintStandingsByTeams {
     fun testSimpleTeams() {
         val competition = generateCompetition()
 
-
         File("./testData/testPrintStandingsByTeams/standingsSimpleTeams.csv").bufferedWriter().use { print("") }
         printStandingsInTeamsToFile(
             StandingsInTeams(competition),
@@ -97,13 +96,9 @@ internal class TestPrintStandingsByTeams {
             mapOf()
         )
 
-        val standingsInGroups = competition.competitors.groupBy { it.group }.map {
-            StandingsOfGroup(competition, it.key, it.value)
-        }
-
         File("./testData/testPrintStandingsByTeams/standingsEmptyTeams.csv").bufferedWriter().use { print("") }
-        printStandingsInGroupsToFile(
-            StandingsInGroups(competition),
+        printStandingsInTeamsToFile(
+            StandingsInTeams(competition),
             "./testData/testPrintStandingsByTeams/standingsEmptyTeams.csv"
         )
 

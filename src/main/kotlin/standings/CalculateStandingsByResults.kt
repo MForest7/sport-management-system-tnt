@@ -15,7 +15,7 @@ data class RecordInStandings(
     val place: String,
     val gap: String
 ) {
-    constructor(competitor: CompetitorInCompetition) : this(competitor, "", "", "")
+    constructor(competitor: CompetitorInCompetition) : this(competitor, "снят", "", "")
 }
 
 class StandingsOfGroup(val competition: Competition, val group: Group, competitors: List<CompetitorInCompetition>) {
@@ -34,7 +34,7 @@ class StandingsOfGroup(val competition: Competition, val group: Group, competito
         records = finalOrder.map {
             RecordInStandings(
                 competitor = it,
-                time = competition.timeOf(it)?.stringRepresentation ?: "",
+                time = competition.timeOf(it)?.stringRepresentation ?: "снят",
                 place = places[it].toString(),
                 gap = competition.timeOf(it)?.gapFrom(timeOfFirst) ?: ""
             )

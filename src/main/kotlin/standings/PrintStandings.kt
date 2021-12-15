@@ -11,7 +11,7 @@ private fun printStandingsForSingleGroup(writer: ICsvFileWriter, standings: Stan
         listOf("№ п/п", "Номер", "Фамилия", "Имя", "Г.р.", "Разр.", "Команда", "Результат", "Место", "Отставание")
     writer.writeRow(topLine)
     writer.writeRows(standings.records.mapIndexed { index, it ->
-        listOf(index + 1) + it.competitor.getInfo() + listOf(it.time ?: "снят", it.place ?: "", it.gap ?: "")
+        listOf(index + 1) + it.competitor.getInfo() + listOf(it.time, it.place, it.gap)
     })
 }
 
