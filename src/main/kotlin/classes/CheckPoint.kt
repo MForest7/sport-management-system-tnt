@@ -20,9 +20,22 @@ data class IncompleteCheckpoint(val name: String, val timeMatching: Map<String, 
 
 class IncompleteCompetition(val checkpoints: List<IncompleteCheckpoint>) {
     operator fun plus(other: IncompleteCompetition): IncompleteCompetition {
-        if (this.checkpoints.map { it.name }.intersect(other.checkpoints.map { it.name }.toSet()).isNotEmpty()) {
-            throw(IllegalArgumentException("Results intersects"))
-        }
-        return IncompleteCompetition(this.checkpoints + other.checkpoints)
+        val checkpointNames = (this.checkpoints.map { it.name } + other.checkpoints.map { it.name }).distinct()
+        return IncompleteCompetition(checkpointNames.map { checkpointName ->
+            var timeMatching = mutableMapOf<String, Time>()
+            val incompleteCheckpoint1 = this.checkpoints.find { it.name == checkpointName }
+            val incompleteCheckpoint2 = other.checkpoints.find { it.name == checkpointName }
+            if (incompleteCheckpoint1 != null) {
+                timeMatching = incompleteCheckpoint1.timeMatching.toMutableMap()
+            }
+            incompleteCheckpoint2?.timeMatching?.forEach { (number, time) ->
+                val anotherRecord = timeMatching[number]
+                if (anotherRecord != null && anotherRecord != time) {
+                    throw IllegalStateException("Wrong data in results")
+                }
+                timeMatching[number] = time
+            }
+            IncompleteCheckpoint(checkpointName, timeMatching)
+        })
     }
 }

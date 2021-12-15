@@ -11,7 +11,7 @@ fun outputStringWithColor(string: String) {
 
 fun startShell() {
     logger.info { "Start shell" }
-    outputStringWithColor("Enter pat h to config(.json) file")
+    outputStringWithColor("Enter path to config(.json) file")
     outputStringWithColor("For example: myData/myconfig.json")
     val pathToConfig = getPathToConfig()
     val config = readJSONConfig(pathToConfig)
@@ -23,7 +23,7 @@ fun startShell() {
     controller.downloadApplications()
     controller.generateSortition()
 
-    print("Enter if results uploaded")
+    outputStringWithColor("Press enter if results were uploaded")
     readLine()
 
     controller.uploadResults()
