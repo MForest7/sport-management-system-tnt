@@ -6,7 +6,9 @@ class Competition(
     val numberMatching: Map<String, CompetitorInCompetition>
 ) {
     var start = checkpoints.first()
+        private set
     var finish = checkpoints.last()
+        private set
 
     fun setCheckpointsFromIncomplete(incompleteCompetition: IncompleteCompetition) {
         val checkpoints = incompleteCompetition.checkpoints.map {

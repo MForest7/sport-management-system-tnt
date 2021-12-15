@@ -1,6 +1,6 @@
 import classes.Competition
 import classes.Config
-import sortition.printSortition
+import sortition.CSVSortitionPrinter
 import standings.*
 
 interface ModelViewer {
@@ -16,7 +16,7 @@ class ShellViewer(private val config: Config) : ModelViewer {
     override fun applicationsUploaded() {}
 
     override fun sortitionGenerated(competition: Competition) {
-        printSortition(config.sortitionFolder, competition)
+        CSVSortitionPrinter(config.sortitionFolder).printSortition(competition)
     }
 
     override fun resultsUploaded() {}
