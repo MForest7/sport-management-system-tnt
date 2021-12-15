@@ -2,7 +2,7 @@ package testsForReaderResultForEachCheckPoint
 
 
 import classes.Time
-import parsers.readListOfIncompleteCheckpointsFromDirectoryWithCheckPointsResults
+import parsers.CheckpointsResultsReader
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
@@ -14,10 +14,10 @@ class TestReadOneCheckPoint {
     fun testSimpleApplication() {
         val checkPointNames = listOf("1km")
         val checkPoint =
-            readListOfIncompleteCheckpointsFromDirectoryWithCheckPointsResults(
+            CheckpointsResultsReader(
                 dirPath,
                 checkPointNames
-            )
+            ).read()
         assert(checkPoint.checkpoints.size == 1)
         assertEquals("1km", checkPoint.checkpoints[0].name)
         val need = mapOf(

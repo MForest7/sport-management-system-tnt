@@ -1,8 +1,6 @@
 package parsers
 
 import classes.*
-import com.github.doyaaaaaken.kotlincsv.client.CsvFileReader
-import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import logger
 import java.lang.Exception
 

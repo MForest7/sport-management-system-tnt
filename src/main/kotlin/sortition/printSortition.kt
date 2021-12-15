@@ -2,38 +2,47 @@ package sortition
 
 import classes.Competition
 import classes.CompetitorInCompetition
+import classes.CsvWriter
 import classes.Group
 import com.github.doyaaaaaken.kotlincsv.client.ICsvFileWriter
 import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
 
-private fun groupToCompetitorMatching(competition: Competition): Map<Group, List<CompetitorInCompetition>> =
-    competition.competitors.groupBy { competitor -> competitor.group }
 
-private fun writeCompetitor(csvFileWriter: ICsvFileWriter, competitor: CompetitorInCompetition, competition: Competition) {
-    val startTime = competition.checkpoints[0].timeMatching[competitor]
-    requireNotNull(startTime)
-    csvFileWriter.writeRow(
-        competitor.number, competitor.surname, competitor.name, competitor.birth,
-        competitor.title, startTime.stringRepresentation
-    )
-}
+class SortitionPrinter(private val dir: String) {
+    private fun groupToCompetitorMatching(competition: Competition): Map<Group, List<CompetitorInCompetition>> =
+        competition.competitors.groupBy { competitor -> competitor.group }
 
-private fun writeCompetitorsInGroup(
-    dir: String,
-    group: Group,
-    competitors: List<CompetitorInCompetition>,
-    competition: Competition
-) {
-    csvWriter().open(dir + "/" + group.name) {
-        this.writeRow(listOf(group.name))
-        competitors.forEach { competitor ->
-            writeCompetitor(this, competitor, competition)
-        }
+    private fun transformCompetitorIntoRow(
+        competitor: CompetitorInCompetition,
+        competition: Competition
+    ): List<String> {
+        val startTime = competition.checkpoints[0].timeMatching[competitor]
+        requireNotNull(startTime)
+        return listOf(
+            competitor.number, competitor.surname, competitor.name, competitor.birth,
+            competitor.title, startTime.stringRepresentation
+        )
     }
-}
 
-fun printSortition(dir: String, competition: Competition) {
-    groupToCompetitorMatching(competition).forEach { (group, competitors) ->
-        writeCompetitorsInGroup(dir, group, competitors, competition)
+    private fun writeCompetitorsInGroup(
+        group: Group,
+        competitors: List<CompetitorInCompetition>,
+        competition: Competition
+    ) {
+        val writer = CsvWriter(dir + "/" + group.name + ".csv")
+        val rows = mutableListOf<List<String>>()
+        rows.add(listOf(group.name))
+        rows.addAll(
+            competitors.map { competitor ->
+                transformCompetitorIntoRow(competitor, competition)
+            }
+        )
+        writer.writeRows(rows)
+    }
+
+    fun print(competition: Competition) {
+        groupToCompetitorMatching(competition).forEach { (group, competitors) ->
+            writeCompetitorsInGroup(group, competitors, competition)
+        }
     }
 }

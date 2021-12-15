@@ -3,10 +3,13 @@ package classes
 import parsers.ApplicationsReader
 import parsers.CheckpointsResultsReader
 import parsers.ParticipantsResultsReader
+import sortition.SortitionPrinter
+import standings.GroupStandingsPrinter
+import standings.TeamsStandingsPrinter
 import java.io.File
 import java.lang.Exception
 
-class FileManagerException(message : String) : Exception(message)
+class FileManagerException(message: String) : Exception(message)
 
 
 class FileManager(
@@ -33,11 +36,11 @@ class FileManager(
     }
 
     val applicationsReader = ApplicationsReader(config.applicationsFolder)
-    val sortitionWriter = CsvWriter(config.sortitionFolder)
+    val sortitionWriter = SortitionPrinter(config.sortitionFolder)
     val resultsForCheckpointsReader =
         CheckpointsResultsReader(config.checkpointsFolder, config.checkPoints)
     val resultsForParticipantsReader =
         ParticipantsResultsReader(config.participantsFolder, config.checkPoints)
-    val standingsInGroupsWriter = CsvWriter(config.resultsInGroups)
-    val standingsInTeamsWriter = CsvWriter(config.resultsInTeams)
+    val standingsInGroupsWriter = GroupStandingsPrinter(config.resultsInGroups)
+    val standingsInTeamsWriter = TeamsStandingsPrinter(config.resultsInTeams)
 }

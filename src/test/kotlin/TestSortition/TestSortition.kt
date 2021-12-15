@@ -1,6 +1,7 @@
 package TestSortition
 
 
+import classes.Applications
 import classes.Competitor
 import classes.Team
 import sortition.generateSortition
@@ -47,7 +48,7 @@ internal class TestSortition {
         )
     )
 
-    private val competition = generateSortition(teams)
+    private val competition = generateSortition(Applications( teams))
 
 
     @Test

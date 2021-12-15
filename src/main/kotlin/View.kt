@@ -1,6 +1,6 @@
 import classes.Competition
 import classes.Config
-import sortition.printSortition
+import classes.FileManager
 import standings.*
 
 interface ModelViewer {
@@ -12,21 +12,23 @@ interface ModelViewer {
 }
 
 
-class ShellViewer(private val config: Config) : ModelViewer {
+class ShellViewer(
+    private val fileManager: FileManager
+) : ModelViewer {
     override fun applicationsUploaded() {}
 
     override fun sortitionGenerated(competition: Competition) {
-        printSortition(config.sortitionFolder, competition)
+        fileManager.sortitionWriter.print(competition)
     }
 
     override fun resultsUploaded() {}
 
     override fun standingsInTeamsGenerated(standingsInTeams: StandingsInTeams) {
-        printStandingsInTeamsToFile(standingsInTeams, config.resultsInTeams)
+        fileManager.standingsInTeamsWriter.print(standingsInTeams)
     }
 
     override fun standingsInGroupsGenerated(standingsInGroups: StandingsInGroups) {
-        printStandingsInGroupsToFile(standingsInGroups, config.resultsInGroups)
+        fileManager.standingsInGroupsWriter.print(standingsInGroups)
     }
 }
 

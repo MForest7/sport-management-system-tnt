@@ -75,13 +75,10 @@ internal class TestPrintStandingsByTeams {
     @Test
     fun testSimpleTeams() {
         val competition = generateCompetition()
-
-
         File("./testData/testPrintStandingsByTeams/standingsSimpleTeams.csv").bufferedWriter().use { print("") }
-        printStandingsInTeamsToFile(
-            StandingsInTeams(competition),
+        TeamsStandingsPrinter(
             "./testData/testPrintStandingsByTeams/standingsSimpleTeams.csv"
-        )
+        ).print(StandingsInTeams(competition))
 
         assertContentEquals(
             File("./testData/testPrintStandingsByTeams/expectedStandingsSimpleTeams.csv").readLines(),
@@ -102,10 +99,9 @@ internal class TestPrintStandingsByTeams {
         }
 
         File("./testData/testPrintStandingsByTeams/standingsEmptyTeams.csv").bufferedWriter().use { print("") }
-        printStandingsInGroupsToFile(
-            StandingsInGroups(competition),
+        GroupStandingsPrinter(
             "./testData/testPrintStandingsByTeams/standingsEmptyTeams.csv"
-        )
+        ).print(StandingsInGroups(competition))
 
         assertContentEquals(
             File("./testData/testPrintStandingsByTeams/expectedStandingsEmptyTeams.csv").readLines(),

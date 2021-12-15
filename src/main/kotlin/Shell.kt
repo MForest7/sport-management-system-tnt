@@ -17,9 +17,9 @@ fun startShell() {
     val pathToConfig = getPathToConfig()
     val config = JsonReader(pathToConfig).read()
     logger.debug { "config = $config" }
-    val model = Model()
-    val viewer = ShellViewer(config)
     val fileManager = FileManager(config)
+    val model = Model()
+    val viewer = ShellViewer(fileManager)
     val controller = ShellController(model, fileManager)
     model.addViewer(viewer)
     controller.downloadApplications()
