@@ -2,9 +2,9 @@ package sortition
 
 import classes.*
 
-class Sortition(val listOfTeams: List<Team>, private val groupNameForUngrouped: String = "OTHER") {
+class Sortition(private val applications: Applications, private val groupNameForUngrouped: String = "OTHER") {
     fun generateCompetition(): Competition {
-        val numberedCompetitors = numberAllCompetitors(listOfTeams)
+        val numberedCompetitors = numberAllCompetitors(applications.teams)
         val competitorsInCompetition = assignGroupsToNumberedCompetitors(numberedCompetitors)
 
         val competitorToTimeMatching = appointTime(competitorsInCompetition)
@@ -18,7 +18,7 @@ class Sortition(val listOfTeams: List<Team>, private val groupNameForUngrouped: 
         fun addGroup(group: Group) = CompetitorInCompetition(competitor, number, group, team)
     }
 
-    private val countOfCompetitors: Int = listOfTeams.sumOf { team -> team.competitors.size }
+    private val countOfCompetitors: Int = applications.teams.sumOf { team -> team.competitors.size }
     private val competitorNumbersGenerator = (1..countOfCompetitors).map { it.toString() }.shuffled().iterator()
 
     private fun numberAllCompetitors(listOfTeams: List<Team>): List<NumberedCompetitor> {
@@ -32,8 +32,8 @@ class Sortition(val listOfTeams: List<Team>, private val groupNameForUngrouped: 
     private fun getNameOfRealGroup(competitor: Competitor) = competitor.wishGroup.ifBlank { groupNameForUngrouped }
 
     private fun assignGroupsToNumberedCompetitors(listOfNumberedCompetitors: List<NumberedCompetitor>): List<CompetitorInCompetition> {
-        val mappingGroupToCompetitors = listOfNumberedCompetitors.groupBy {
-                numberedCompetitor -> getNameOfRealGroup(numberedCompetitor.competitor)
+        val mappingGroupToCompetitors = listOfNumberedCompetitors.groupBy { numberedCompetitor ->
+            getNameOfRealGroup(numberedCompetitor.competitor)
         }
         return mappingGroupToCompetitors.map { (groupName, numberedCompetitors) ->
             val group = Group(groupName)
