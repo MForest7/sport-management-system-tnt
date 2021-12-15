@@ -11,13 +11,13 @@ fun outputStringWithColor(string: String) {
     print(color + string + reset + "\n")
 }
 
-fun startShell() {
+fun startShell(pathToConfig: String) {
     logger.info { "Start shell" }
     outputStringWithColor("Enter path to config(.json) file")
     outputStringWithColor("For example: myData/myconfig.json")
-    val pathToConfig = getPathToConfig()
     val config = JsonReader(pathToConfig).read()
     logger.debug { "config = $config" }
+
     val fileManager = FileManager(config)
     val model = Model()
     val viewer = ShellViewer(fileManager)
@@ -35,13 +35,7 @@ fun startShell() {
     controller.generateStandingsInTeams()
 
     outputStringWithColor("Done!")
+
     logger.info { "End shell" }
 }
 
-
-fun getPathToConfig(): String {
-    val pathToConfig = readLine()
-    require(pathToConfig != null) { "path is null" }
-    require(pathToConfig.endsWith(".json")) { "Not a .json file" }
-    return pathToConfig
-}
