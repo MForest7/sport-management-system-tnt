@@ -1,7 +1,7 @@
 package testsForPrintStandingsByResults
 
 import classes.*
-import standings.StandingsOfGroup
+import standings.*
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
@@ -68,6 +68,39 @@ internal class TestPrintStandingsByGroups {
             checkPoints.toMutableList(),
             competitors,
             listOf("1", "2", "3", "4", "5", "6").associateWith { competitors[it.toInt() - 1] }
+        )
+    }
+
+    @Test
+    fun testSimpleGroups() {
+        val competition = generateCompetition()
+        File("./testData/testPrintStandingsByGroups/standingsSimpleGroup.csv").bufferedWriter().use { print("") }
+        GroupStandingsPrinter(
+            "./testData/testPrintStandingsByGroups/standingsSimpleGroup.csv"
+        ).print(StandingsInGroups(competition))
+
+        assertContentEquals(
+            File("./testData/testPrintStandingsByGroups/expectedStandingsSimpleGroup.csv").readLines(),
+            File("./testData/testPrintStandingsByGroups/standingsSimpleGroup.csv").readLines()
+        )
+    }
+
+    @Test
+    fun testEmptyCompetition() {
+        val competition = Competition(
+            mutableListOf(CheckPoint("start", mutableMapOf()), CheckPoint("finish", mutableMapOf())),
+            listOf(),
+            mapOf()
+        )
+
+        File("./testData/testPrintStandingsByGroups/standingsEmptyGroup.csv").bufferedWriter().use { print("") }
+        GroupStandingsPrinter(
+            "./testData/testPrintStandingsByGroups/standingsEmptyGroup.csv"
+        ).print(StandingsInGroups(competition))
+
+        assertContentEquals(
+            File("./testData/testPrintStandingsByGroups/expectedStandingsEmptyGroup.csv").readLines(),
+            File("./testData/testPrintStandingsByGroups/standingsEmptyGroup.csv").readLines()
         )
     }
 }
