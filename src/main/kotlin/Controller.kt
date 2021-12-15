@@ -1,7 +1,5 @@
-import classes.Config
-import parsers.readListOfIncompleteCheckpointsFromDirectoryWithCheckPointsResults
-import parsers.readListOfIncompleteCheckpointsFromDirectoryWithParticipantsResults
-import parsers.readListOfTeamsFromDirectory
+import classes.FileManager
+
 
 abstract class Controller(protected val model: Model) {
     fun generateSortition() {
@@ -17,19 +15,15 @@ abstract class Controller(protected val model: Model) {
     }
 }
 
-class ShellController(model: Model, private val config: Config) : Controller(model) {
+class ShellController(model: Model, private val fileManager: FileManager) : Controller(model) {
     fun downloadApplications() {
-        val listOfTeams = readListOfTeamsFromDirectory(config.applicationsFolder)
+        val listOfTeams = fileManager.applicationsReader.read()
         model.uploadApplications(listOfTeams)
     }
 
     fun uploadResults() {
-        val checkpointsResults = readListOfIncompleteCheckpointsFromDirectoryWithCheckPointsResults(
-            config.checkpointsFolder, config.checkPoints
-        )
-        val participantResults = readListOfIncompleteCheckpointsFromDirectoryWithParticipantsResults(
-            config.participantsFolder, config.checkPoints
-        )
+        val checkpointsResults = fileManager.resultsForCheckpointsReader.read()
+        val participantResults = fileManager.resultsForParticipantsReader.read()
         val finalResults = checkpointsResults + participantResults
         model.uploadResults(finalResults)
     }

@@ -1,45 +1,38 @@
 package parsers
 
 
+import classes.CsvReader
 import classes.IncompleteCheckpoint
 import classes.IncompleteCompetition
-import com.github.doyaaaaaken.kotlincsv.client.CsvFileReader
-import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import logger
 
-private fun CsvFileReaderWithFileName.getCheckpointNameFromRecord(record: List<String>?): String =
-    getFirstFieldFromRecord(record)
 
-private fun CsvFileReaderWithFileName.createCheckpointFromFile(): IncompleteCheckpoint {
-    val checkpointName = getCheckpointNameFromRecord(readSingleRecord())
-    val timeMatching = convertRecordsToTimeMatching(readAllRemainingRecords())
-    logger.debug { "Checkpoint name = $checkpointName, competitors time = $timeMatching" }
-    return IncompleteCheckpoint(checkpointName, timeMatching)
-}
-
-private fun readCheckpoint(fileName: String): IncompleteCheckpoint {
-    val createCheckpoint = { csvFileReader: CsvFileReader ->
-        CsvFileReaderWithFileName(fileName, csvFileReader).createCheckpointFromFile()
+class CheckpointsResultsReader(
+    override val dir: String,
+    private val checkpointNames: List<String>
+) : DirectoryReader<IncompleteCheckpoint, IncompleteCompetition> {
+    override fun readUnit(csvReader: CsvReader): IncompleteCheckpoint {
+        val checkpointName = csvReader.readFirstElementInFirstRow()
+        val timeMatching = convertRecordsToTimeMatching(csvReader.readAllExceptFirst())
+        logger.debug { "Checkpoint name = $checkpointName, competitors time = $timeMatching" }
+        val checkpoint = IncompleteCheckpoint(checkpointName, timeMatching)
+        logger.debug { "$checkpoint from file(${csvReader.filename})" }
+        return checkpoint
     }
-    val checkpoint = csvReader().open(fileName, createCheckpoint)
-    logger.debug { "$checkpoint from file($fileName)" }
-    return checkpoint
-}
 
-private fun checkCheckPoints(checkpointNames: List<String>, checkpoints: List<IncompleteCheckpoint>) {
-    checkpoints.forEach { checkpoint ->
-        require(checkpoint.name in checkpointNames) { "${checkpoint.name} not in allowed checkpoint names." }
+    private fun checkCheckPoints(checkpoints: List<IncompleteCheckpoint>) {
+        // TODO: change to exceptions
+        checkpoints.forEach { checkpoint ->
+            require(checkpoint.name in checkpointNames) { "${checkpoint.name} not in allowed checkpoint names." }
+        }
+        require(checkpoints.distinctBy { checkpoint -> checkpoint.name } == checkpoints) {
+            "One or more checkpoint are repeated in several files"
+        }
     }
-    require(checkpoints.distinctBy { checkpoint -> checkpoint.name } == checkpoints) {
-        "One or more checkpoint are repeated in several files"
-    }
-}
 
-fun readListOfIncompleteCheckpointsFromDirectoryWithCheckPointsResults(
-    dir: String,
-    checkpointNames: List<String>
-): IncompleteCompetition {
-    val checkpoints = getMappedListOfFilesFromDir(dir, ::readCheckpoint)
-    checkCheckPoints(checkpointNames, checkpoints)
-    return IncompleteCompetition(checkpoints)
+    override fun read(): IncompleteCompetition {
+        val checkpoints = readUnmerged()
+        checkCheckPoints(checkpoints)
+        return IncompleteCompetition(checkpoints)
+    }
 }

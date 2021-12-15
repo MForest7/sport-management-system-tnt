@@ -1,20 +1,24 @@
-package testsForReaderOfTeamsFromApplications
+package testsForApplicationReader
 
+import classes.Applications
 import classes.Competitor
 import classes.Team
-import parsers.readListOfTeamsFromDirectory
-import kotlin.test.Test
+import org.junit.Test
+import parsers.ApplicationsReader
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 
-internal class TestReadListOfTeamsFromDirectory {
-    private val dirPath = "testData/testsDataFolderForReaderOfTeamsFromApplications/testReadListOfTeamsFromDirectory/"
+class testApplicationReader {
+    @Test
+    fun testEmptyDir() {
+        val dir = "testData/testDataForApplicationsReader/testReadListOfTeamsFromDirectory/testEmptyDirectory"
+        val data = ApplicationsReader(dir).read()
+        assertEquals(data, Applications(listOf()))
+    }
 
     @Test
-    fun testThreeApplications() {
-        val listOfTeams = readListOfTeamsFromDirectory(dirPath + "testThreeApplications/")
-        assertContentEquals(
+    fun testRegular() {
+        val teams = Applications(
             listOf(
                 Team(
                     "ПСКОВ,РУСЬ", listOf(
@@ -30,18 +34,10 @@ internal class TestReadListOfTeamsFromDirectory {
                     "МОСКВА",
                     listOf(Competitor("М14", "ПУПКИН", "ВАСЯ", "2013", "КМС", "", ""))
                 )
-            ), listOfTeams
+            )
         )
+        val dir = "testData/testDataForApplicationsReader/testReadListOfTeamsFromDirectory/testThreeApplications"
+        val data = ApplicationsReader(dir).read()
+        assertEquals(data, teams)
     }
-
-    @Test
-    fun testDirectoryDoesntExist() {
-        assertFailsWith<IllegalArgumentException> { readListOfTeamsFromDirectory("") }
-    }
-
-    @Test
-    fun testEmptyDirectory() {
-        assertEquals(true, readListOfTeamsFromDirectory(dirPath + "testEmptyDirectory").isEmpty())
-    }
-
 }

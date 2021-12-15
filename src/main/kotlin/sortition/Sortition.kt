@@ -96,7 +96,8 @@ private fun createCompInCompListFromGroupedCompWithNumberAndTeam(mappingGroupToC
     }
 
 
-fun generateSortition(listOfTeams: List<Team>): Competition {
+fun generateSortition(applications: Applications): Competition {
+    val listOfTeams = applications.teams
     val teamsWithNumberedCompetitors = numberAllCompetitors(listOfTeams)
 
     val groupForUngrouped = getUnusedGroupName(getAllWishedGroupNamesInTeam(listOfTeams))

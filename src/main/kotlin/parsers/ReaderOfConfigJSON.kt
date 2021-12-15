@@ -6,4 +6,7 @@ import kotlinx.serialization.json.Json
 import java.io.File
 
 
-fun readJSONConfig(fileName: String): Config = Json.decodeFromString<Config>(File(fileName).readText()).normalize()
+class JsonReader(private val fileName: String) {
+    fun read(): Config = Json.decodeFromString<Config>(File(fileName).readText()).normalize()
+}
+

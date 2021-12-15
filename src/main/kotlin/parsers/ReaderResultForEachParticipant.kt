@@ -1,58 +1,60 @@
 package parsers
 
-import classes.IncompleteCheckpoint
-import classes.IncompleteCompetition
-import classes.Time
+import classes.*
 import com.github.doyaaaaaken.kotlincsv.client.CsvFileReader
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import logger
+import java.lang.Exception
 
+open class ParticipantsResultsReaderException(message: String) :
+    Exception(message)
 
-private fun CsvFileReaderWithFileName.getPersonNumberFromRecord(record: List<String>?): String =
-    getFirstFieldFromRecord(record)
+class ParticipantsResultsReaderExceptionSameNumber(message: String) :
+    ParticipantsResultsReaderException(message)
 
+class ParticipantsResultsReader(
+    override val dir: String,
+    private val checkpointNames: List<String>
+) : DirectoryReader<CheckpointsForParticipant, IncompleteCompetition> {
 
-data class CheckpointsForParticipant(val personNumber: String, val timeMatching: Map<String, Time>)
-
-private fun CsvFileReaderWithFileName.createCheckpointsFromFile(): CheckpointsForParticipant {
-    val personNumber = getPersonNumberFromRecord(readSingleRecord())
-    val checkpoints = convertRecordsToTimeMatching(readAllRemainingRecords())
-    logger.debug { "Person number = $personNumber, checkpoints = $checkpoints" }
-    return CheckpointsForParticipant(personNumber, checkpoints)
-}
-
-fun readCheckpointsFromOneParticipant(fileName: String): CheckpointsForParticipant {
-    val createCheckpoint = { csvFileReader: CsvFileReader ->
-        CsvFileReaderWithFileName(fileName, csvFileReader).createCheckpointsFromFile()
-    }
-    val checkpointsForParticipant = csvReader().open(fileName, createCheckpoint)
-    logger.debug { "CheckPoint($checkpointsForParticipant) from file($fileName)" }
-    return checkpointsForParticipant
-}
-
-
-fun readListOfIncompleteCheckpointsFromDirectoryWithParticipantsResults(
-    dir: String,
-    checkpointNames: List<String>
-): IncompleteCompetition {
-    val countOfCheckpoints = checkpointNames.size
-
-    val checkPointsForParticipant = getMappedListOfFilesFromDir(dir, ::readCheckpointsFromOneParticipant)
-
-    require(checkPointsForParticipant.distinctBy { it.personNumber } == checkPointsForParticipant) {
-        "One or more participants are repeated in several files"
+    override fun readUnit(csvReader: CsvReader):
+            CheckpointsForParticipant {
+        val personNumber = csvReader.readFirstElementInFirstRow()
+        val checkpoints = convertRecordsToTimeMatching(csvReader.readAllExceptFirst())
+        logger.debug { "Person number = $personNumber, checkpoints = $checkpoints" }
+        val checkpointsForParticipant = CheckpointsForParticipant(personNumber, checkpoints)
+        logger.debug { "CheckPoint($checkpointsForParticipant) from file(${csvReader.filename})" }
+        return checkpointsForParticipant
     }
 
-    //merge checkpoints
-    val checkpoints = List(countOfCheckpoints) { index ->
-        val checkpointName = checkpointNames[index]
-        val timeMatching = mutableMapOf<String, Time>()
-        checkPointsForParticipant.forEach { participant ->
-            participant.timeMatching[checkpointName]?.let { time ->
-                timeMatching[participant.personNumber] = time
-            }
+    private fun checkParticipantsUnique(participants: List<CheckpointsForParticipant>) {
+        val countEntries = participants.groupingBy { it.personNumber }.eachCount()
+        val mostOccurringElement = countEntries.maxByOrNull { it.value }
+        if ((mostOccurringElement?.value ?: 0) > 1) {
+            throw ParticipantsResultsReaderExceptionSameNumber(
+                mostOccurringElement!!.key
+            )
         }
-        IncompleteCheckpoint(checkpointName, timeMatching)
     }
-    return IncompleteCompetition(checkpoints)
+
+    override fun read(): IncompleteCompetition {
+        val countOfCheckpoints = checkpointNames.size
+
+        val checkpointsForParticipant = readUnmerged()
+
+        checkParticipantsUnique(checkpointsForParticipant)
+
+        val checkpoints = List(countOfCheckpoints) { index ->
+            val checkpointName = checkpointNames[index]
+            val timeMatching = mutableMapOf<String, Time>()
+            checkpointsForParticipant.forEach { participant ->
+                participant.timeMatching[checkpointName]?.let { time ->
+                    timeMatching[participant.personNumber] = time
+                }
+            }
+            IncompleteCheckpoint(checkpointName, timeMatching)
+        }
+        return IncompleteCompetition(checkpoints)
+
+    }
 }

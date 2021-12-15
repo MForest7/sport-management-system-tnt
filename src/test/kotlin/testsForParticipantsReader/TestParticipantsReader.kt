@@ -1,24 +1,24 @@
-package testsForReaderResultForEachParticipant
+package testsForParticipantsReader
 
-import classes.Time
 import classes.IncompleteCheckpoint
 import classes.IncompleteCompetition
-import parsers.readListOfIncompleteCheckpointsFromDirectoryWithParticipantsResults
-import kotlin.test.Test
-import kotlin.test.assertContentEquals
+import classes.Time
+import org.junit.Test
+import parsers.DirectoryReaderException
+import parsers.ParticipantsResultsReader
+import parsers.ParticipantsResultsReaderExceptionSameNumber
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
-internal class ReadListOfIncompleteCheckpointsFromDirectoryWithParticipantsResults {
+internal class TestParticipantsReader {
     private val dirPath =
         "testData/testDataFolderReaderResultForEachParticipant/testReadListOfIncompleteCheckpointsFromDirectoryWithParticipantsResults/"
 
     @Test
     fun testThreeParticipants() {
-        val listOfCheckpoints = readListOfIncompleteCheckpointsFromDirectoryWithParticipantsResults(
-            dirPath + "testThreeParticipants/",
-            listOf("1km", "2km", "finish")
-        )
+        val listOfCheckpoints = ParticipantsResultsReader(
+            dirPath + "testThreeParticipants/", listOf("1km", "2km", "finish")
+        ).read()
         val competition = IncompleteCompetition(
             listOf(
                 IncompleteCheckpoint(
@@ -46,20 +46,20 @@ internal class ReadListOfIncompleteCheckpointsFromDirectoryWithParticipantsResul
 
     @Test
     fun testDirectoryDoesntExist() {
-        assertFailsWith<IllegalArgumentException> {
-            readListOfIncompleteCheckpointsFromDirectoryWithParticipantsResults(
+        assertFailsWith<DirectoryReaderException> {
+            ParticipantsResultsReader(
                 "",
                 listOf("1km", "2km")
-            )
+            ).read()
         }
     }
 
     @Test
     fun testEmptyDirectory() {
-        val listOfCheckpoints = readListOfIncompleteCheckpointsFromDirectoryWithParticipantsResults(
+        val listOfCheckpoints = ParticipantsResultsReader(
             dirPath + "testEmptyDirectory/",
             listOf("1km", "2km", "finish")
-        )
+        ).read()
         val competition = IncompleteCompetition(
             listOf(
                 IncompleteCheckpoint("1km", mapOf()),
@@ -75,12 +75,11 @@ internal class ReadListOfIncompleteCheckpointsFromDirectoryWithParticipantsResul
 
     @Test
     fun testRepeatedParticipants() {
-        assertFailsWith<IllegalArgumentException> {
-            readListOfIncompleteCheckpointsFromDirectoryWithParticipantsResults(
+        assertFailsWith<ParticipantsResultsReaderExceptionSameNumber> {
+            ParticipantsResultsReader(
                 dirPath + "testRepeatedParticipants/",
                 listOf("1km", "2km", "Finish")
-            )
+            ).read()
         }
     }
-
 }

@@ -1,5 +1,6 @@
+import classes.FileManager
 import mu.KotlinLogging
-import parsers.readJSONConfig
+import parsers.JsonReader
 
 val logger = KotlinLogging.logger { }
 
@@ -14,11 +15,12 @@ fun startShell() {
     outputStringWithColor("Enter path to config(.json) file")
     outputStringWithColor("For example: myData/myconfig.json")
     val pathToConfig = getPathToConfig()
-    val config = readJSONConfig(pathToConfig)
+    val config = JsonReader(pathToConfig).read()
     logger.debug { "config = $config" }
     val model = Model()
     val viewer = ShellViewer(config)
-    val controller = ShellController(model, config)
+    val fileManager = FileManager(config)
+    val controller = ShellController(model, fileManager)
     model.addViewer(viewer)
     controller.downloadApplications()
     controller.generateSortition()

@@ -1,3 +1,4 @@
+import classes.Applications
 import classes.Competition
 import classes.IncompleteCompetition
 import classes.Team
@@ -10,7 +11,7 @@ class Model {
     private val viewers = mutableSetOf<ModelViewer>()
 
     private var competition: Competition? = null
-    private var applications: List<Team>? = null
+    private var applications: Applications? = null
     private var standingsInTeams: StandingsInTeams? = null
     private var standingsInGroups: StandingsInGroups? = null
 
@@ -22,7 +23,7 @@ class Model {
         viewers.forEach(notificationFunction)
     }
 
-    fun uploadApplications(applications: List<Team>) {
+    fun uploadApplications(applications: Applications) {
         this.applications = applications
         notifyViewers { it.applicationsUploaded() }
     }

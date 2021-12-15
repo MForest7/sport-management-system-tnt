@@ -1,7 +1,7 @@
 package testsForReaderOfJSON
 
 import classes.Config
-import parsers.readJSONConfig
+import parsers.JsonReader
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -18,7 +18,7 @@ internal class TestReadJSONConfig {
             resultsInGroups = "/groupsresults",
             checkPoints = listOf("1km"),
         ).normalize()
-        val got = readJSONConfig("testData/testJSONReader/config.json")
+        val got = JsonReader("testData/testJSONReader/config.json").read()
         assertEquals(expect, got)
     }
 }
