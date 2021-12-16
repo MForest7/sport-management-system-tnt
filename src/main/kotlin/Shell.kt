@@ -13,8 +13,6 @@ fun outputStringWithColor(string: String) {
 
 fun startShell(pathToConfig: String) {
     logger.info { "Start shell" }
-    outputStringWithColor("Enter path to config(.json) file")
-    outputStringWithColor("For example: myData/myconfig.json")
     val config = JsonReader(pathToConfig).read()
     logger.debug { "config = $config" }
 
