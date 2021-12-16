@@ -5,6 +5,7 @@ import classes.Competitor
 import classes.Team
 import org.junit.Test
 import parsers.ApplicationsReader
+import java.io.File
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 
@@ -12,6 +13,7 @@ class testApplicationReader {
     @Test
     fun testEmptyDir() {
         val dir = "testData/testDataForApplicationsReader/testReadListOfTeamsFromDirectory/testEmptyDirectory"
+        File(dir).mkdir()
         val data = ApplicationsReader(dir).read()
         assertEquals(data, Applications(listOf()))
     }

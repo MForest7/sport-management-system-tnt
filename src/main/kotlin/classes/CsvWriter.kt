@@ -2,7 +2,7 @@ package classes
 
 import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
 
-class CsvWriter(val filename: String) {
+class CsvWriter(private val filename: String) {
     fun writeRow(row: List<String>) {
         csvWriter().open(filename) { writeRow(row) }
     }

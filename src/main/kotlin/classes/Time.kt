@@ -7,7 +7,7 @@ class Time(val time: Int) : Comparable<Time> {
         get() = listOf(time / 3600, (time / 60) % 60, time % 60)
             .joinToString(":") { it.toString().padStart(2, '0') }
 
-    val formatToGap: String
+    private val formatToGap: String
         get() = "+" + stringRepresentation.take(4).dropWhile { (it == '0') or (it == ':') } + stringRepresentation.drop(4)
 
     constructor(string: String) : this(

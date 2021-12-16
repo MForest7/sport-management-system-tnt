@@ -14,13 +14,11 @@ data class RecordInStandings(
     val time: String,
     val place: String,
     val gap: String
-) {
-    constructor(competitor: CompetitorInCompetition) : this(competitor, "", "", "")
-}
+)
 
 class StandingsOfGroup(val competition: Competition, val group: Group, competitors: List<CompetitorInCompetition>) {
     val records: List<RecordInStandings>
-    val timeOfFirst: Time
+    private val timeOfFirst: Time
 
     init {
         val (finishedCompetitors, notFinishedCompetitors) = competitors.partition { competition.timeOf(it) != null }
