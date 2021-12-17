@@ -15,6 +15,11 @@ import androidx.compose.ui.unit.dp
 import logger
 import startShell
 
+
+enum class MyButtons {
+    NONE, LOAD_CONFIG, INFORMATION, TIME_PASSING
+}
+
 @Composable
 fun sportManagerSystemApp(window: ComposeWindow) {
     logger.info { "App is started" }
@@ -22,38 +27,28 @@ fun sportManagerSystemApp(window: ComposeWindow) {
     val myFileChooser = MyFileChooser(window)
     val myErrorDialog = MyErrorDialog()
     val exception = remember { mutableStateOf<Exception?>(null) }
+    val lastPressedButton = remember { mutableStateOf(MyButtons.NONE) }
+    val table = Table()
 
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier.fillMaxWidth().padding(8.dp)
     ) {
         Button(onClick = {
-            try {
-                startShell(myFileChooser.pickFile("json"))
-            } catch (e: Exception) {
-                exception.value = Exception(e.message)
-            }
+            lastPressedButton.value = MyButtons.LOAD_CONFIG
         }) {
             Text("Load config")
         }
 
 
         Button(onClick = {
-            try {
-                TODO()
-            } catch (e: Exception) {
-                exception.value = Exception(e.message)
-            }
+            lastPressedButton.value = MyButtons.INFORMATION
         }) {
             Text("Information about participants")
         }
 
         Button(onClick = {
-            try {
-                TODO()
-            } catch (e: Exception) {
-                exception.value = Exception(e.message)
-            }
+            lastPressedButton.value = MyButtons.TIME_PASSING
         }) {
             Text("Time of passing distances")
         }
@@ -78,6 +73,26 @@ fun sportManagerSystemApp(window: ComposeWindow) {
             Text("Results in teams")
         }
 
+    }
+
+    when (lastPressedButton.value) {
+        MyButtons.LOAD_CONFIG -> {
+            try {
+                startShell(myFileChooser.pickFile("json"))
+            } catch (e: Exception) {
+                exception.value = Exception(e.message)
+            }
+            lastPressedButton.value = MyButtons.NONE
+        }
+        MyButtons.INFORMATION -> {
+            table.drawTable(
+                listOf("1 col", "2 col", "3 col"),
+                listOf(listOf("kek", "abobus", "lolis"), listOf("", "amogus", "lol"))
+            )
+        }
+        MyButtons.TIME_PASSING -> {
+            table.drawTable(listOf("kek col", "lol col"), listOf(listOf("KEK", "ABOBUS"), listOf("AMOGUS", "LOL")))
+        }
     }
 
     myErrorDialog.show(exception.value)
