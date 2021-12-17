@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.SnackbarDefaults.backgroundColor
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
@@ -14,6 +15,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import logger
@@ -24,16 +28,20 @@ fun mySort(data: List<MutableList<String>>, index: Int): List<MutableList<String
     }
     return data.sortedBy { it[index] }
 }
-
-class Table {
-
+class Table(
+    private var columnNames: List<String>,
+    private var tableData: List<List<String>>,
+    private val db: CompetitorsDB
+) {
     @Composable
-    fun drawTable(columnNames: List<String>, tableData: List<List<String>>, db: CompetitorsDB) {
-
-        val realData = remember { mutableStateOf(tableData.map { it.toMutableList() }.toMutableList()) }
+    fun drawTable(offsetX: Dp, offsetY: Dp, showDelete: Boolean) {
+        val realData = remember { mutableStateOf(tableData.map { it.toMutableList() }.toMutableList())}
         logger.debug { "drawing table ($columnNames, $realData)" }
         val backgroundColor = Color.LightGray
+        val deleteButtonBackground = Color.Gray
         val countOfColumns = columnNames.size
+
+        val buttonWidth = 30.dp
 
         val rowSize = remember { mutableStateOf(IntSize.Zero) }
 
@@ -42,7 +50,7 @@ class Table {
 
         val redraw = remember { mutableStateOf(false) }
 
-        LazyColumn(Modifier.fillMaxWidth().padding(16.dp).offset(y = 40.dp).onSizeChanged {
+        LazyColumn(Modifier.fillMaxWidth().padding(16.dp).offset(x = offsetX, y = offsetY).onSizeChanged {
             rowSize.value = it
         }) {
             item {
@@ -64,9 +72,19 @@ class Table {
             for (i in realData.value.indices) {
                 item {
                     Row(Modifier.background(backgroundColor)) {
+                        if (showDelete) {
+                            Button(
+                                modifier = Modifier.width(buttonWidth),
+                                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red),
+                                onClick = {
+                                    db.deleteCompetitor(realData.value[i][0].toInt())
+                                }) {
+                                Text("X")
+                            }
+                        }
+
                         for (j in realData.value[i].indices) {
                             val curText = remember { mutableStateOf(realData.value[i][j]) }
-
                             TextField(
                                 value = curText.value,
                                 onValueChange = {
@@ -85,7 +103,9 @@ class Table {
             }
         }
         if (redraw.value) {
-            drawTable(columnNames, realData.value, db)
+            tableData = realData.value
+            drawTable(offsetX, offsetY, showDelete)
         }
     }
 }
+

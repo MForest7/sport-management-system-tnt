@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -18,19 +19,21 @@ import startShell
 
 
 enum class MyButtons {
-    NONE, LOAD_CONFIG, APPLICATIONS, TIME_PASSING, RESULTS_GROUPS
+    NONE, LOAD_CONFIG, APPLICATIONS, TIME_PASSING, RESULTS_GROUPS, RESULTS_TEAMS, ADD_COMPETITOR
 }
 
 @Composable
 fun sportManagerSystemApp(window: ComposeWindow) {
     logger.info { "App is started" }
 
-    val myFileChooser = MyFileChooser(window)
+    val myFileChooser = remember { MyFileChooser(window) }
     val lastPressedButton = remember { mutableStateOf(MyButtons.NONE) }
-    val table = Table()
     val database = remember { DB("database") }
 
-
+    fun updateButton(button: MyButtons) {
+        lastPressedButton.value = MyButtons.NONE
+        lastPressedButton.value = button
+    }
 
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -62,6 +65,7 @@ fun sportManagerSystemApp(window: ComposeWindow) {
         }
 
         Button(onClick = {
+            lastPressedButton.value = MyButtons.RESULTS_TEAMS
         }) {
             Text("Results in teams")
         }
@@ -80,12 +84,43 @@ fun sportManagerSystemApp(window: ComposeWindow) {
 
         MyButtons.APPLICATIONS -> {
             val columns = listOf("id", "name", "surname", "birth", "team", "wishGroup", "title")
-            table.drawTable(columns, database.getAllCompetitors(columns), database)
+            val table = Table(columns, database.getAllCompetitors(columns), database)
+            var changedSelectionState = remember { mutableStateOf(false) }
+            table.drawTable(0.dp, 80.dp, changedSelectionState.value)
+
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.padding(8.dp).offset(y = 40.dp)
+            ) {
+                Button(onClick = {
+                    database.createEmptyCompetitor()
+                    updateButton(MyButtons.APPLICATIONS)
+                }) {
+                    Text("Add competitor")
+                }
+
+                Button(onClick = {
+                    changedSelectionState.value = !changedSelectionState.value
+                    updateButton(MyButtons.APPLICATIONS)
+                }) {
+                    Text("Delete competitor")
+                }
+
+                Button(onClick = {
+                    database.cleanCompetitors()
+                    updateButton(MyButtons.APPLICATIONS)
+                }) {
+                    Text("Clean all")
+                }
+            }
         }
         MyButtons.TIME_PASSING -> {
             TODO()
         }
         MyButtons.RESULTS_GROUPS -> {
+            TODO()
+        }
+        MyButtons.RESULTS_TEAMS -> {
             TODO()
         }
         MyButtons.NONE -> {}
