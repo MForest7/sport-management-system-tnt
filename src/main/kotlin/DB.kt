@@ -11,11 +11,18 @@ interface CompetitorsDB {
     fun createEmptyCompetitor(): Int
     fun getAllCompetitors(columns: List<String>): List<List<String>>
     fun cleanCompetitors()
+    fun deleteCompetitor(id: Int)
 }
 
+interface SortitionDB {
+    fun setCompetitorStart(id: Int, time: Int)
+    fun setCompetitorNumber(id: Int, number: String)
+    fun setCompetitorGroup(id: Int, group: String)
+    fun setCompetitorTeam(id: Int, team: String)
+    fun getCompetition()
+}
 
-
-class DB(name: String) : CompetitorsDB {
+class DB(name: String) : CompetitorsDB, SortitionDB {
     companion object {
         const val idPropertyName = "id"
         const val wishGroupPropertyName = "wishGroup"
@@ -26,18 +33,25 @@ class DB(name: String) : CompetitorsDB {
         const val teamPropertyName = "team"
     }
 
-    private object Competitors : Table("Applications") {
+    object Competitors : Table("Applications") {
         val id = integer("id").autoIncrement().primaryKey()
-        val wishGroup = varchar("wishGroup", 20).nullable()
-        val surname = varchar("surname", 20).nullable()
-        val team = varchar("team", 20).nullable()
-        val name = varchar("name", 20).nullable()
-        val birth = varchar("birth", 20).nullable()
-        val title = varchar("title", 20).nullable()
+        val wishGroup = text("wishGroup").nullable()
+        val surname = text("surname").nullable()
+        val team = text("team").nullable()
+        val name = text("name").nullable()
+        val birth = text("birth").nullable()
+        val title = text("title").nullable()
     }
 
 
-    private val db = Database.connect("jdbc:h2:./$name", driver = "org.h2.Driver")
+    object CompetitorsInCompetition : Table("CompetitorsInCompetition") {
+        val id = integer("id").uniqueIndex().references(Competitors.id)
+        val number = text("number")
+        val group = text("group")
+        val startTime = integer("startTime")
+    }
+
+    private val db = Database.connect("jdbc:h2:./$name;DB_CLOSE_DELAY=-1;", "org.h2.Driver")
 
     init {
         transaction(db) {
@@ -46,7 +60,7 @@ class DB(name: String) : CompetitorsDB {
     }
 
     override fun updateCompetitor(id: Int, data: Map<String, String>) {
-        transaction(db) {
+        transaction {
             data.forEach { (property, value) ->
                 Competitors.update({ Competitors.id eq id }) {
                     when (property) {
@@ -103,5 +117,31 @@ class DB(name: String) : CompetitorsDB {
             SchemaUtils.drop(Competitors)
             SchemaUtils.create(Competitors)
         }
+    }
+
+    override fun deleteCompetitor(id: Int) {
+        transaction(db) {
+            Competitors.deleteWhere { Competitors.id eq id }
+        }
+    }
+
+    override fun setCompetitorStart(id: Int, time: Int) {
+
+    }
+
+    override fun setCompetitorNumber(id: Int, number: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun setCompetitorGroup(id: Int, group: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun setCompetitorTeam(id: Int, team: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun getCompetition() {
+        TODO("Not yet implemented")
     }
 }
