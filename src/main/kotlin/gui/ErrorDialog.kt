@@ -15,11 +15,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import logger
 
-class MyErrorDialog {
+object MyErrorDialog {
     private val openDialog = mutableStateOf(true)
+    var exception: Exception? = null
 
     @Composable
-    fun show(exception: Exception?) {
+    fun show() {
         exception?.let {
             logger.debug { "catch exception $exception" }
 
@@ -38,6 +39,7 @@ class MyErrorDialog {
                 backgroundColor = Color.Red,
                 onDismissRequest = {
                     openDialog.value = false
+                    exception = null
                 },
                 confirmButton = {
                     Text(
