@@ -13,15 +13,20 @@ abstract class Controller(protected val model: Model) {
     fun generateStandingsInTeams() {
         model.generateStandingsInTeams()
     }
+
+    abstract fun downloadApplications()
+
+    abstract fun uploadResults()
 }
 
+
 class ShellController(model: Model, private val fileManager: FileManager) : Controller(model) {
-    fun downloadApplications() {
+    override fun downloadApplications() {
         val listOfTeams = fileManager.applicationsReader.read()
         model.uploadApplications(listOfTeams)
     }
 
-    fun uploadResults() {
+    override fun uploadResults() {
         val checkpointsResults = fileManager.resultsForCheckpointsReader.read()
         val participantResults = fileManager.resultsForParticipantsReader.read()
         val finalResults = checkpointsResults + participantResults
