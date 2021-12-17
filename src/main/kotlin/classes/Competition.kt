@@ -6,17 +6,15 @@ class Competition(
     val numberMatching: Map<String, CompetitorInCompetition>
 ) {
     var start = checkpoints.first()
-        private set
-    var finish = checkpoints.last()
-        private set
+    val notFinished = mutableSetOf<CompetitorInCompetition>()
+    val timeMatching = mutableMapOf<CompetitorInCompetition, Time>()
 
     fun setCheckpointsFromIncomplete(incompleteCompetition: IncompleteCompetition) {
         val checkpoints = incompleteCompetition.checkpoints.map {
             it.convertIncompleteToCheckpoint(numberMatching)
         }.toMutableList()
-        this.checkpoints.addAll(checkpoints)
+        this.checkpoints.addAll(listOf(start) + checkpoints)
         start = this.checkpoints.first()
-        finish = this.checkpoints.last()
     }
 }
 

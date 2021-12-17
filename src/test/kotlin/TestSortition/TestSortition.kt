@@ -1,10 +1,9 @@
 package TestSortition
 
 
-import classes.Applications
-import classes.Competitor
-import classes.Team
+import classes.*
 import sortition.Sortition
+import kotlin.reflect.jvm.internal.impl.descriptors.deserialization.PlatformDependentDeclarationFilter
 import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertContentEquals
@@ -48,7 +47,13 @@ internal class TestSortition {
         )
     )
 
-    private val competition = Sortition(Applications(teams)).generateCompetition()
+    private val groups = listOf(
+        Group("М14", listOf(), AllCheckpointsCalculator),
+        Group("VIP", listOf(), AllCheckpointsCalculator),
+        Group("KEK", listOf(), AllCheckpointsCalculator)
+    )
+
+    private val competition = Sortition(Applications(teams), groups).generateCompetition()
 
 
     @Test

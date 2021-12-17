@@ -17,6 +17,7 @@ internal class TestReadJSONConfig {
             resultsInTeams = "/teamsresults/",
             resultsInGroups = "/groupsresults",
             checkPoints = listOf("1km"),
+            groups = mapOf("KEK" to listOf("1km"))
         ).normalize()
         val got = JsonReader("testData/testJSONReader/config.json").read()
         assertEquals(expect, got)

@@ -1,6 +1,7 @@
 package testsForReaderResultForEachCheckPoint
 
 
+import classes.IncompleteCheckPointRecord
 import classes.Time
 import parsers.CheckpointsResultsReader
 import kotlin.test.Test
@@ -20,11 +21,11 @@ class TestReadOneCheckPoint {
             ).read()
         assert(checkPoint.checkpoints.size == 1)
         assertEquals("1km", checkPoint.checkpoints[0].name)
-        val need = mapOf(
-            "241" to Time("12:04:17"),
-            "242" to Time("12:05:11"),
-            "243" to Time("12:06:15"),
+        val need = listOf(
+            IncompleteCheckPointRecord("241", Time("12:04:17")),
+            IncompleteCheckPointRecord("242", Time("12:05:11")),
+            IncompleteCheckPointRecord("243", Time("12:06:15")),
         )
-        assertContentEquals(need.toList(), checkPoint.checkpoints[0].timeMatching.toList())
+        assertContentEquals(need.toList(), checkPoint.checkpoints[0].timeMatching)
     }
 }

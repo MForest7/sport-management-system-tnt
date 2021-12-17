@@ -1,7 +1,6 @@
 package parsers
 
-import classes.CsvReader
-import classes.Time
+import classes.*
 import java.io.File
 import java.lang.Exception
 
@@ -26,11 +25,20 @@ interface DirectoryReader<IntermediateRepresentation, FinalType> {
     fun read(): FinalType
 }
 
-fun convertRecordsToTimeMatching(list: List<List<String>>): Map<String, Time> {
-    val timeMatching = mutableMapOf<String, Time>()
+fun convertRecordsToParticipantRecords(list: List<List<String>>): List<CheckpointForParticipantRecord> {
+    val timeMatching = mutableListOf<CheckpointForParticipantRecord>()
     for (record in list) {
         require(record.size == 2) { "Record($record) size is not 2" }
-        timeMatching[record[0]] = Time(record[1])
+        timeMatching.add(CheckpointForParticipantRecord(record[0], Time(record[1])))
+    }
+    return timeMatching
+}
+
+fun convertRecordsToCheckpointRecords(list: List<List<String>>): List<IncompleteCheckPointRecord> {
+    val timeMatching = mutableListOf<IncompleteCheckPointRecord>()
+    for (record in list) {
+        require(record.size == 2) { "Record($record) size is not 2" }
+        timeMatching.add(IncompleteCheckPointRecord(record[0], Time(record[1])))
     }
     return timeMatching
 }

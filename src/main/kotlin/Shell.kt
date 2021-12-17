@@ -1,6 +1,7 @@
 import classes.FileManager
 import mu.KotlinLogging
 import parsers.JsonReader
+import parsers.readGroups
 
 val logger = KotlinLogging.logger { }
 
@@ -22,6 +23,7 @@ fun startShell() {
     val viewer = ShellViewer(fileManager)
     val controller = ShellController(model, fileManager)
     model.addViewer(viewer)
+    controller.downloadGroups(readGroups(config.groups))
     controller.downloadApplications()
     controller.generateSortition()
 
