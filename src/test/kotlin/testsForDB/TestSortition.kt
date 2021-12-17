@@ -77,19 +77,17 @@ class TestSortition {
 
     @Test
     fun testCompetition() {
-        for (i in competitors.indices) {
-            db.createEmptyCompetitor()
-            db.updateCompetitor(
-                i + 1,
-                mapOf(
-                    DB.wishGroupPropertyName to competitors[i].wishGroup,
-                    DB.birthPropertyName to competitors[i].birth,
-                    DB.surnamePropertyName to competitors[i].surname,
-                    DB.titlePropertyName to competitors[i].title,
-                    DB.namePropertyName to competitors[i].name,
+        competition.setCheckpointsFromIncomplete(
+            IncompleteCompetition(
+                listOf(
+                    IncompleteCheckpoint(
+                        "as", listOf(
+                            IncompleteCheckPointRecord("3", Time(2))
+                        )
+                    )
                 )
             )
-        }
+        )
         db.setCompetition(competition)
         val result = db.getCompetition()
         assertEquals(result.timeMatching.size, competition.timeMatching.size)

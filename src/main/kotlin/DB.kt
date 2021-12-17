@@ -2,6 +2,7 @@ import classes.*
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.lang.Exception
+import kotlin.reflect.jvm.internal.impl.util.Check
 
 interface CompetitorsDB {
     /**
@@ -19,6 +20,7 @@ interface SortitionDB {
     fun setCompetition(competition: Competition)
     fun getCompetition(): Competition
 }
+
 
 class DB(name: String) : CompetitorsDB, SortitionDB {
     companion object {
@@ -42,19 +44,29 @@ class DB(name: String) : CompetitorsDB, SortitionDB {
     }
 
     object CompetitorsInCompetition : Table("CompetitorsInCompetition") {
-        val id = reference("id", Competitors.id).uniqueIndex()
+        val id = integer("id").primaryKey()
+        val wishGroup = text("wishGroup")
+        val surname = text("surname")
+        val team = text("team")
+        val name = text("name")
+        val birth = text("birth")
+        val title = text("title")
         val number = text("number")
         val group = text("group")
-        val startTime = integer("startTime")
         val groupCalculatorId = integer("groupCalculatorId")
         val checkpointNames = text("checkpointNames")
+    }
+
+    object Checkpoints : Table("Checkpoints") {
+        val name = text("name")
+        val data = text("data")
     }
 
     private val db = Database.connect("jdbc:h2:./$name;DB_CLOSE_DELAY=-1;", "org.h2.Driver")
 
     init {
         transaction(db) {
-            SchemaUtils.create(Competitors, CompetitorsInCompetition)
+            SchemaUtils.create(Competitors, CompetitorsInCompetition, Checkpoints)
         }
     }
 
@@ -125,11 +137,11 @@ class DB(name: String) : CompetitorsDB, SortitionDB {
 
     override fun setCompetition(competition: Competition) {
         transaction(db) {
+            SchemaUtils.drop(Competitors, Checkpoints)
+            SchemaUtils.create(Competitors, Checkpoints)
             competition.competitors.forEach { competitor ->
                 CompetitorsInCompetition.insert {
                     it[id] = competitor.id
-                    it[startTime] = competition.start.timeMatching[competitor]?.first()?.time
-                        ?: throw Exception("I don't know what happened :( Everything must be ok!")
                     it[number] = competitor.number
                     it[group] = competitor.group.name
                     it[groupCalculatorId] =
@@ -139,9 +151,20 @@ class DB(name: String) : CompetitorsDB, SortitionDB {
                             else -> throw Exception("I don't know such calculator :(")
                         }
                     it[checkpointNames] = competitor.group.checkPointNames.joinToString("$")
-                }
-                Competitors.update({ Competitors.id eq competitor.id }) {
+                    it[wishGroup] = competitor.wishGroup
+                    it[surname] = competitor.surname
                     it[team] = competitor.team.name
+                    it[name] = competitor.name
+                    it[birth] = competitor.birth
+                    it[title] = competitor.title
+                }
+            }
+            competition.checkpoints.map { checkPoint ->
+                Checkpoints.insert {
+                    it[name] = checkPoint.name
+                    it[data] = checkPoint.timeMatching.toList().map { (competitor, times) ->
+                        competitor.id.toString() + "@@@" + times.joinToString("$$$") { time -> time.time.toString() }
+                    }.joinToString("!!!")
                 }
             }
         }
@@ -150,68 +173,66 @@ class DB(name: String) : CompetitorsDB, SortitionDB {
     override fun getCompetition(): Competition {
         return transaction(db) {
 
-            val groups = (CompetitorsInCompetition innerJoin Competitors)
-                .selectAll().map {
-                    Triple(
-                        it[CompetitorsInCompetition.group],
-                        it[CompetitorsInCompetition.checkpointNames].split("$"),
-                        when (it[CompetitorsInCompetition.groupCalculatorId]) {
-                            0 -> AllCheckpointsCalculator
-                            else -> KCheckpointsCalculator(it[CompetitorsInCompetition.groupCalculatorId])
-                        }
-                    )
-                }.distinct().map { Group(it.first, it.second, it.third) }
+            val groups = CompetitorsInCompetition.selectAll().map {
+                Triple(
+                    it[CompetitorsInCompetition.group],
+                    it[CompetitorsInCompetition.checkpointNames].split("$"),
+                    when (it[CompetitorsInCompetition.groupCalculatorId]) {
+                        0 -> AllCheckpointsCalculator
+                        else -> KCheckpointsCalculator(it[CompetitorsInCompetition.groupCalculatorId])
+                    }
+                )
+            }.distinct().map { Group(it.first, it.second, it.third) }
 
-            val competitors = (CompetitorsInCompetition innerJoin Competitors).selectAll().map {
+            val competitors = CompetitorsInCompetition.selectAll().map {
                 Competitor(
-                    it[Competitors.wishGroup]
-                        ?: throw Exception("I don't know what happened :( Everything must be ok!"),
-                    it[Competitors.surname]
-                        ?: throw Exception("I don't know what happened :( Everything must be ok!"),
-                    it[Competitors.name]
-                        ?: throw Exception("I don't know what happened :( Everything must be ok!"),
-                    it[Competitors.birth]
-                        ?: throw Exception("I don't know what happened :( Everything must be ok!"),
-                    it[Competitors.title]
-                        ?: throw Exception("I don't know what happened :( Everything must be ok!"),
+                    it[CompetitorsInCompetition.wishGroup],
+                    it[CompetitorsInCompetition.surname],
+                    it[CompetitorsInCompetition.name],
+                    it[CompetitorsInCompetition.birth],
+                    it[CompetitorsInCompetition.title],
                     "", "",
-                    it[Competitors.id]
+                    it[CompetitorsInCompetition.id]
                 )
             }
 
 
-            val teams = (CompetitorsInCompetition innerJoin Competitors)
+            val teams = CompetitorsInCompetition
                 .selectAll().groupBy(
-                    { it[Competitors.team]!! }, {
-                        competitors.find { competitor -> competitor.id == it[Competitors.id] }!!
+                    { it[CompetitorsInCompetition.team] }, {
+                        competitors.find { competitor -> competitor.id == it[CompetitorsInCompetition.id] }!!
                     }
                 ).map { (teamName, comps) ->
                     Team(teamName, comps)
                 }
 
 
-            val compInComp = (CompetitorsInCompetition innerJoin Competitors).selectAll().map {
+            val compInComp = CompetitorsInCompetition.selectAll().map {
                 CompetitorInCompetition(
-                    competitors.find { competitor -> competitor.id == it[Competitors.id] }!!,
+                    competitors.find { competitor -> competitor.id == it[CompetitorsInCompetition.id] }!!,
                     it[CompetitorsInCompetition.number],
                     groups.find { group -> group.name == it[CompetitorsInCompetition.group] }!!,
-                    teams.find { team -> team.name == it[Competitors.team] }!!
+                    teams.find { team -> team.name == it[CompetitorsInCompetition.team] }!!
                 )
             }
 
             val numberMatching = compInComp.associateBy { competitor -> competitor.number }
 
 
-            val timeMatching = (CompetitorsInCompetition).selectAll().groupBy(
-                {
-                    compInComp.find { comp -> it[CompetitorsInCompetition.id] == comp.id }!!
-                }, {
-                    Time(it[CompetitorsInCompetition.startTime])
-                }
-            )
+            val checkpoints = (Checkpoints).selectAll().map { checkPoint ->
+                val data = checkPoint[Checkpoints.data]
+                CheckPoint(
+                    checkPoint[Checkpoints.name],
+                    data.split("!!!").map { it1 ->
+                        val tmp1 = it1.split("@@@")
+                        val tmp2 = tmp1[1].split("$$$").map { time -> Time(time.toInt()) }
+                        compInComp.find { comp -> comp.id == tmp1[0].toInt() }!! to tmp2
+                    }.toMap()
+                )
+            }.toMutableList()
 
             Competition(
-                checkpoints = mutableListOf(CheckPoint("", timeMatching)),
+                checkpoints = checkpoints,
                 competitors = compInComp,
                 numberMatching = numberMatching
             )
