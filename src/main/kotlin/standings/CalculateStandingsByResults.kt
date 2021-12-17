@@ -3,20 +3,6 @@ package standings
 import classes.*
 import kotlin.math.max
 
-private fun Competition.calculateTime(competitor: CompetitorInCompetition): Time? {
-    data class CheckPointWithCount(val checkPoint: CheckPoint, val next: Iterator<Time>?)
-
-    val checkPointsOrder = competitor.group.checkPointNames.map { name -> checkpoints.find { it.name == name } }.filterIsInstance<CheckPoint>()
-        .map { checkPoint -> CheckPointWithCount(checkPoint, checkPoint.timeMatching[competitor]?.listIterator()) }
-    val startTime = start.timeMatching[competitor]?.getOrNull(0) ?: return null
-    val finishTime = checkPointsOrder.fold(startTime) { time, checkPoint ->
-        val nextTime = checkPoint.next?.next() ?: return null
-        if (nextTime <= time) return null
-        nextTime
-    }
-    return finishTime - startTime
-}
-
 private fun Competition.timeOf(competitor: CompetitorInCompetition): Time? {
     if (competitor in notFinished) return null
     if (timeMatching[competitor] == null) {
