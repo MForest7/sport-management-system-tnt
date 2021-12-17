@@ -3,10 +3,31 @@ package standings
 import classes.*
 import kotlin.math.max
 
+private fun Competition.calculateTime(competitor: CompetitorInCompetition): Time? {
+    data class CheckPointWithCount(val checkPoint: CheckPoint, val next: Iterator<Time>?)
+
+    val checkPointsOrder = competitor.group.checkPointNames.map { name -> checkpoints.find { it.name == name } }.filterIsInstance<CheckPoint>()
+        .map { checkPoint -> CheckPointWithCount(checkPoint, checkPoint.timeMatching[competitor]?.listIterator()) }
+    val startTime = start.timeMatching[competitor]?.getOrNull(0) ?: return null
+    val finishTime = checkPointsOrder.fold(startTime) { time, checkPoint ->
+        val nextTime = checkPoint.next?.next() ?: return null
+        if (nextTime <= time) return null
+        nextTime
+    }
+    return finishTime - startTime
+}
+
 private fun Competition.timeOf(competitor: CompetitorInCompetition): Time? {
-    val timeAtStart = start.timeMatching[competitor]
-    val timeAtFinish = finish.timeMatching[competitor]
-    return if (timeAtStart != null) timeAtFinish?.minus(timeAtStart) else null
+    if (competitor in notFinished) return null
+    if (timeMatching[competitor] == null) {
+        val time = competitor.group.calculator.getTime(this, competitor)
+        if (time == null)
+            notFinished.add(competitor)
+        else
+            timeMatching[competitor] = time
+        return time
+    }
+    return timeMatching[competitor]
 }
 
 data class RecordInStandings(
@@ -14,9 +35,7 @@ data class RecordInStandings(
     val time: String,
     val place: String,
     val gap: String
-) {
-    constructor(competitor: CompetitorInCompetition) : this(competitor, "", "", "")
-}
+)
 
 class StandingsOfGroup(val competition: Competition, val group: Group, competitors: List<CompetitorInCompetition>) {
     val records: List<RecordInStandings>
@@ -25,7 +44,7 @@ class StandingsOfGroup(val competition: Competition, val group: Group, competito
     init {
         val (finishedCompetitors, notFinishedCompetitors) = competitors.partition { competition.timeOf(it) != null }
         val finalOrder = finishedCompetitors.sortedBy { competition.timeOf(it) }
-        timeOfFirst = competition.timeOf(finalOrder.first()) ?: Time(0)
+        timeOfFirst = if (finalOrder.isNotEmpty()) competition.timeOf(finalOrder.first()) ?: Time(0) else Time(0)
 
         val places = finalOrder.associateWith { competitor ->
             1 + finalOrder.count { competition.timeOf(competitor)?.gapFrom(competition.timeOf(it)) != null }

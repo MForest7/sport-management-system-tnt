@@ -11,7 +11,8 @@ data class Config(
     val checkpointsFolder: String,
     val resultsInTeams: String,
     val resultsInGroups: String,
-    val checkPoints: List<String>
+    val checkPoints: List<String>,
+    val groups: Map<String, List<String>>
 ) {
 
     private fun normalizePath(path: String) = path.dropLastWhile { it == '/' }.plus("/")
@@ -23,6 +24,7 @@ data class Config(
         normalizePath(checkpointsFolder),
         normalizePath(resultsInTeams),
         normalizePath(resultsInGroups),
-        checkPoints
+        checkPoints,
+        groups
     )
 }

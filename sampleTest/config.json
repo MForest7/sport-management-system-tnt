@@ -9,5 +9,9 @@
     "1km",
     "2km",
     "Finish"
-  ]
+  ],
+  "groups": {
+    "М12": ["1km", "2km", "Finish"],
+    "VIP": ["1km", "2km", "Finish"]
+  }
 }

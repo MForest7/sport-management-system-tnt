@@ -3,6 +3,7 @@ package testsForPrintStandingsByResults
 import classes.*
 import standings.*
 import java.io.File
+import kotlin.reflect.jvm.internal.impl.descriptors.deserialization.PlatformDependentDeclarationFilter
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 
@@ -26,7 +27,7 @@ internal class TestPrintStandingsByTeams {
             )
         )
 
-        val groups = listOf("VIP", "М14").associateWith { Group(it) }
+        val groups = listOf("VIP", "М14").associateWith { Group(it, listOf("start", "finish"), AllCheckpointsCalculator) }
 
         var acc = 0
         val competitors = teams.map { team ->
@@ -35,7 +36,7 @@ internal class TestPrintStandingsByTeams {
                 CompetitorInCompetition(
                     it,
                     acc.toString(),
-                    groups.getOrDefault(it.wishGroup, Group(it.wishGroup)),
+                    groups.getOrDefault(it.wishGroup, Group(it.wishGroup, listOf("start", "finish"), AllCheckpointsCalculator)),
                     team
                 )
             }
@@ -58,10 +59,10 @@ internal class TestPrintStandingsByTeams {
         )
 
         val checkPoints = listOf(
-            CheckPoint("start", competitors.associateWith { startTimes[it.number.toInt() - 1] }.toMutableMap()),
+            CheckPoint("start", competitors.associateWith { listOf(startTimes[it.number.toInt() - 1]) }.toMutableMap()),
             CheckPoint(
                 "finish",
-                competitors.dropLast(1).associateWith { finishTimes[it.number.toInt() - 1] }.toMutableMap()
+                competitors.dropLast(1).associateWith { listOf(finishTimes[it.number.toInt() - 1]) }.toMutableMap()
             )
         )
 

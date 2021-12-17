@@ -1,6 +1,7 @@
 package testsForReaderResultForEachCheckPoint
 
 
+import classes.IncompleteCheckPointRecord
 import classes.Time
 import classes.IncompleteCheckpoint
 import parsers.CheckpointsResultsReader
@@ -23,22 +24,22 @@ class TestMultipleCheckPoints {
         assert(checkPoints.checkpoints.size == 3)
         val need = listOf(
             IncompleteCheckpoint(
-                "5km", mapOf(
-                    "23" to Time("14:00:21"),
-                    "41" to Time("05:10:00"),
-                    "10" to Time("01:11:01"),
+                "5km", listOf(
+                    IncompleteCheckPointRecord("23", Time("14:00:21")),
+                    IncompleteCheckPointRecord("41", Time("05:10:00")),
+                    IncompleteCheckPointRecord("10", Time("01:11:01")),
                 )
             ), IncompleteCheckpoint(
-                "1km", mapOf(
-                    "1" to Time("14:00:21"),
-                    "2" to Time("05:10:00"),
-                    "3" to Time("01:11:01")
+                "1km", listOf(
+                    IncompleteCheckPointRecord("1", Time("14:00:21")),
+                    IncompleteCheckPointRecord("2", Time("05:10:00")),
+                    IncompleteCheckPointRecord("3", Time("01:11:01"))
                 )
             ), IncompleteCheckpoint(
-                "10km", mapOf(
-                    "322" to Time("12:00:21"),
-                    "1123" to Time("00:00:00"),
-                    "1" to Time("01:11:01")
+                "10km", listOf(
+                    IncompleteCheckPointRecord("322", Time("12:00:21")),
+                    IncompleteCheckPointRecord("1123", Time("00:00:00")),
+                    IncompleteCheckPointRecord("1", Time("01:11:01"))
                 )
             )
         )
