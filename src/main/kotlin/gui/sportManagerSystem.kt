@@ -1,5 +1,6 @@
 package gui
 
+import DB
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,7 +18,7 @@ import startShell
 
 
 enum class MyButtons {
-    NONE, LOAD_CONFIG, INFORMATION, TIME_PASSING
+    NONE, LOAD_CONFIG, APPLICATIONS, TIME_PASSING, RESULTS_GROUPS
 }
 
 @Composable
@@ -25,10 +26,11 @@ fun sportManagerSystemApp(window: ComposeWindow) {
     logger.info { "App is started" }
 
     val myFileChooser = MyFileChooser(window)
-    val myErrorDialog = MyErrorDialog()
-    val exception = remember { mutableStateOf<Exception?>(null) }
     val lastPressedButton = remember { mutableStateOf(MyButtons.NONE) }
     val table = Table()
+    val database = remember { DB("database") }
+
+
 
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -42,9 +44,9 @@ fun sportManagerSystemApp(window: ComposeWindow) {
 
 
         Button(onClick = {
-            lastPressedButton.value = MyButtons.INFORMATION
+            lastPressedButton.value = MyButtons.APPLICATIONS
         }) {
-            Text("Information about participants")
+            Text("Applications")
         }
 
         Button(onClick = {
@@ -54,21 +56,12 @@ fun sportManagerSystemApp(window: ComposeWindow) {
         }
 
         Button(onClick = {
-            try {
-                TODO()
-            } catch (e: Exception) {
-                exception.value = Exception(e.message)
-            }
+            lastPressedButton.value = MyButtons.RESULTS_GROUPS
         }) {
             Text("Results in groups")
         }
 
         Button(onClick = {
-            try {
-                TODO()
-            } catch (e: Exception) {
-                exception.value = Exception(e.message)
-            }
         }) {
             Text("Results in teams")
         }
@@ -80,21 +73,25 @@ fun sportManagerSystemApp(window: ComposeWindow) {
             try {
                 startShell(myFileChooser.pickFile("json"))
             } catch (e: Exception) {
-                exception.value = Exception(e.message)
+                MyErrorDialog.exception = Exception(e.message)
             }
             lastPressedButton.value = MyButtons.NONE
         }
-        MyButtons.INFORMATION -> {
-            table.drawTable(
-                listOf("1 col", "2 col", "3 col"),
-                listOf(listOf("kek", "abobus", "lolis"), listOf("", "amogus", "lol"))
-            )
+
+        MyButtons.APPLICATIONS -> {
+            val columns = listOf("id", "name", "surname", "birth", "team", "wishGroup", "title")
+            table.drawTable(columns, database.getAllCompetitors(columns), database)
         }
         MyButtons.TIME_PASSING -> {
-            table.drawTable(listOf("kek col", "lol col"), listOf(listOf("KEK", "ABOBUS"), listOf("AMOGUS", "LOL")))
+            TODO()
         }
+        MyButtons.RESULTS_GROUPS -> {
+            TODO()
+        }
+        MyButtons.NONE -> {}
+        else -> TODO()
     }
 
-    myErrorDialog.show(exception.value)
+    MyErrorDialog.show()
     logger.info { "App is ended" }
 }
