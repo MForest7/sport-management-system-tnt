@@ -13,7 +13,7 @@ class CheckpointsResultsReader(
 ) : DirectoryReader<IncompleteCheckpoint, IncompleteCompetition> {
     override fun readUnit(csvReader: CsvReader): IncompleteCheckpoint {
         val checkpointName = csvReader.readFirstElementInFirstRow()
-        val timeMatching = convertRecordsToTimeMatching(csvReader.readAllExceptFirst())
+        val timeMatching = convertRecordsToCheckpointRecords(csvReader.readAllExceptFirst())
         logger.debug { "Checkpoint name = $checkpointName, competitors time = $timeMatching" }
         val checkpoint = IncompleteCheckpoint(checkpointName, timeMatching)
         logger.debug { "$checkpoint from file(${csvReader.filename})" }

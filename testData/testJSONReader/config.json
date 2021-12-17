@@ -7,5 +7,8 @@
   "resultsInGroups": "/groupsresults",
   "checkPoints": [
     "1km"
-  ]
+  ],
+  "groups": {
+    "KEK": ["1km"]
+  }
 }

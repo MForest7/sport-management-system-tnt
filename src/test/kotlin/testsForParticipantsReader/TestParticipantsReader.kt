@@ -1,5 +1,6 @@
 package testsForParticipantsReader
 
+import classes.IncompleteCheckPointRecord
 import classes.IncompleteCheckpoint
 import classes.IncompleteCompetition
 import classes.Time
@@ -22,19 +23,19 @@ internal class TestParticipantsReader {
         val competition = IncompleteCompetition(
             listOf(
                 IncompleteCheckpoint(
-                    "1km", mapOf(
-                        "first" to Time("12:00:00"),
-                        "third" to Time("12:01:06"),
+                    "1km", listOf(
+                        IncompleteCheckPointRecord("first", Time("12:00:00")),
+                        IncompleteCheckPointRecord("third", Time("12:01:06")),
                     )
                 ),
                 IncompleteCheckpoint(
-                    "2km", mapOf(
-                        "first" to Time("13:05:06"),
-                        "second" to Time("00:00:00"),
+                    "2km", listOf(
+                        IncompleteCheckPointRecord("first", Time("13:05:06")),
+                        IncompleteCheckPointRecord("second", Time("00:00:00")),
                     )
                 ),
                 IncompleteCheckpoint(
-                    "finish", mapOf()
+                    "finish", listOf()
                 )
             )
         )
@@ -62,9 +63,9 @@ internal class TestParticipantsReader {
         ).read()
         val competition = IncompleteCompetition(
             listOf(
-                IncompleteCheckpoint("1km", mapOf()),
-                IncompleteCheckpoint("2km", mapOf()),
-                IncompleteCheckpoint("finish", mapOf()),
+                IncompleteCheckpoint("1km", listOf()),
+                IncompleteCheckpoint("2km", listOf()),
+                IncompleteCheckpoint("finish", listOf()),
             )
         )
         assertEquals(

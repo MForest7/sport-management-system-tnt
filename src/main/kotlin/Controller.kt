@@ -1,4 +1,5 @@
 import classes.FileManager
+import classes.Group
 
 
 abstract class Controller(protected val model: Model) {
@@ -25,6 +26,10 @@ abstract class Controller(protected val model: Model) {
 
 
 class ShellController(model: Model, private val fileManager: FileManager) : Controller(model) {
+    fun downloadGroups(listOfGroups: List<Group>) {
+        model.uploadGroups(listOfGroups)
+    }
+
     override fun downloadApplications() {
         val listOfTeams = fileManager.applicationsReader.read()
         model.uploadApplications(listOfTeams)
