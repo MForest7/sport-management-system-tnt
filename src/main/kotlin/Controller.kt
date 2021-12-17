@@ -14,6 +14,10 @@ abstract class Controller(protected val model: Model) {
         model.generateStandingsInTeams()
     }
 
+    fun uploadSortition() {
+
+    }
+
     abstract fun downloadApplications()
 
     abstract fun uploadResults()

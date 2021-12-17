@@ -6,6 +6,7 @@ import standings.*
 interface ModelViewer {
     fun applicationsUploaded()
     fun sortitionGenerated(competition: Competition)
+    fun sortitionUploaded(competition: Competition)
     fun resultsUploaded()
     fun standingsInTeamsGenerated(standingsInTeams: StandingsInTeams)
     fun standingsInGroupsGenerated(standingsInGroups: StandingsInGroups)
@@ -19,6 +20,10 @@ class ShellViewer(
 
     override fun sortitionGenerated(competition: Competition) {
         fileManager.sortitionWriter.print(competition)
+    }
+
+    override fun sortitionUploaded(competition: Competition) {
+
     }
 
     override fun resultsUploaded() {}
