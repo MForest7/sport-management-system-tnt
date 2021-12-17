@@ -1,4 +1,4 @@
-import classes.Competition
+import classes.*
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.lang.Exception
@@ -41,19 +41,20 @@ class DB(name: String) : CompetitorsDB, SortitionDB {
         val title = text("title").nullable()
     }
 
-
     object CompetitorsInCompetition : Table("CompetitorsInCompetition") {
-        val id = integer("id").uniqueIndex().references(Competitors.id)
+        val id = reference("id", Competitors.id).uniqueIndex()
         val number = text("number")
         val group = text("group")
         val startTime = integer("startTime")
+        val groupCalculatorId = integer("groupCalculatorId")
+        val checkpointNames = text("checkpointNames")
     }
 
     private val db = Database.connect("jdbc:h2:./$name;DB_CLOSE_DELAY=-1;", "org.h2.Driver")
 
     init {
         transaction(db) {
-            SchemaUtils.create(Competitors)
+            SchemaUtils.create(Competitors, CompetitorsInCompetition)
         }
     }
 
@@ -74,7 +75,6 @@ class DB(name: String) : CompetitorsDB, SortitionDB {
             }
         }
     }
-
 
     override fun createEmptyCompetitor(): Int {
         return transaction(db) {
@@ -126,15 +126,95 @@ class DB(name: String) : CompetitorsDB, SortitionDB {
     override fun setCompetition(competition: Competition) {
         transaction(db) {
             competition.competitors.forEach { competitor ->
-                CompetitorsInCompetition.update({ CompetitorsInCompetition.id eq 8 }) {
+                CompetitorsInCompetition.insert {
+                    it[id] = competitor.id
                     it[startTime] = competition.start.timeMatching[competitor]?.first()?.time
                         ?: throw Exception("I don't know what happened :( Everything must be ok!")
+                    it[number] = competitor.number
+                    it[group] = competitor.group.name
+                    it[groupCalculatorId] =
+                        when (competitor.group.calculator) {
+                            is AllCheckpointsCalculator -> 0
+                            is KCheckpointsCalculator -> competitor.group.calculator.minCheckpoints
+                            else -> throw Exception("I don't know such calculator :(")
+                        }
+                    it[checkpointNames] = competitor.group.checkPointNames.joinToString("$")
+                }
+                Competitors.update({ Competitors.id eq competitor.id }) {
+                    it[team] = competitor.team.name
                 }
             }
         }
     }
 
     override fun getCompetition(): Competition {
-        TODO("Not yet implemented")
+        return transaction(db) {
+
+            val groups = (CompetitorsInCompetition innerJoin Competitors)
+                .selectAll().map {
+                    Triple(
+                        it[CompetitorsInCompetition.group],
+                        it[CompetitorsInCompetition.checkpointNames].split("$"),
+                        when (it[CompetitorsInCompetition.groupCalculatorId]) {
+                            0 -> AllCheckpointsCalculator
+                            else -> KCheckpointsCalculator(it[CompetitorsInCompetition.groupCalculatorId])
+                        }
+                    )
+                }.distinct().map { Group(it.first, it.second, it.third) }
+
+            val competitors = (CompetitorsInCompetition innerJoin Competitors).selectAll().map {
+                Competitor(
+                    it[Competitors.wishGroup]
+                        ?: throw Exception("I don't know what happened :( Everything must be ok!"),
+                    it[Competitors.surname]
+                        ?: throw Exception("I don't know what happened :( Everything must be ok!"),
+                    it[Competitors.name]
+                        ?: throw Exception("I don't know what happened :( Everything must be ok!"),
+                    it[Competitors.birth]
+                        ?: throw Exception("I don't know what happened :( Everything must be ok!"),
+                    it[Competitors.title]
+                        ?: throw Exception("I don't know what happened :( Everything must be ok!"),
+                    "", "",
+                    it[Competitors.id]
+                )
+            }
+
+
+            val teams = (CompetitorsInCompetition innerJoin Competitors)
+                .selectAll().groupBy(
+                    { it[Competitors.team]!! }, {
+                        competitors.find { competitor -> competitor.id == it[Competitors.id] }!!
+                    }
+                ).map { (teamName, comps) ->
+                    Team(teamName, comps)
+                }
+
+
+            val compInComp = (CompetitorsInCompetition innerJoin Competitors).selectAll().map {
+                CompetitorInCompetition(
+                    competitors.find { competitor -> competitor.id == it[Competitors.id] }!!,
+                    it[CompetitorsInCompetition.number],
+                    groups.find { group -> group.name == it[CompetitorsInCompetition.group] }!!,
+                    teams.find { team -> team.name == it[Competitors.team] }!!
+                )
+            }
+
+            val numberMatching = compInComp.associateBy { competitor -> competitor.number }
+
+
+            val timeMatching = (CompetitorsInCompetition).selectAll().groupBy(
+                {
+                    compInComp.find { comp -> it[CompetitorsInCompetition.id] == comp.id }!!
+                }, {
+                    Time(it[CompetitorsInCompetition.startTime])
+                }
+            )
+
+            Competition(
+                checkpoints = mutableListOf(CheckPoint("", timeMatching)),
+                competitors = compInComp,
+                numberMatching = numberMatching
+            )
+        }
     }
 }
