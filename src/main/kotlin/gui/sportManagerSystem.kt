@@ -3,19 +3,30 @@ package gui
 import DB
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Colors
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposeWindow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import logger
 import startShell
 
 
 enum class MyButtons {
-    NONE, LOAD_CONFIG, APPLICATIONS, TIME_PASSING, RESULTS_GROUPS, RESULTS_TEAMS, ADD_COMPETITOR
+    NONE, LOAD_CONFIG, APPLICATIONS, TIME_PASSING, RESULTS_GROUPS, RESULTS_TEAMS, ADD_COMPETITOR, DELETE_COMPETITOR,
+    SELECT_ROW, SORTED_BY_COLUMN, CLEAN_ALL
+}
+
+fun mySort(data: List<MutableList<String>>, index: Int): List<MutableList<String>> {
+    if (data.find { it[index].toIntOrNull() == null } == null) {
+        return data.sortedBy { it[index].toInt() }
+    }
+    return data.sortedBy { it[index] }
 }
 
 @Composable
@@ -25,6 +36,9 @@ fun sportManagerSystemApp(window: ComposeWindow) {
     val myFileChooser = remember { MyFileChooser(window) }
     val lastPressedButton = remember { mutableStateOf(MyButtons.NONE) }
     val database = remember { DB("database") }
+    val changedSelectionState = remember { mutableStateOf(false) }
+    val selected = remember { mutableStateOf(mutableSetOf<Int>()) }
+    val columnToSort = remember { mutableStateOf(0) }
 
     fun updateButton(button: MyButtons) {
         lastPressedButton.value = MyButtons.NONE
@@ -80,31 +94,31 @@ fun sportManagerSystemApp(window: ComposeWindow) {
 
         MyButtons.APPLICATIONS -> {
             val columns = listOf("id", "name", "surname", "birth", "team", "wishGroup", "title")
-            val table = Table(columns, database.getAllCompetitors(columns), database)
-            var changedSelectionState = remember { mutableStateOf(false) }
-            table.drawTable(0.dp, 80.dp, changedSelectionState.value)
+            val sortedData = mySort(database.getAllCompetitors(columns).map { it.toMutableList() }, columnToSort.value)
+            val table = Table(columns, sortedData, database)
+            table.drawTable(0.dp, 80.dp, changedSelectionState.value, selected.value, columnToSort, lastPressedButton)
+
+            println(selected)
 
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.padding(8.dp).offset(y = 40.dp)
             ) {
                 Button(onClick = {
-                    database.createEmptyCompetitor()
-                    updateButton(MyButtons.APPLICATIONS)
+                    lastPressedButton.value = MyButtons.ADD_COMPETITOR
                 }) {
                     Text("Add competitor")
                 }
 
-                Button(onClick = {
-                    changedSelectionState.value = !changedSelectionState.value
-                    updateButton(MyButtons.APPLICATIONS)
+                Button(colors = ButtonDefaults.buttonColors(backgroundColor = if (changedSelectionState.value) Color.Red else Color.Blue),
+                    onClick = {
+                    lastPressedButton.value = MyButtons.DELETE_COMPETITOR
                 }) {
                     Text("Delete competitor")
                 }
 
                 Button(onClick = {
-                    database.cleanCompetitors()
-                    updateButton(MyButtons.APPLICATIONS)
+                    lastPressedButton.value = MyButtons.CLEAN_ALL
                 }) {
                     Text("Clean all")
                 }
@@ -118,6 +132,33 @@ fun sportManagerSystemApp(window: ComposeWindow) {
         }
         MyButtons.RESULTS_TEAMS -> {
             TODO()
+        }
+        MyButtons.ADD_COMPETITOR -> {
+            database.createEmptyCompetitor()
+            lastPressedButton.value = MyButtons.APPLICATIONS
+        }
+        MyButtons.DELETE_COMPETITOR -> {
+            changedSelectionState.value = !changedSelectionState.value
+            if (!changedSelectionState.value) {
+                selected.value.forEach {
+                    database.deleteCompetitor(it)
+                }
+                selected.value.clear()
+            }
+            println("delete")
+            println(changedSelectionState)
+            println(selected)
+            lastPressedButton.value = MyButtons.APPLICATIONS
+        }
+        MyButtons.SELECT_ROW -> {
+            lastPressedButton.value = MyButtons.APPLICATIONS
+        }
+        MyButtons.SORTED_BY_COLUMN -> {
+            lastPressedButton.value = MyButtons.APPLICATIONS
+        }
+        MyButtons.CLEAN_ALL -> {
+            database.cleanCompetitors()
+            lastPressedButton.value = MyButtons.APPLICATIONS
         }
 
         MyButtons.NONE -> {}

@@ -10,6 +10,7 @@ import androidx.compose.material.SnackbarDefaults.backgroundColor
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -26,16 +27,9 @@ class Table(
     private var tableData: List<List<String>>,
     private val db: CompetitorsDB
 ) {
-    @Composable
-    fun draw(offsetX: Dp, offsetY: Dp, showDelete: Boolean) {
-        if (showDelete)
-            showDeleteButtons(offsetX, offsetY)
-        else
-            drawTable(offsetX, offsetY, false)
-    }
 
     @Composable
-    fun drawTable(offsetX: Dp, offsetY: Dp, showDelete: Boolean) {
+    fun drawTable(offsetX: Dp, offsetY: Dp, showDelete: Boolean, selected: MutableSet<Int>, columnToSort: MutableState<Int>, lastButton: MutableState<MyButtons>) {
         val realData = tableData.map { it.toMutableList() }.toMutableList()
         logger.debug { "drawing table ($columnNames, $realData)" }
         val backgroundColor = Color.LightGray
@@ -55,21 +49,30 @@ class Table(
             item {
                 Row(Modifier.fillMaxWidth().background(backgroundColor)) {
                     columnNames.indices.forEach { index ->
-                        Button(onClick = {println("kek")}, modifier = Modifier.background(Color.LightGray).width((rowSize.value.width / countOfColumns).dp)) {
+                        Button(onClick = {
+                                columnToSort.value = index
+                                lastButton.value = MyButtons.SORTED_BY_COLUMN
+                            }, modifier = Modifier.background(Color.LightGray).width((rowSize.value.width / countOfColumns).dp)) {
                             Text(text = columnNames[index])
                         }
                     }
                 }
             }
+
             for (i in realData.indices) {
                 item {
                     Row(Modifier.background(backgroundColor)) {
                         if (showDelete) {
                             Button(
                                 modifier = Modifier.width(buttonWidth),
-                                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red),
+                                colors = ButtonDefaults.buttonColors(backgroundColor = if (realData[i][0].toInt() in selected) Color.Red else Color.Gray),
                                 onClick = {
-                                    db.deleteCompetitor(realData[i][0].toInt())
+                                    val id = realData[i][0].toInt()
+                                    if (id in selected)
+                                        selected.remove(id)
+                                    else
+                                        selected.add(id)
+                                    lastButton.value = MyButtons.SELECT_ROW
                                 }) {
                                 Text("X")
                             }
@@ -91,29 +94,6 @@ class Table(
                                 }, readOnly = j == 0,
                                 modifier = Modifier.width((rowSize.value.width / countOfColumns).dp)
                             )
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    @Composable
-    fun showDeleteButtons(offsetX: Dp, offsetY: Dp) {
-        val offsetButton = 20.dp
-        drawTable(offsetX + offsetButton, offsetY, false)
-
-        val realData = tableData.map { it.toMutableList() }.toMutableList()
-        val backgroundColor = Color.Red
-
-        LazyColumn(Modifier.width(offsetButton)) {
-            for (i in realData.indices) {
-                item {
-                    Row(Modifier.background(backgroundColor).width(offsetButton)) {
-                        Button( onClick = {
-                            db.deleteCompetitor(realData[i][0].toInt())
-                        } ) {
-                            Text("Delete competitor")
                         }
                     }
                 }
