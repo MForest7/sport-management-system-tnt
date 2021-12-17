@@ -4,7 +4,6 @@ import DB
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Colors
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -13,17 +12,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import classes.CheckPoint
+import classes.Team
 import logger
+import standings.StandingsInTeams
+import standings.timeOf
 import startShell
 
 
 enum class MyButtons {
     NONE, LOAD_CONFIG, APPLICATIONS, TIME_PASSING, RESULTS_GROUPS, RESULTS_TEAMS, ADD_COMPETITOR, DELETE_COMPETITOR,
-    SELECT_ROW, SORTED_BY_COLUMN, CLEAN_ALL
+    SELECT_ROW, SORTED_BY_COLUMN, CLEAN_ALL, SHOW_TEAM, SHOW_CHECKPOINT
 }
 
 fun mySort(data: List<MutableList<String>>, index: Int): List<MutableList<String>> {
-    if (data.find { it[index].toIntOrNull() == null } == null) {
+    if (data.find { it[index].toIntOrNull() == null } == null) { // only digits
         return data.sortedBy { it[index].toInt() }
     }
     return data.sortedBy { it[index] }
@@ -39,11 +42,8 @@ fun sportManagerSystemApp(window: ComposeWindow) {
     val changedSelectionState = remember { mutableStateOf(false) }
     val selected = remember { mutableStateOf(mutableSetOf<Int>()) }
     val columnToSort = remember { mutableStateOf(0) }
-
-    fun updateButton(button: MyButtons) {
-        lastPressedButton.value = MyButtons.NONE
-        lastPressedButton.value = button
-    }
+    val teamToShow = remember { mutableStateOf<Team?>(null) }
+    val checkpointToShow = remember { mutableStateOf<CheckPoint?>(null) }
 
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -96,9 +96,15 @@ fun sportManagerSystemApp(window: ComposeWindow) {
             val columns = listOf("id", "name", "surname", "birth", "team", "wishGroup", "title")
             val sortedData = mySort(database.getAllCompetitors(columns).map { it.toMutableList() }, columnToSort.value)
             val table = Table(columns, sortedData, database)
-            table.drawTable(0.dp, 80.dp, changedSelectionState.value, selected.value, columnToSort, lastPressedButton)
-
-            println(selected)
+            table.drawTable(
+                0.dp,
+                80.dp,
+                changedSelectionState.value,
+                selected.value,
+                columnToSort,
+                lastPressedButton,
+                true
+            )
 
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -110,10 +116,10 @@ fun sportManagerSystemApp(window: ComposeWindow) {
                     Text("Add competitor")
                 }
 
-                Button(colors = ButtonDefaults.buttonColors(backgroundColor = if (changedSelectionState.value) Color.Red else Color.Blue),
+                Button(colors = ButtonDefaults.buttonColors(backgroundColor = if (changedSelectionState.value) Color.Red else Color.Magenta),
                     onClick = {
-                    lastPressedButton.value = MyButtons.DELETE_COMPETITOR
-                }) {
+                        lastPressedButton.value = MyButtons.DELETE_COMPETITOR
+                    }) {
                     Text("Delete competitor")
                 }
 
@@ -125,13 +131,93 @@ fun sportManagerSystemApp(window: ComposeWindow) {
             }
         }
         MyButtons.TIME_PASSING -> {
-            TODO()
+            val competition = database.getCompetition()
+            val checkpoints = competition.checkpoints.drop(1)
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.padding(8.dp).offset(y = 40.dp)
+            ) {
+                checkpoints.forEach { checkpoint ->
+                    Button(onClick = {
+                        lastPressedButton.value = MyButtons.SHOW_CHECKPOINT
+                        checkpointToShow.value = checkpoint
+                    }) {
+                        Text(checkpoint.name)
+                    }
+                }
+            }
+            val checkpoint = checkpointToShow.value
+            if (checkpoint != null) {
+                val columns = listOf("id", "number", "time")
+                val data = mutableListOf<List<String>>()
+                competition.competitors.forEach { competitor ->
+                    checkpoint.timeMatching[competitor]
+                    checkpoint.timeMatching[competitor]?.forEach { time ->
+                        data.add(listOf(competitor.id.toString(), competitor.number, time.stringRepresentation))
+                    }
+                }
+                val table = Table(columns, data, database)
+                table.drawTable(
+                    0.dp,
+                    80.dp,
+                    changedSelectionState.value,
+                    selected.value,
+                    columnToSort,
+                    lastPressedButton,
+                    false
+                )
+            }
+        }
+        MyButtons.SHOW_CHECKPOINT -> {
+            lastPressedButton.value = MyButtons.TIME_PASSING
         }
         MyButtons.RESULTS_GROUPS -> {
             TODO()
         }
         MyButtons.RESULTS_TEAMS -> {
-            TODO()
+            val competition = database.getCompetition()
+            StandingsInTeams(competition)
+            val teams = competition.competitors.map { it.team }.distinct()
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.padding(8.dp).offset(y = 40.dp)
+            ) {
+                teams.forEach { team ->
+                    Button(onClick = {
+                        lastPressedButton.value = MyButtons.SHOW_TEAM
+                        teamToShow.value = team
+                    }) {
+                        Text(team.name)
+                    }
+                }
+            }
+            val team = teamToShow.value
+            if (team != null) {
+                val columns = listOf("id", "number", "name", "surname", "time")
+                val data = competition.competitors.filter { it.team == team }.map {
+                    listOf(
+                        it.id.toString(),
+                        it.number,
+                        it.name,
+                        it.surname,
+                        competition.timeOf(it)?.stringRepresentation ?: "DNF"
+                    )
+                }
+                val table = Table(columns, data, database)
+                table.drawTable(
+                    0.dp,
+                    80.dp,
+                    changedSelectionState.value,
+                    selected.value,
+                    columnToSort,
+                    lastPressedButton,
+                    false
+                )
+            }
+
+        }
+        MyButtons.SHOW_TEAM -> {
+            lastPressedButton.value = MyButtons.RESULTS_TEAMS
         }
         MyButtons.ADD_COMPETITOR -> {
             database.createEmptyCompetitor()
@@ -145,9 +231,6 @@ fun sportManagerSystemApp(window: ComposeWindow) {
                 }
                 selected.value.clear()
             }
-            println("delete")
-            println(changedSelectionState)
-            println(selected)
             lastPressedButton.value = MyButtons.APPLICATIONS
         }
         MyButtons.SELECT_ROW -> {

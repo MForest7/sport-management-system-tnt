@@ -6,14 +6,12 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.SnackbarDefaults.backgroundColor
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
@@ -29,11 +27,18 @@ class Table(
 ) {
 
     @Composable
-    fun drawTable(offsetX: Dp, offsetY: Dp, showDelete: Boolean, selected: MutableSet<Int>, columnToSort: MutableState<Int>, lastButton: MutableState<MyButtons>) {
+    fun drawTable(
+        offsetX: Dp,
+        offsetY: Dp,
+        showDelete: Boolean,
+        selected: MutableSet<Int>,
+        columnToSort: MutableState<Int>,
+        lastButton: MutableState<MyButtons>,
+        isMutable: Boolean
+    ) {
         val realData = tableData.map { it.toMutableList() }.toMutableList()
         logger.debug { "drawing table ($columnNames, $realData)" }
         val backgroundColor = Color.LightGray
-        val deleteButtonBackground = Color.Gray
         val countOfColumns = columnNames.size
 
         val buttonWidth = 30.dp
@@ -49,10 +54,14 @@ class Table(
             item {
                 Row(Modifier.fillMaxWidth().background(backgroundColor)) {
                     columnNames.indices.forEach { index ->
-                        Button(onClick = {
+                        Button(
+                            onClick = {
                                 columnToSort.value = index
                                 lastButton.value = MyButtons.SORTED_BY_COLUMN
-                            }, modifier = Modifier.background(Color.LightGray).width((rowSize.value.width / countOfColumns).dp)) {
+                            },
+                            modifier = Modifier.background(Color.LightGray)
+                                .width((rowSize.value.width / countOfColumns).dp)
+                        ) {
                             Text(text = columnNames[index])
                         }
                     }
@@ -91,7 +100,7 @@ class Table(
                                         realData[i][0].toInt(),
                                         columnNames.drop(1).zip(realData[i].drop(1)).toMap()
                                     )
-                                }, readOnly = j == 0,
+                                }, readOnly = (j == 0) || !isMutable,
                                 modifier = Modifier.width((rowSize.value.width / countOfColumns).dp)
                             )
                         }

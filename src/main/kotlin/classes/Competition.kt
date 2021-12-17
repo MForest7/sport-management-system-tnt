@@ -13,7 +13,7 @@ class Competition(
         val checkpoints = incompleteCompetition.checkpoints.map {
             it.convertIncompleteToCheckpoint(numberMatching)
         }.toMutableList()
-        this.checkpoints.addAll(listOf(start) + checkpoints)
+        this.checkpoints.addAll(checkpoints)
         start = this.checkpoints.first()
     }
 }
