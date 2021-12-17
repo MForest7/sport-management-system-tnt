@@ -8,6 +8,7 @@ open class Competitor(
     val title: String,
     val MedicalExamination: String,
     val MedicalInsurance: String,
+    val id: Int = 0
 ) {
     constructor(competitor: Competitor) : this(
         competitor.wishGroup,
@@ -16,7 +17,8 @@ open class Competitor(
         competitor.birth,
         competitor.title,
         competitor.MedicalExamination,
-        competitor.MedicalInsurance
+        competitor.MedicalInsurance,
+        competitor.id
     )
 
     override fun equals(other: Any?): Boolean {

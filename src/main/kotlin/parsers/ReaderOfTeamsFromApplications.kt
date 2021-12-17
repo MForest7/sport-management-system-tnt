@@ -9,6 +9,10 @@ import kotlin.reflect.full.memberProperties
 
 
 class ApplicationsReader(override val dir: String) : DirectoryReader<Team, Applications> {
+    companion object {
+        var idCounter = 1
+    }
+
     private fun getCompetitorFromListOfStrings(competitorInfo: List<String>): Competitor {
         val properties = Competitor::class.memberProperties.size
         logger.debug { "getCompetitorFromListOfStrings starts" }
@@ -22,7 +26,9 @@ class ApplicationsReader(override val dir: String) : DirectoryReader<Team, Appli
             competitorInfo.elementAtOrElse(3) { "" },
             competitorInfo.elementAtOrElse(4) { "" },
             competitorInfo.elementAtOrElse(5) { "" },
-            competitorInfo.elementAtOrElse(6) { "" })
+            competitorInfo.elementAtOrElse(6) { "" },
+            idCounter++
+        )
         logger.debug { "Competitor = $competitor" }
         return competitor
     }

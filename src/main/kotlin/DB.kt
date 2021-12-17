@@ -1,3 +1,4 @@
+import classes.Competition
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.lang.Exception
@@ -15,11 +16,8 @@ interface CompetitorsDB {
 }
 
 interface SortitionDB {
-    fun setCompetitorStart(id: Int, time: Int)
-    fun setCompetitorNumber(id: Int, number: String)
-    fun setCompetitorGroup(id: Int, group: String)
-    fun setCompetitorTeam(id: Int, team: String)
-    fun getCompetition()
+    fun setCompetition(competition: Competition)
+    fun getCompetition(): Competition
 }
 
 class DB(name: String) : CompetitorsDB, SortitionDB {
@@ -125,23 +123,18 @@ class DB(name: String) : CompetitorsDB, SortitionDB {
         }
     }
 
-    override fun setCompetitorStart(id: Int, time: Int) {
-
+    override fun setCompetition(competition: Competition) {
+        transaction(db) {
+            competition.competitors.forEach { competitor ->
+                CompetitorsInCompetition.update({ CompetitorsInCompetition.id eq 8 }) {
+                    it[startTime] = competition.start.timeMatching[competitor]?.first()?.time
+                        ?: throw Exception("I don't know what happened :( Everything must be ok!")
+                }
+            }
+        }
     }
 
-    override fun setCompetitorNumber(id: Int, number: String) {
-        TODO("Not yet implemented")
-    }
-
-    override fun setCompetitorGroup(id: Int, group: String) {
-        TODO("Not yet implemented")
-    }
-
-    override fun setCompetitorTeam(id: Int, team: String) {
-        TODO("Not yet implemented")
-    }
-
-    override fun getCompetition() {
+    override fun getCompetition(): Competition {
         TODO("Not yet implemented")
     }
 }

@@ -27,7 +27,8 @@ internal class TestPrintStandingsByTeams {
             )
         )
 
-        val groups = listOf("VIP", "М14").associateWith { Group(it, listOf("start", "finish"), AllCheckpointsCalculator) }
+        val groups =
+            listOf("VIP", "М14").associateWith { Group(it, listOf("start", "finish"), AllCheckpointsCalculator) }
 
         var acc = 0
         val competitors = teams.map { team ->
@@ -36,7 +37,10 @@ internal class TestPrintStandingsByTeams {
                 CompetitorInCompetition(
                     it,
                     acc.toString(),
-                    groups.getOrDefault(it.wishGroup, Group(it.wishGroup, listOf("start", "finish"), AllCheckpointsCalculator)),
+                    groups.getOrDefault(
+                        it.wishGroup,
+                        Group(it.wishGroup, listOf("start", "finish"), AllCheckpointsCalculator)
+                    ),
                     team
                 )
             }
