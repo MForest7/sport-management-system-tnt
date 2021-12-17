@@ -54,7 +54,7 @@ class Table {
                                 realData.value = mySort(realData.value, index).toMutableList()
                             },
                             modifier = Modifier.width((rowSize.value.width / countOfColumns).dp),
-                            colors = ButtonDefaults.buttonColors(backgroundColor = Color.LightGray)
+                            colors = ButtonDefaults.buttonColors(backgroundColor = backgroundColor)
                         ) {
                             Text(text = columnNames[index])
                         }
