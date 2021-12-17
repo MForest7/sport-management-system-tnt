@@ -15,7 +15,7 @@ interface DirectoryReader<IntermediateRepresentation, FinalType> {
     fun readUnit(csvReader: CsvReader): IntermediateRepresentation
 
     fun readUnmerged(): List<IntermediateRepresentation> {
-        val listOfFiles = File(dir).list()?.toList() ?: throw DirectoryReaderExceptionInDirectory("Strange directory")
+        val listOfFiles = File(dir).list()?.toList() ?: throw DirectoryReaderExceptionInDirectory("Strange directory ($dir)")
 
         val sortedListOfFiles = listOfFiles.sorted() // to escape undefined order
 
