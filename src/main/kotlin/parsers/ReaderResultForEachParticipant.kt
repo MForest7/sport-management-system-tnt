@@ -18,7 +18,7 @@ class ParticipantsResultsReader(
     override fun readUnit(csvReader: CsvReader):
             CheckpointsForParticipant {
         val personNumber = csvReader.readFirstElementInFirstRow()
-        val checkpoints = convertRecordsToTimeMatching(csvReader.readAllExceptFirst())
+        val checkpoints = convertRecordsToParticipantRecords(csvReader.readAllExceptFirst())
         logger.debug { "Person number = $personNumber, checkpoints = $checkpoints" }
         val checkpointsForParticipant = CheckpointsForParticipant(personNumber, checkpoints)
         logger.debug { "CheckPoint($checkpointsForParticipant) from file(${csvReader.filename})" }
@@ -36,23 +36,20 @@ class ParticipantsResultsReader(
     }
 
     override fun read(): IncompleteCompetition {
-        val countOfCheckpoints = checkpointNames.size
-
         val checkpointsForParticipant = readUnmerged()
 
         checkParticipantsUnique(checkpointsForParticipant)
 
-        val checkpoints = List(countOfCheckpoints) { index ->
-            val checkpointName = checkpointNames[index]
-            val timeMatching = mutableMapOf<String, Time>()
-            checkpointsForParticipant.forEach { participant ->
-                participant.timeMatching[checkpointName]?.let { time ->
-                    timeMatching[participant.personNumber] = time
-                }
+        val checkpoints = checkpointNames.associateWith { mutableListOf<IncompleteCheckPointRecord>() }
+
+        checkpointsForParticipant.forEach { participant ->
+            participant.timeMatching.forEach { record ->
+                require (checkpoints[record.nameCheckPoint] != null) { "Unknown checkpoint: ${record.nameCheckPoint}" }
+                checkpoints[record.nameCheckPoint]?.add(IncompleteCheckPointRecord(participant.personNumber, record.time))
             }
-            IncompleteCheckpoint(checkpointName, timeMatching)
         }
-        return IncompleteCompetition(checkpoints)
+
+        return IncompleteCompetition(checkpoints.map { (name, matching) -> IncompleteCheckpoint(name, matching) })
 
     }
 }

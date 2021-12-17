@@ -2,7 +2,14 @@ package sortition
 
 import classes.*
 
-class Sortition(private val applications: Applications, private val groupNameForUngrouped: String = "OTHER") {
+class Sortition(
+    private val applications: Applications,
+    private val groups: List<Group>
+) {
+    init {
+        require(groups.isNotEmpty()) { "No available groups!" }
+    }
+
     fun generateCompetition(): Competition {
         val numberedCompetitors = numberAllCompetitors(applications.teams)
         val competitorsInCompetition = assignGroupsToNumberedCompetitors(numberedCompetitors)
@@ -29,23 +36,19 @@ class Sortition(private val applications: Applications, private val groupNameFor
         }.flatten()
     }
 
-    private fun getNameOfRealGroup(competitor: Competitor) = competitor.wishGroup.ifBlank { groupNameForUngrouped }
-
     private fun assignGroupsToNumberedCompetitors(listOfNumberedCompetitors: List<NumberedCompetitor>): List<CompetitorInCompetition> {
-        val mappingGroupToCompetitors = listOfNumberedCompetitors.groupBy { numberedCompetitor ->
-            getNameOfRealGroup(numberedCompetitor.competitor)
-        }
-        return mappingGroupToCompetitors.map { (groupName, numberedCompetitors) ->
-            val group = Group(groupName)
+        val mappingGroupToCompetitors = listOfNumberedCompetitors.groupBy { numberedCompetitor -> numberedCompetitor.competitor.wishGroup }
+        return mappingGroupToCompetitors.map { (wishGroupName, numberedCompetitors) ->
+            val group = groups.firstOrNull { it.name == wishGroupName } ?: groups.random()
             numberedCompetitors.map { competitor -> competitor.addGroup(group) }
         }.flatten()
     }
 
-    private fun appointTime(competitorsInCompetition: List<CompetitorInCompetition>): Map<CompetitorInCompetition, Time> {
+    private fun appointTime(competitorsInCompetition: List<CompetitorInCompetition>): Map<CompetitorInCompetition, List<Time>> {
         val interval = 60
         var currentTime = 12 * 60 * 60
         return competitorsInCompetition.associateWith {
-            Time(currentTime).also { currentTime += interval }
+            listOf(Time(currentTime)).also { currentTime += interval }
         }
     }
 }

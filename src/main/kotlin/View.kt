@@ -4,6 +4,7 @@ import classes.FileManager
 import standings.*
 
 interface ModelViewer {
+    fun groupsUploaded()
     fun applicationsUploaded()
     fun sortitionGenerated(competition: Competition)
     fun sortitionUploaded(competition: Competition)
@@ -16,6 +17,8 @@ interface ModelViewer {
 class ShellViewer(
     private val fileManager: FileManager
 ) : ModelViewer {
+    override fun groupsUploaded() {}
+
     override fun applicationsUploaded() {}
 
     override fun sortitionGenerated(competition: Competition) {

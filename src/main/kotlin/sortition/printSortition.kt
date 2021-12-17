@@ -16,7 +16,7 @@ class SortitionPrinter(private val dir: String) {
         competitor: CompetitorInCompetition,
         competition: Competition
     ): List<String> {
-        val startTime = competition.checkpoints[0].timeMatching[competitor]
+        val startTime = competition.start.timeMatching[competitor]?.get(0)
         requireNotNull(startTime)
         return listOf(
             competitor.number, competitor.surname, competitor.name, competitor.birth,
