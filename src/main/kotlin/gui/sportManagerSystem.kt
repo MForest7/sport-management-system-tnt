@@ -94,7 +94,10 @@ fun sportManagerSystemApp(window: ComposeWindow) {
 
         MyButtons.APPLICATIONS -> {
             val columns = listOf("id", "name", "surname", "birth", "team", "wishGroup", "title")
-            val sortedData = mySort(database.getAllCompetitors(columns).map { it.toMutableList() }, columnToSort.value)
+            val data = database.getCompetition().competitors.map {
+                listOf(it.id.toString(), it.name, it.surname, it.birth, it.team.name, it.wishGroup, it.title)
+            }
+            val sortedData = mySort(data.map { it.toMutableList() }, columnToSort.value)
             val table = Table(columns, sortedData, database)
             table.drawTable(
                 0.dp,
