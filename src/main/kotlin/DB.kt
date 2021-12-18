@@ -14,6 +14,8 @@ interface CompetitorsDB {
     fun getAllCompetitors(columns: List<String>): List<List<String>>
     fun cleanCompetitors()
     fun deleteCompetitor(id: Int)
+    fun setPossibleGroupNames(groups: List<String>)
+    fun getPossibleGroupNames(): List<String>
 }
 
 interface SortitionDB {
@@ -60,6 +62,10 @@ class DB(name: String) : CompetitorsDB, SortitionDB {
     object Checkpoints : Table("Checkpoints") {
         val name = text("name")
         val data = text("data")
+    }
+
+    object PossibleGroups : Table("PossibleGroups") {
+        val group = text("name")
     }
 
     private val db = Database.connect("jdbc:h2:./$name;DB_CLOSE_DELAY=-1;", "org.h2.Driver")
@@ -236,6 +242,25 @@ class DB(name: String) : CompetitorsDB, SortitionDB {
                 competitors = compInComp,
                 numberMatching = numberMatching
             )
+        }
+    }
+
+    override fun setPossibleGroupNames(groups: List<String>) {
+        transaction(db) {
+            SchemaUtils.drop(PossibleGroups)
+            SchemaUtils.create(PossibleGroups)
+
+            groups.forEach { group ->
+                PossibleGroups.insert {
+                    it[PossibleGroups.group] = group
+                }
+            }
+        }
+    }
+
+    override fun getPossibleGroupNames(): List<String> {
+        return transaction(db) {
+            PossibleGroups.selectAll().map { it[PossibleGroups.group] }
         }
     }
 }
