@@ -33,7 +33,20 @@ open class Competitor(
         if (title != other.title) return false
         if (MedicalExamination != other.MedicalExamination) return false
         if (MedicalInsurance != other.MedicalInsurance) return false
+        if (id != other.id) return false
 
         return true
+    }
+
+    override fun hashCode(): Int {
+        var result = wishGroup.hashCode()
+        result = 31 * result + surname.hashCode()
+        result = 31 * result + name.hashCode()
+        result = 31 * result + birth.hashCode()
+        result = 31 * result + title.hashCode()
+        result = 31 * result + MedicalExamination.hashCode()
+        result = 31 * result + MedicalInsurance.hashCode()
+        result = 31 * result + id
+        return result
     }
 }
