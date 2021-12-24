@@ -2,7 +2,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.singleWindowApplication
 import gui.GUI
-import gui.Tabs
 //import gui.sportManagerSystemApp
 
 
