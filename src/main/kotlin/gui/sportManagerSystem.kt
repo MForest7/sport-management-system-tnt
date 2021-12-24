@@ -85,7 +85,10 @@ fun sportManagerSystemApp(window: ComposeWindow) {
     when (lastPressedButton.value) {
         MyButtons.LOAD_CONFIG -> {
             try {
-                startShell(myFileChooser.pickFile("json"))
+                val competition = startShell(myFileChooser.pickFile("json"))
+                require(competition != null) { "competition is null" }
+                database.clearCompetition()
+                database.setCompetition(competition)
             } catch (e: Exception) {
                 MyErrorDialog.exception = Exception(e.message)
             }
@@ -94,72 +97,12 @@ fun sportManagerSystemApp(window: ComposeWindow) {
 
         MyButtons.APPLICATIONS -> {
             val columns = listOf("id", "name", "surname", "birth", "team", "wishGroup", "title")
-            val data = database.getCompetition().competitors.map {
+            val data = database.getCompetition()?.competitors?.map {
                 listOf(it.id.toString(), it.name, it.surname, it.birth, it.team.name, it.wishGroup, it.title)
             }
-            val sortedData = mySort(data.map { it.toMutableList() }, columnToSort.value)
-            val table = Table(columns, sortedData, database)
-            table.drawTable(
-                0.dp,
-                80.dp,
-                changedSelectionState.value,
-                selected.value,
-                columnToSort,
-                lastPressedButton,
-                true
-            )
-
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.padding(8.dp).offset(y = 40.dp)
-            ) {
-                Button(onClick = {
-                    lastPressedButton.value = MyButtons.ADD_COMPETITOR
-                }) {
-                    Text("Add competitor")
-                }
-
-                Button(colors = ButtonDefaults.buttonColors(backgroundColor = if (changedSelectionState.value) Color.Red else Color.Magenta),
-                    onClick = {
-                        lastPressedButton.value = MyButtons.DELETE_COMPETITOR
-                    }) {
-                    Text("Delete competitor")
-                }
-
-                Button(onClick = {
-                    lastPressedButton.value = MyButtons.CLEAN_ALL
-                }) {
-                    Text("Clean all")
-                }
-            }
-        }
-        MyButtons.TIME_PASSING -> {
-            val competition = database.getCompetition()
-            val checkpoints = competition.checkpoints.drop(1)
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.padding(8.dp).offset(y = 40.dp)
-            ) {
-                checkpoints.forEach { checkpoint ->
-                    Button(onClick = {
-                        lastPressedButton.value = MyButtons.SHOW_CHECKPOINT
-                        checkpointToShow.value = checkpoint
-                    }) {
-                        Text(checkpoint.name)
-                    }
-                }
-            }
-            val checkpoint = checkpointToShow.value
-            if (checkpoint != null) {
-                val columns = listOf("id", "number", "time")
-                val data = mutableListOf<List<String>>()
-                competition.competitors.forEach { competitor ->
-                    checkpoint.timeMatching[competitor]
-                    checkpoint.timeMatching[competitor]?.forEach { time ->
-                        data.add(listOf(competitor.id.toString(), competitor.number, time.stringRepresentation))
-                    }
-                }
-                val table = Table(columns, data, database)
+            if (data != null) {
+                val sortedData = mySort(data.map { it.toMutableList() }, columnToSort.value)
+                val table = Table(columns, sortedData, database)
                 table.drawTable(
                     0.dp,
                     80.dp,
@@ -167,55 +110,131 @@ fun sportManagerSystemApp(window: ComposeWindow) {
                     selected.value,
                     columnToSort,
                     lastPressedButton,
-                    false
+                    true
                 )
+
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.padding(8.dp).offset(y = 40.dp)
+                ) {
+                    Button(onClick = {
+                        lastPressedButton.value = MyButtons.ADD_COMPETITOR
+                    }) {
+                        Text("Add competitor")
+                    }
+
+                    Button(colors = ButtonDefaults.buttonColors(backgroundColor = if (changedSelectionState.value) Color.Red else Color.Magenta),
+                        onClick = {
+                            lastPressedButton.value = MyButtons.DELETE_COMPETITOR
+                        }) {
+                        Text("Delete competitor")
+                    }
+
+                    Button(onClick = {
+                        lastPressedButton.value = MyButtons.CLEAN_ALL
+                    }) {
+                        Text("Clean all")
+                    }
+                }
+            } else {
+                MyErrorDialog.set(Exception("data is null"))
+                lastPressedButton.value = MyButtons.NONE
+            }
+        }
+        MyButtons.TIME_PASSING -> {
+            val competition = database.getCompetition()
+            if (competition != null) {
+                val checkpoints = competition.checkpoints.drop(1)
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.padding(8.dp).offset(y = 40.dp)
+                ) {
+                    checkpoints.forEach { checkpoint ->
+                        Button(onClick = {
+                            lastPressedButton.value = MyButtons.SHOW_CHECKPOINT
+                            checkpointToShow.value = checkpoint
+                        }) {
+                            Text(checkpoint.name)
+                        }
+                    }
+                }
+                val checkpoint = checkpointToShow.value
+                if (checkpoint != null) {
+                    val columns = listOf("id", "number", "time")
+                    val data = mutableListOf<List<String>>()
+                    competition.competitors.forEach { competitor ->
+                        checkpoint.timeMatching[competitor]
+                        checkpoint.timeMatching[competitor]?.forEach { time ->
+                            data.add(listOf(competitor.id.toString(), competitor.number, time.stringRepresentation))
+                        }
+                    }
+                    val table = Table(columns, data, database)
+                    table.drawTable(
+                        0.dp,
+                        80.dp,
+                        changedSelectionState.value,
+                        selected.value,
+                        columnToSort,
+                        lastPressedButton,
+                        false
+                    )
+                }
+            } else {
+                MyErrorDialog.set(Exception("data is null"))
+                lastPressedButton.value = MyButtons.NONE
             }
         }
         MyButtons.SHOW_CHECKPOINT -> {
             lastPressedButton.value = MyButtons.TIME_PASSING
         }
         MyButtons.RESULTS_GROUPS -> {
-            TODO()
+            MyErrorDialog.set(Exception("not implemented yet"))
+            lastPressedButton.value = MyButtons.NONE
         }
         MyButtons.RESULTS_TEAMS -> {
             val competition = database.getCompetition()
-            StandingsInTeams(competition)
-            val teams = competition.competitors.map { it.team }.distinct()
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.padding(8.dp).offset(y = 40.dp)
-            ) {
-                teams.forEach { team ->
-                    Button(onClick = {
-                        lastPressedButton.value = MyButtons.SHOW_TEAM
-                        teamToShow.value = team
-                    }) {
-                        Text(team.name)
+            if (competition != null) {
+                StandingsInTeams(competition)
+                val teams = competition.competitors.map { it.team }.distinct()
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.padding(8.dp).offset(y = 40.dp)
+                ) {
+                    teams.forEach { team ->
+                        Button(onClick = {
+                            lastPressedButton.value = MyButtons.SHOW_TEAM
+                            teamToShow.value = team
+                        }) {
+                            Text(team.name)
+                        }
                     }
                 }
-            }
-            val team = teamToShow.value
-            if (team != null) {
-                val columns = listOf("id", "number", "name", "surname", "time")
-                val data = competition.competitors.filter { it.team == team }.map {
-                    listOf(
-                        it.id.toString(),
-                        it.number,
-                        it.name,
-                        it.surname,
-                        competition.timeOf(it)?.stringRepresentation ?: "DNF"
+                val team = teamToShow.value
+                if (team != null) {
+                    val columns = listOf("id", "number", "name", "surname", "time")
+                    val data = competition.competitors.filter { it.team == team }.map {
+                        listOf(
+                            it.id.toString(),
+                            it.number,
+                            it.name,
+                            it.surname,
+                            competition.timeOf(it)?.stringRepresentation ?: "DNF"
+                        )
+                    }
+                    val table = Table(columns, data, database)
+                    table.drawTable(
+                        0.dp,
+                        80.dp,
+                        changedSelectionState.value,
+                        selected.value,
+                        columnToSort,
+                        lastPressedButton,
+                        false
                     )
                 }
-                val table = Table(columns, data, database)
-                table.drawTable(
-                    0.dp,
-                    80.dp,
-                    changedSelectionState.value,
-                    selected.value,
-                    columnToSort,
-                    lastPressedButton,
-                    false
-                )
+            } else {
+                MyErrorDialog.set(Exception("data is null"))
+                lastPressedButton.value = MyButtons.NONE
             }
 
         }
@@ -244,7 +263,8 @@ fun sportManagerSystemApp(window: ComposeWindow) {
         }
         MyButtons.CLEAN_ALL -> {
             database.cleanCompetitors()
-            lastPressedButton.value = MyButtons.APPLICATIONS
+            database.clearCompetition()
+            lastPressedButton.value = MyButtons.NONE
         }
 
         MyButtons.NONE -> {}
