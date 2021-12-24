@@ -15,6 +15,8 @@ class Model {
     private var standingsInTeams: StandingsInTeams? = null
     private var standingsInGroups: StandingsInGroups? = null
 
+    fun getCompetition() = competition
+
     fun addViewer(viewer: ModelViewer) {
         viewers.add(viewer)
     }

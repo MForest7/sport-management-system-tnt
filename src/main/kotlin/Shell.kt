@@ -1,3 +1,4 @@
+import classes.Competition
 import classes.FileManager
 import mu.KotlinLogging
 import parsers.JsonReader
@@ -11,7 +12,7 @@ fun outputStringWithColor(string: String) {
     print(color + string + reset + "\n")
 }
 
-fun startShell(pathToConfig: String) {
+fun startShell(pathToConfig: String): Competition? {
     logger.info { "Start shell" }
     val config = JsonReader(pathToConfig).read()
     logger.debug { "config = $config" }
@@ -25,15 +26,12 @@ fun startShell(pathToConfig: String) {
     controller.uploadApplications()
     controller.generateSortition()
 
-    outputStringWithColor("Press enter if results were uploaded")
-    readLine()
-
     controller.loadResults()
     controller.generateStandingsInGroups()
     controller.generateStandingsInTeams()
 
-    outputStringWithColor("Done!")
 
     logger.info { "End shell" }
+    return model.getCompetition()
 }
 

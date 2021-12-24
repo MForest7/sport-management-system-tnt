@@ -7,7 +7,6 @@ import sortition.SortitionPrinter
 import standings.GroupStandingsPrinter
 import standings.TeamsStandingsPrinter
 import java.io.File
-import java.lang.Exception
 
 class FileManagerException(message: String) : Exception(message)
 
@@ -29,8 +28,8 @@ class FileManager(
     init {
         checkDir(config.applicationsFolder)
         checkDir(config.sortitionFolder)
-        checkFile(config.resultsInTeams)
-        checkFile(config.resultsInGroups)
+//        checkFile(config.resultsInTeams)
+//        checkFile(config.resultsInGroups)
         checkDir(config.checkpointsFolder)
         checkDir(config.checkpointsFolder)
     }

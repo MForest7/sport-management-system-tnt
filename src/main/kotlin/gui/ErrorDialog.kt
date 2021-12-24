@@ -19,6 +19,11 @@ object MyErrorDialog {
     private val openDialog = mutableStateOf(true)
     var exception: Exception? = null
 
+    fun set(e: Exception) {
+        exception = e
+        openDialog.value = true
+    }
+
     @Composable
     fun show() {
         exception?.let {
