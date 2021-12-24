@@ -47,9 +47,9 @@ object GUI {
     class Tab(
         val name: String = "",
         val nextTabsEnum: List<Tabs> = listOf<Tabs>(),
-        var parent: Tab? = null,
         val content: @Composable() Tab.() -> Unit
     ) {
+        var parent: Tab? = null
         private val nextTabs = nextTabsEnum.map { it.content }
 
         init { nextTabs.forEach { it.parent = this } }
