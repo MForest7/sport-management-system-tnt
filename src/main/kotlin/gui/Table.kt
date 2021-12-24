@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import logger
 
-class Table(
+/*class Table(
     private var columnNames: List<String>,
     private var tableData: List<List<String>>,
     private val db: CompetitorsDB
@@ -109,4 +109,4 @@ class Table(
             }
         }
     }
-}
+}*/

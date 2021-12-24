@@ -20,7 +20,7 @@ import standings.timeOf
 import startShell
 
 
-enum class MyButtons {
+/*enum class MyButtons {
     NONE, LOAD_CONFIG, APPLICATIONS, TIME_PASSING, RESULTS_GROUPS, RESULTS_TEAMS, ADD_COMPETITOR, DELETE_COMPETITOR,
     SELECT_ROW, SORTED_BY_COLUMN, CLEAN_ALL, SHOW_TEAM, SHOW_CHECKPOINT
 }
@@ -253,4 +253,4 @@ fun sportManagerSystemApp(window: ComposeWindow) {
 
     MyErrorDialog.show()
     logger.info { "App is ended" }
-}
+}*/
