@@ -1,16 +1,15 @@
 package gui
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Checkbox
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 
 open class Tab(
     val name: String = "",
@@ -48,7 +47,7 @@ open class Tab(
     fun getStack(): List<Tab> = (parent?.getStack() ?: listOf<Tab>()) + listOf(this)
 
     @Composable
-    fun draw(yOffset: Dp, selected: List<Tab>): Tab? {
+    fun drawHeader(yOffset: Dp, selected: List<Tab>): Tab? {
         var switch: Tab? by remember { mutableStateOf(null) }
         var refresh: Boolean by remember { mutableStateOf(false) }
         if (refresh) switch = null
@@ -71,7 +70,7 @@ open class Tab(
     }
 
     @Composable
-    fun drawContent(yOffset: Dp): Tab? {
+    open fun drawContent(yOffset: Dp): Tab? {
         var switch: Tab? by remember { mutableStateOf(null) }
         var refresh: Boolean by remember { mutableStateOf(false) }
         if (refresh) switch = null
@@ -86,37 +85,70 @@ open class Tab(
     }
 }
 
-class TabWithAddDelete(
+class TabWithTable<T>(
     name: String = "",
     nextTabs: MutableList<Tab> = mutableListOf(),
     parent: Tab? = null,
-    table: Table
+    table: Table<T>
 ) : Tab(
     name,
     nextTabs,
     parent,
     @Composable {
-        val update by remember { mutableStateOf(Tab(parent = this) {}) }
         var switch: Tab? by remember { mutableStateOf(null) }
         var refresh: Boolean by remember { mutableStateOf(false) }
         if (refresh) switch = null
 
-        //val showDelete
+        var showDelete by remember { mutableStateOf(false) }
+        val selected by remember { mutableStateOf(mutableSetOf<Int>()) }
 
-        Button(
-            onClick = {
-                table.add()
-                switch = update
+        val update by remember { mutableStateOf(Update(this)) }
+
+        Row {
+            Button(
+                onClick = {
+                    table.add()
+                    switch = update
+                }
+            ) {
+                Text("add")
             }
-        ) {
-            Text("add")
+            Button(
+                onClick = {
+                    if (showDelete) {
+                        table.delete(selected)
+                        selected.clear()
+                    }
+                    showDelete = !showDelete
+                },
+                colors = ButtonDefaults.buttonColors(backgroundColor = if (showDelete) Color.Red else Color.Blue)
+            ) {
+                Text("delete")
+            }
         }
-        Button(
-            onClick = {
 
+        if (showDelete) {
+            Column(modifier = Modifier.padding(top = 40.dp)) {
+                repeat(table.size) {
+                    var checked by remember { mutableStateOf(false) }
+                    Checkbox(
+                        checked = checked,
+                        onCheckedChange = { check ->
+                            println("$it, $check")
+                            if (check)
+                                selected.add(it)
+                            else
+                                selected.remove(it)
+                            checked = check
+                        },
+                        modifier = Modifier.height(60.dp)
+                    )
+                }
             }
-        ) {
-            Text("delete")
+        }
+
+        Box(modifier = Modifier.padding(start = if (showDelete) 40.dp else 0.dp, top = 40.dp)) {
+            table.draw()
         }
 
         refresh = (switch != null)
@@ -124,4 +156,9 @@ class TabWithAddDelete(
     }
 ) {
 
+}
+
+class Update(parent: Tab?) : Tab(parent = parent, content = {}) {
+    @Composable
+    override fun drawContent(yOffset: Dp): Tab? = parent
 }

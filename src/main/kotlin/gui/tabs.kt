@@ -32,11 +32,10 @@ val CHEBUREK = Tab.Builder("CHEBUREK")
     }
     .build()
 
-val KEK = Tab.Builder("kek")
-    .withContent @Composable {
-        println("lol kek cheburek")
-    }
-    .build()
+val KEK = TabWithTable<String>(
+    name = "kek",
+    table = Table<String>(mutableListOf("aboba", "amogus", "sus"), "")
+)
 
 val LOL = Tab.Builder("LOL")
     .withTabs(listOf(CHEBUREK))

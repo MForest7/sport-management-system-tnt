@@ -1,8 +1,37 @@
 package gui
 
-class Table {
-    fun add() {}
-    fun delete() {}
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.height
+import androidx.compose.material.TextField
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+
+class Table<T>(private var data: MutableList<T>, private val default: T) {
+    fun add() {
+        data.add(default)
+    }
+
+    fun delete(indices: Set<Int>) {
+        data = data.filterIndexed { index, t -> index !in indices }.toMutableList()
+    }
+
+    val size: Int
+        get() = data.size
+
+    @Composable
+    fun draw() {
+        Column {
+            data.forEachIndexed { index, it ->
+                TextField(
+                    it.toString(),
+                    onValueChange = {},
+                    readOnly = true,
+                    modifier = Modifier.height(60.dp)
+                )
+            }
+        }
+    }
 }
 
 /*class Table(

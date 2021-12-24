@@ -20,9 +20,11 @@ object GUI {
 
         println(currentTab.getStack().map { it.name })
         currentTab.getStack().forEachIndexed { index, it ->
-            currentTab = it.draw((index * 40 + 40).dp, currentTab.getStack()) ?: currentTab
+            currentTab = it.drawHeader((index * 40 + 40).dp, currentTab.getStack()) ?: currentTab
         }
-        currentTab = currentTab.drawContent((currentTab.getStack().size * 40 + 40).dp) ?: currentTab
+        currentTab =
+            currentTab.drawContent((currentTab.getStack().size * 40 + if (currentTab.nextTabs.isEmpty()) 0 else 40).dp)
+                ?: currentTab
     }
 
     /*fun attachNewTab(parent: Tab?, name: String, content: Tab.() -> Unit) {
