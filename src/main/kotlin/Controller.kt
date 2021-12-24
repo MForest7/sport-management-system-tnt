@@ -15,30 +15,26 @@ abstract class Controller(protected val model: Model) {
         model.generateStandingsInTeams()
     }
 
-    fun uploadSortition() {
+    abstract fun uploadApplications()
 
-    }
-
-    abstract fun downloadApplications()
-
-    abstract fun uploadResults()
+    abstract fun loadResults()
 }
 
 
 class ShellController(model: Model, private val fileManager: FileManager) : Controller(model) {
-    fun downloadGroups(listOfGroups: List<Group>) {
-        model.uploadGroups(listOfGroups)
+    fun loadGroups(listOfGroups: List<Group>) {
+        model.loadGroups(listOfGroups)
     }
 
-    override fun downloadApplications() {
+    override fun uploadApplications() {
         val listOfTeams = fileManager.applicationsReader.read()
-        model.uploadApplications(listOfTeams)
+        model.loadApplications(listOfTeams)
     }
 
-    override fun uploadResults() {
+    override fun loadResults() {
         val checkpointsResults = fileManager.resultsForCheckpointsReader.read()
         val participantResults = fileManager.resultsForParticipantsReader.read()
         val finalResults = checkpointsResults + participantResults
-        model.uploadResults(finalResults)
+        model.loadResults(finalResults)
     }
 }

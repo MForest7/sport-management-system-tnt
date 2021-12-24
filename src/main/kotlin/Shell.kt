@@ -21,14 +21,14 @@ fun startShell(pathToConfig: String) {
     val viewer = ShellViewer(fileManager)
     val controller = ShellController(model, fileManager)
     model.addViewer(viewer)
-    controller.downloadGroups(readGroups(config.groups))
-    controller.downloadApplications()
+    controller.loadGroups(readGroups(config.groups))
+    controller.uploadApplications()
     controller.generateSortition()
 
     outputStringWithColor("Press enter if results were uploaded")
     readLine()
 
-    controller.uploadResults()
+    controller.loadResults()
     controller.generateStandingsInGroups()
     controller.generateStandingsInTeams()
 

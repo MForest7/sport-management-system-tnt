@@ -4,11 +4,11 @@ import standings.StandingsInGroups
 import standings.StandingsInTeams
 
 interface ModelViewer {
-    fun groupsUploaded()
-    fun applicationsUploaded()
+    fun groupsLoaded()
+    fun applicationsLoaded()
     fun sortitionGenerated(competition: Competition)
-    fun sortitionUploaded(competition: Competition)
-    fun resultsUploaded()
+    fun sortitionLoaded(competition: Competition)
+    fun resultsLoaded()
     fun standingsInTeamsGenerated(standingsInTeams: StandingsInTeams)
     fun standingsInGroupsGenerated(standingsInGroups: StandingsInGroups)
 }
@@ -17,19 +17,17 @@ interface ModelViewer {
 class ShellViewer(
     private val fileManager: FileManager
 ) : ModelViewer {
-    override fun groupsUploaded() {}
+    override fun groupsLoaded() {}
 
-    override fun applicationsUploaded() {}
+    override fun applicationsLoaded() {}
 
     override fun sortitionGenerated(competition: Competition) {
         fileManager.sortitionWriter.print(competition)
     }
 
-    override fun sortitionUploaded(competition: Competition) {
+    override fun sortitionLoaded(competition: Competition) {}
 
-    }
-
-    override fun resultsUploaded() {}
+    override fun resultsLoaded() {}
 
     override fun standingsInTeamsGenerated(standingsInTeams: StandingsInTeams) {
         fileManager.standingsInTeamsWriter.print(standingsInTeams)

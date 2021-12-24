@@ -1,8 +1,10 @@
-import classes.*
+import classes.Applications
+import classes.Competition
+import classes.Group
+import classes.IncompleteCompetition
 import sortition.Sortition
 import standings.StandingsInGroups
 import standings.StandingsInTeams
-import java.lang.Exception
 
 class Model {
     private val viewers = mutableSetOf<ModelViewer>()
@@ -21,14 +23,14 @@ class Model {
         viewers.forEach(notificationFunction)
     }
 
-    fun uploadGroups(groups: List<Group>) {
+    fun loadGroups(groups: List<Group>) {
         this.groups = groups
-        notifyViewers { it.groupsUploaded() }
+        notifyViewers { it.groupsLoaded() }
     }
 
-    fun uploadApplications(applications: Applications) {
+    fun loadApplications(applications: Applications) {
         this.applications = applications
-        notifyViewers { it.applicationsUploaded() }
+        notifyViewers { it.applicationsLoaded() }
     }
 
     fun generateSortition() {
@@ -40,9 +42,9 @@ class Model {
         notifyViewers { it.sortitionGenerated(newCompetition) }
     }
 
-    fun uploadResults(results: IncompleteCompetition) {
+    fun loadResults(results: IncompleteCompetition) {
         competition?.setCheckpointsFromIncomplete(results) ?: throw Exception("Competition was not generated yet!")
-        notifyViewers { it.resultsUploaded() }
+        notifyViewers { it.resultsLoaded() }
     }
 
     fun generateStandingsInTeams() {
