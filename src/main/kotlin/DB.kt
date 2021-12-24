@@ -20,7 +20,8 @@ interface CompetitorsDB {
 
 interface SortitionDB {
     fun setCompetition(competition: Competition)
-    fun getCompetition(): Competition
+    fun getCompetition(): Competition?
+    fun clearCompetition()
 }
 
 
@@ -72,7 +73,7 @@ class DB(name: String) : CompetitorsDB, SortitionDB {
 
     init {
         transaction(db) {
-            SchemaUtils.create(Competitors, CompetitorsInCompetition, Checkpoints)
+            SchemaUtils.create(Competitors, CompetitorsInCompetition, Checkpoints, PossibleGroups)
         }
     }
 
@@ -96,7 +97,6 @@ class DB(name: String) : CompetitorsDB, SortitionDB {
 
     override fun createEmptyCompetitor(): Int {
         return transaction(db) {
-            addLogger(StdOutSqlLogger)
             SchemaUtils.create(Competitors)
             Competitors.insert {
                 it[wishGroup] = null
@@ -143,8 +143,8 @@ class DB(name: String) : CompetitorsDB, SortitionDB {
 
     override fun setCompetition(competition: Competition) {
         transaction(db) {
-            SchemaUtils.drop(Competitors, Checkpoints)
-            SchemaUtils.create(Competitors, Checkpoints)
+            SchemaUtils.drop(CompetitorsInCompetition, Checkpoints)
+            SchemaUtils.create(CompetitorsInCompetition, Checkpoints)
             competition.competitors.forEach { competitor ->
                 CompetitorsInCompetition.insert {
                     it[id] = competitor.id
@@ -176,9 +176,11 @@ class DB(name: String) : CompetitorsDB, SortitionDB {
         }
     }
 
-    override fun getCompetition(): Competition {
+    override fun getCompetition(): Competition? {
         return transaction(db) {
-
+            if (CompetitorsInCompetition.selectAll().empty()) {
+                return@transaction null
+            }
             val groups = CompetitorsInCompetition.selectAll().map {
                 Triple(
                     it[CompetitorsInCompetition.group],
@@ -242,6 +244,13 @@ class DB(name: String) : CompetitorsDB, SortitionDB {
                 competitors = compInComp,
                 numberMatching = numberMatching
             )
+        }
+    }
+
+    override fun clearCompetition() {
+        transaction(db) {
+            SchemaUtils.drop(CompetitorsInCompetition, Checkpoints)
+            SchemaUtils.create(CompetitorsInCompetition, Checkpoints)
         }
     }
 
