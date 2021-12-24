@@ -26,6 +26,7 @@ open class Tab(
     ) {
 
         fun withTabs(tabs: List<Tab>) = apply { this.tabs = tabs }
+        fun withTabs(vararg tabs: Tab) = apply { this.tabs = tabs.toList() }
         fun withContent(content: @Composable Tab.() -> Any?) = apply { this.content = content }
 
         fun build(): Tab {
@@ -107,26 +108,28 @@ class TabWithTable<T>(
         val update by remember { mutableStateOf(Update(this)) }
         val stateVertical = rememberScrollState(0)
 
-        Row {
-            Button(
-                onClick = {
-                    table.add()
-                    switch = update
-                }
-            ) {
-                Text("add")
-            }
-            Button(
-                onClick = {
-                    if (showDelete) {
-                        table.delete(selected)
-                        selected.clear()
+        if (table is MutableTable) {
+            Row {
+                Button(
+                    onClick = {
+                        table.add()
+                        switch = update
                     }
-                    showDelete = !showDelete
-                },
-                colors = ButtonDefaults.buttonColors(backgroundColor = if (showDelete) Color.Red else Color.Blue)
-            ) {
-                Text("delete")
+                ) {
+                    Text("add")
+                }
+                Button(
+                    onClick = {
+                        if (showDelete) {
+                            table.delete(selected)
+                            selected.clear()
+                        }
+                        showDelete = !showDelete
+                    },
+                    colors = ButtonDefaults.buttonColors(backgroundColor = if (showDelete) Color.Red else Color.Blue)
+                ) {
+                    Text("delete")
+                }
             }
         }
 
@@ -151,7 +154,7 @@ class TabWithTable<T>(
         }
 
         Box(modifier = Modifier.padding(start = if (showDelete) 40.dp else 0.dp, top = 40.dp)) {
-            table.draw(stateVertical)
+            table.draw(stateVertical, showDelete)
         }
 
         refresh = (switch != null)
