@@ -13,7 +13,7 @@ data class CompetitorRaw(
 
 data class GroupFromOneFile(val name: String, val competitors: List<CompetitorRaw>)
 
-class SortitionReader(override val dir: String, private val application: Applications) :
+class SortitionReader(override val dir: String, private val rules: Rules, private val application: Applications) :
     DirectoryReader<GroupFromOneFile, Competition> {
 
     override fun readUnit(csvReader: CsvReader): GroupFromOneFile {
@@ -27,9 +27,7 @@ class SortitionReader(override val dir: String, private val application: Applica
 
     override fun read(): Competition {
         val groupsFromFiles = readUnmerged()
-        val groups = groupsFromFiles.map {
-            Group(it.name, listOf(""))
-        }
+        val groups = rules.groups
         val numberMatching = mutableMapOf<String, CompetitorInCompetition>()
         val checkpoint = CheckPoint("", mutableMapOf())
         val competitors = application.teams.flatMap { team ->
@@ -69,7 +67,7 @@ class SortitionReader(override val dir: String, private val application: Applica
             }
         }
 
-        return Competition(listOf(checkpoint), competitors, numberMatching)
+        return Competition(listOf(checkpoint) + rules.checkpoints, competitors, numberMatching)
     }
 }
 
