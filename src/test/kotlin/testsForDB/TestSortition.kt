@@ -7,7 +7,6 @@ import org.junit.Before
 import org.junit.Test
 import sortition.Sortition
 import java.io.File
-import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 
 class TestSortition {
@@ -90,6 +89,7 @@ class TestSortition {
         )
         db.setCompetition(competition)
         val result = db.getCompetition()
+        require(result != null)
         assertEquals(result.timeMatching.size, competition.timeMatching.size)
         assertEquals(result.checkpoints.size, competition.checkpoints.size)
         assertEquals(result.competitors.size, competition.competitors.size)

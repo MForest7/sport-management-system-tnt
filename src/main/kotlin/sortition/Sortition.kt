@@ -44,11 +44,11 @@ class Sortition(
         }.flatten()
     }
 
-    private fun appointTime(competitorsInCompetition: List<CompetitorInCompetition>): Map<CompetitorInCompetition, List<Time>> {
+    private fun appointTime(competitorsInCompetition: List<CompetitorInCompetition>): Map<CompetitorInCompetition, MutableList<Time>> {
         val interval = 60
         var currentTime = 12 * 60 * 60
         return competitorsInCompetition.associateWith {
-            listOf(Time(currentTime)).also { currentTime += interval }
+            listOf(Time(currentTime)).also { currentTime += interval }.toMutableList()
         }
     }
 }

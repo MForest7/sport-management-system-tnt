@@ -1,17 +1,15 @@
 import classes.*
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
-import java.lang.Exception
-import kotlin.reflect.jvm.internal.impl.util.Check
 
 interface CompetitorsDB {
     /**
      * data keys format:
      * id, wishGroup, surname, team, name, birth, title
      */
-    fun updateCompetitor(id: Int, data: Map<String, String>)
+    fun updateCompetitor(competitor: Competitor)
     fun createEmptyCompetitor(): Int
-    fun getAllCompetitors(columns: List<String>): List<List<String>>
+    fun getAllCompetitors(): List<Competitor>
     fun cleanCompetitors()
     fun deleteCompetitor(id: Int)
     fun setPossibleGroupNames(groups: List<String>)
@@ -26,15 +24,6 @@ interface SortitionDB {
 
 
 class DB(name: String) : CompetitorsDB, SortitionDB {
-    companion object {
-        const val idPropertyName = "id"
-        const val wishGroupPropertyName = "wishGroup"
-        const val surnamePropertyName = "surname"
-        const val namePropertyName = "name"
-        const val titlePropertyName = "title"
-        const val birthPropertyName = "birth"
-        const val teamPropertyName = "team"
-    }
 
     object Competitors : Table("Applications") {
         val id = integer("id").autoIncrement().primaryKey()
@@ -77,20 +66,13 @@ class DB(name: String) : CompetitorsDB, SortitionDB {
         }
     }
 
-    override fun updateCompetitor(id: Int, data: Map<String, String>) {
+    override fun updateCompetitor(competitor: Competitor) {
         transaction {
-            data.forEach { (property, value) ->
-                Competitors.update({ Competitors.id eq id }) {
-                    when (property) {
-                        wishGroupPropertyName -> it[wishGroup] = value
-                        surnamePropertyName -> it[surname] = value
-                        namePropertyName -> it[name] = value
-                        titlePropertyName -> it[title] = value
-                        birthPropertyName -> it[birth] = value
-                        teamPropertyName -> it[team] = value
-                        else -> throw Exception("Unknown property!")
-                    }
-                }
+            Competitors.update({ Competitors.id eq competitor.id }) {
+                it[surname] = competitor.surname
+                it[name] = competitor.name
+                it[title] = competitor.title
+                it[birth] = competitor.birth
             }
         }
     }
@@ -109,21 +91,19 @@ class DB(name: String) : CompetitorsDB, SortitionDB {
         }
     }
 
-    override fun getAllCompetitors(columns: List<String>): List<List<String>> {
+    override fun getAllCompetitors(): List<Competitor> {
         return transaction(db) {
             Competitors.selectAll().map {
-                columns.map { column ->
-                    when (column) {
-                        idPropertyName -> it[Competitors.id].toString()
-                        wishGroupPropertyName -> it[Competitors.wishGroup] ?: ""
-                        surnamePropertyName -> it[Competitors.surname] ?: ""
-                        namePropertyName -> it[Competitors.name] ?: ""
-                        titlePropertyName -> it[Competitors.title] ?: ""
-                        birthPropertyName -> it[Competitors.birth] ?: ""
-                        teamPropertyName -> it[Competitors.team] ?: ""
-                        else -> throw Exception("Unknown property!")
-                    }
-                }
+                Competitor(
+                    it[Competitors.wishGroup] ?: "",
+                    it[Competitors.surname] ?: "",
+                    it[Competitors.name] ?: "",
+                    it[Competitors.birth] ?: "",
+                    it[Competitors.title] ?: "",
+                    "",
+                    "",
+                    it[Competitors.id]
+                )
             }
         }
     }
@@ -233,7 +213,7 @@ class DB(name: String) : CompetitorsDB, SortitionDB {
                     checkPoint[Checkpoints.name],
                     data.split("!!!").map { it1 ->
                         val tmp1 = it1.split("@@@")
-                        val tmp2 = tmp1[1].split("$$$").map { time -> Time(time.toInt()) }
+                        val tmp2 = tmp1[1].split("$$$").map { time -> Time(time.toInt()) }.toMutableList()
                         compInComp.find { comp -> comp.id == tmp1[0].toInt() }!! to tmp2
                     }.toMap()
                 )

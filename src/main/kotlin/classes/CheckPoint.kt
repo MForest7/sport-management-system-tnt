@@ -2,7 +2,7 @@ package classes
 
 data class CheckPoint(
     val name: String = "",
-    val timeMatching: Map<CompetitorInCompetition, List<Time>>
+    val timeMatching: Map<CompetitorInCompetition, MutableList<Time>>
 )
 
 data class IncompleteCheckPointRecord(val number: String, val time: Time)
@@ -11,7 +11,7 @@ data class IncompleteCheckpoint(val name: String, val timeMatching: List<Incompl
     fun convertIncompleteToCheckpoint(numberMatching: Map<String, CompetitorInCompetition>): CheckPoint {
         val timeAndCountMatching = timeMatching.groupBy { (number, _) -> number }
             .map { (number, records) -> numberMatching[number] to records.map { it.time }.sorted() }
-            .filterIsInstance< Pair<CompetitorInCompetition, List<Time>> >().toMap()
+            .filterIsInstance<Pair<CompetitorInCompetition, MutableList<Time>>>().toMap()
         return CheckPoint(this.name, timeAndCountMatching)
     }
 }
