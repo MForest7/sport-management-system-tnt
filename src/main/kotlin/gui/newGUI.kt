@@ -48,6 +48,7 @@ object GUI {
         currentTab =
             currentTab.drawContent((if (currentTab.nextTabs.isEmpty()) 0 else 40).dp + 40.dp)
                 ?: currentTab
+        MyErrorDialog.show()
     }
 
     private val CHECKPOINTS = Tab.Builder("checkpoints")
@@ -57,7 +58,7 @@ object GUI {
     private val LOAD_CONFIG = Tab.Builder("Load config")
         .withContent @Composable {
             try {
-                controller.uploadGroups(myFileChooser.pickFile("json"))
+                controller.uploadGroups(myFileChooser.pickFileOrDir("json"))
             } catch (e: Exception) {
                 MyErrorDialog.exception = Exception(e.message)
             }
