@@ -40,6 +40,11 @@ class Model {
         notifyViewers { it.sortitionGenerated(newCompetition) }
     }
 
+    fun uploadSortition(sortition: Competition) {
+        competition = sortition
+        notifyViewers { it.sortitionGenerated(sortition) }
+    }
+
     fun loadResults(results: IncompleteCompetition) {
         competition?.setCheckpointsFromIncomplete(results) ?: throw Exception("Competition was not generated yet!")
         notifyViewers { it.resultsLoaded(results) }

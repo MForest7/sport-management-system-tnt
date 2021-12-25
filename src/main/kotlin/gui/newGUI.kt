@@ -167,7 +167,8 @@ object GUI {
                 Button(
                     onClick = {
                         try {
-
+                            controller.uploadSortition(myFileChooser.pickFileOrDir())
+                            switch = true
                         } catch (e: Exception) {
                             MyErrorDialog.exception = Exception(e.message)
                         }

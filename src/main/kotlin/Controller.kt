@@ -1,8 +1,5 @@
 import classes.*
-import parsers.ApplicationsReader
-import parsers.CheckpointsResultsReader
-import parsers.JsonReader
-import parsers.ParticipantsResultsReader
+import parsers.*
 
 
 abstract class Controller(protected val model: Model) {
@@ -58,6 +55,12 @@ class GUIController(private val model: Model) {
         val listOfTeams = ApplicationsReader(folder).read()
         applications = listOfTeams
         model.loadApplications(listOfTeams)
+    }
+
+    fun uploadSortition(folder: String) {
+        val finalRules = rules ?: return
+        val competition = SortitionReader(folder, finalRules, applications).read()
+        model.uploadSortition(competition)
     }
 
     fun generateSortition() {

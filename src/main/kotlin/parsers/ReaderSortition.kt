@@ -55,7 +55,7 @@ class SortitionReader(override val dir: String, private val rules: Rules, privat
                 val numberNotNull = number
                 val startTimeNotNull = startTime
 
-                require(groupFromFileNotNull != null && numberNotNull != null && startTimeNotNull != null) { "cant find group from one of competitors\n($competitor))" }
+                require(groupFromFileNotNull != null && numberNotNull != null && startTimeNotNull != null) { "cant find group from one of competitors\n(${competitor.surname} ${competitor.name}))" }
 
                 val group = groups.find { it.name == groupFromFileNotNull.name }
                 require(group != null) { "cant find group from one of competitors2\n($competitor))" }
