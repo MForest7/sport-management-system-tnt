@@ -1,9 +1,11 @@
 package testsForPrintStandingsByResults
 
 import classes.*
-import standings.*
+import standings.GroupStandingsPrinter
+import standings.StandingsInGroups
+import standings.StandingsInTeams
+import standings.TeamsStandingsPrinter
 import java.io.File
-import kotlin.reflect.jvm.internal.impl.descriptors.deserialization.PlatformDependentDeclarationFilter
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 
@@ -63,10 +65,14 @@ internal class TestPrintStandingsByTeams {
         )
 
         val checkPoints = listOf(
-            CheckPoint("start", competitors.associateWith { listOf(startTimes[it.number.toInt() - 1]) }.toMutableMap()),
+            CheckPoint(
+                "start",
+                competitors.associateWith { mutableListOf(startTimes[it.number.toInt() - 1]) }.toMutableMap()
+            ),
             CheckPoint(
                 "finish",
-                competitors.dropLast(1).associateWith { listOf(finishTimes[it.number.toInt() - 1]) }.toMutableMap()
+                competitors.dropLast(1).associateWith { mutableListOf(finishTimes[it.number.toInt() - 1]) }
+                    .toMutableMap()
             )
         )
 

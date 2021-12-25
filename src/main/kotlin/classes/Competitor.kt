@@ -6,8 +6,8 @@ open class Competitor(
     val name: String,
     val birth: String,
     val title: String,
-    val MedicalExamination: String,
-    val MedicalInsurance: String,
+    val medicalExamination: String,
+    val medicalInsurance: String,
     val id: Int = 0
 ) {
     constructor(competitor: Competitor) : this(
@@ -16,8 +16,8 @@ open class Competitor(
         competitor.name,
         competitor.birth,
         competitor.title,
-        competitor.MedicalExamination,
-        competitor.MedicalInsurance,
+        competitor.medicalExamination,
+        competitor.medicalInsurance,
         competitor.id
     )
 
@@ -31,8 +31,8 @@ open class Competitor(
         if (name != other.name) return false
         if (birth != other.birth) return false
         if (title != other.title) return false
-        if (MedicalExamination != other.MedicalExamination) return false
-        if (MedicalInsurance != other.MedicalInsurance) return false
+        if (medicalExamination != other.medicalExamination) return false
+        if (medicalInsurance != other.medicalInsurance) return false
         if (id != other.id) return false
 
         return true
@@ -44,8 +44,8 @@ open class Competitor(
         result = 31 * result + name.hashCode()
         result = 31 * result + birth.hashCode()
         result = 31 * result + title.hashCode()
-        result = 31 * result + MedicalExamination.hashCode()
-        result = 31 * result + MedicalInsurance.hashCode()
+        result = 31 * result + medicalExamination.hashCode()
+        result = 31 * result + medicalInsurance.hashCode()
         result = 31 * result + id
         return result
     }
