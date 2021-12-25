@@ -11,13 +11,12 @@ fun outputStringWithColor(string: String) {
     print(color + string + reset + "\n")
 }
 
-fun startShell(pathToConfig: String) {
+fun startShell(pathToConfig: String, model: Model) {
     logger.info { "Start shell" }
     val config = JsonReader(pathToConfig).read()
     logger.debug { "config = $config" }
 
     val fileManager = FileManager(config)
-    val model = Model()
     val viewer = ShellViewer(fileManager)
     val controller = ShellController(model, fileManager)
     model.addViewer(viewer)

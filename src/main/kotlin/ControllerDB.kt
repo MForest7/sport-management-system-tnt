@@ -1,12 +1,10 @@
-import classes.CheckPoint
-import classes.Competitor
-import classes.CompetitorInCompetition
-import classes.Time
+import classes.*
 
 
 class DatabaseController(
-    private val db: DB
-) {
+    private val db: DB,
+    model: Model
+) : Controller(model) {
     fun set(newValue: Competitor) {
         val oldValue = db.getAllCompetitors().find {
             it.id == newValue.id
@@ -30,5 +28,18 @@ class DatabaseController(
         list[number] = time
 
         db.setCompetition(competition)
+    }
+
+    fun uploadGroups(groups: List<Group>) {
+
+    }
+
+    override fun uploadApplications() {
+        val listOfTeams = db.getAllApplications()
+        model.loadApplications(listOfTeams)
+    }
+
+    override fun loadResults() {
+
     }
 }

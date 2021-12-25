@@ -1,7 +1,7 @@
 package classes
 
 data class CheckPoint(
-    val name: String = "",
+    var name: String = "",
     val timeMatching: Map<CompetitorInCompetition, MutableList<Time>>
 )
 

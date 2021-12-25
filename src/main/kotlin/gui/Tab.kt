@@ -1,17 +1,16 @@
 package gui
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Checkbox
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 
 open class Tab(
     val name: String = "",
@@ -92,77 +91,32 @@ class TabWithTable<T>(
     name: String = "",
     nextTabs: MutableList<Tab> = mutableListOf(),
     parent: Tab? = null,
-    table: Table<T>
+    private var table: Table<T>,
+    content: @Composable Tab.() -> Any? = {}
 ) : Tab(
     name,
     nextTabs,
     parent,
-    @Composable {
+    content
+) {
+    @Composable
+    override fun drawContent(yOffset: Dp): Tab? {
         var switch: Tab? by remember { mutableStateOf(null) }
         var refresh: Boolean by remember { mutableStateOf(false) }
+        val update by remember { mutableStateOf(Update(this)) }
         if (refresh) switch = null
 
-        var showDelete by remember { mutableStateOf(false) }
-        val selected by remember { mutableStateOf(mutableSetOf<Int>()) }
-
-        val update by remember { mutableStateOf(Update(this)) }
-        val stateVertical = rememberScrollState(0)
-
-        if (table is MutableTable) {
-            Row {
-                Button(
-                    onClick = {
-                        table.add()
-                        switch = update
-                    }
-                ) {
-                    Text("add")
-                }
-                Button(
-                    onClick = {
-                        if (showDelete) {
-                            table.delete(selected)
-                            selected.clear()
-                        }
-                        showDelete = !showDelete
-                    },
-                    colors = ButtonDefaults.buttonColors(backgroundColor = if (showDelete) Color.Red else Color.Blue)
-                ) {
-                    Text("delete")
-                }
-            }
-        }
-
-        if (showDelete) {
-            Column(modifier = Modifier.padding(top = 40.dp).verticalScroll(stateVertical)) {
-                repeat(table.size) {
-                    var checked by remember { mutableStateOf(false) }
-                    Checkbox(
-                        checked = checked,
-                        onCheckedChange = { check ->
-                            println("$it, $check")
-                            if (check)
-                                selected.add(it)
-                            else
-                                selected.remove(it)
-                            checked = check
-                        },
-                        modifier = Modifier.height(60.dp)
-                    )
-                }
-            }
-        }
-
-        Box(modifier = Modifier.padding(start = if (showDelete) 40.dp else 0.dp, top = 40.dp)) {
-            if (table.draw(stateVertical, showDelete))
-                switch = update
+        Box(modifier = Modifier.padding(top = yOffset)) {
+            val checkUpdate = table.drawHeader()
+            table.print()
+            if (checkUpdate) switch = update
+            val checkSwitch = content.invoke(this@TabWithTable)
+            if (checkSwitch is Tab) switch = checkSwitch
         }
 
         refresh = (switch != null)
-        switch
+        return switch
     }
-) {
-
 }
 
 class Update(parent: Tab?) : Tab(parent = parent, content = {}) {

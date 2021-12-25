@@ -1,5 +1,4 @@
 import classes.*
-import gui.CompetitorWithTeam
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
@@ -10,6 +9,7 @@ interface CompetitorsDB {
      */
     fun updateCompetitor(competitor: Competitor)
     fun createEmptyCompetitor(team: Team? = null): Int
+    fun getCompetitor(id: Int): Competitor
     fun getAllCompetitors(): List<Competitor>
     fun getAllApplications(): Applications
     fun cleanCompetitors()
@@ -93,6 +93,23 @@ class DB(name: String) : CompetitorsDB, SortitionDB {
         }
     }
 
+    override fun getCompetitor(id: Int): Competitor {
+        return transaction(db) {
+            Competitors.select { Competitors.id eq id }.map {
+                Competitor(
+                    it[Competitors.wishGroup] ?: "",
+                    it[Competitors.surname] ?: "",
+                    it[Competitors.name] ?: "",
+                    it[Competitors.birth] ?: "",
+                    it[Competitors.title] ?: "",
+                    "",
+                    "",
+                    it[Competitors.id]
+                )
+            }.first()
+        }
+    }
+
     override fun getAllCompetitors(): List<Competitor> {
         return transaction(db) {
             Competitors.selectAll().map {
@@ -112,24 +129,34 @@ class DB(name: String) : CompetitorsDB, SortitionDB {
 
     override fun getAllApplications(): Applications {
         return transaction(db) {
-            val competitors = Competitors.selectAll().map {
-                CompetitorWithTeam(
-                    Team(it[Competitors.team] ?: "", listOf()),
-                    Competitor(
-                        it[Competitors.wishGroup] ?: "",
-                        it[Competitors.surname] ?: "",
-                        it[Competitors.name] ?: "",
-                        it[Competitors.birth] ?: "",
-                        it[Competitors.title] ?: "",
-                        "",
-                        "",
-                        it[Competitors.id]
-                    )
+            val competitors = CompetitorsInCompetition.selectAll().map {
+                Competitor(
+                    it[CompetitorsInCompetition.wishGroup],
+                    it[CompetitorsInCompetition.surname],
+                    it[CompetitorsInCompetition.name],
+                    it[CompetitorsInCompetition.birth],
+                    it[CompetitorsInCompetition.title],
+                    "", "",
+                    it[CompetitorsInCompetition.id]
                 )
             }
-            Applications(
-                competitors.groupBy { it.team.name }
-                    .map { (teamName, competitors) -> Team(teamName, competitors.map { it.competitor }) }
+
+            val kek = CompetitorsInCompetition.selectAll().groupBy(
+                { it[CompetitorsInCompetition.team] }, {
+                    competitors.find { competitor -> competitor.id == it[CompetitorsInCompetition.id] }!!
+                }
+            ).map { (teamName, comps) ->
+                Team(teamName, comps)
+            }
+
+            Applications(CompetitorsInCompetition
+                .selectAll().groupBy(
+                    { it[CompetitorsInCompetition.team] }, {
+                        competitors.find { competitor -> competitor.id == it[CompetitorsInCompetition.id] }!!
+                    }
+                ).map { (teamName, comps) ->
+                    Team(teamName, comps)
+                }
             )
         }
     }
@@ -196,7 +223,7 @@ class DB(name: String) : CompetitorsDB, SortitionDB {
                         else -> KCheckpointsCalculator(it[CompetitorsInCompetition.groupCalculatorId])
                     }
                 )
-            }.distinct().map { Group(it.first, it.second, it.third) }
+            }.distinct().map { Group(it.first, it.second.toMutableList(), it.third) }
 
             val competitors = CompetitorsInCompetition.selectAll().map {
                 Competitor(

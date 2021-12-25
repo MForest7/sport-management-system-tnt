@@ -38,3 +38,5 @@ class ShellController(model: Model, private val fileManager: FileManager) : Cont
         model.loadResults(finalResults)
     }
 }
+
+class GUIController(model: Model)

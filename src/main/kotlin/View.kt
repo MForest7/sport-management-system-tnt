@@ -13,6 +13,28 @@ interface ModelViewer {
     fun standingsInGroupsGenerated(standingsInGroups: StandingsInGroups)
 }
 
+class DataBaseViewer(
+    private val database: DB
+) : ModelViewer {
+    override fun groupsLoaded() {}
+
+    override fun applicationsLoaded() {}
+
+    override fun sortitionGenerated(competition: Competition) {
+        database.setCompetition(competition)
+    }
+
+    override fun sortitionLoaded(competition: Competition) {}
+
+    override fun resultsLoaded() {}
+
+    override fun standingsInTeamsGenerated(standingsInTeams: StandingsInTeams) {
+    }
+
+    override fun standingsInGroupsGenerated(standingsInGroups: StandingsInGroups) {
+    }
+}
+
 
 class ShellViewer(
     private val fileManager: FileManager
