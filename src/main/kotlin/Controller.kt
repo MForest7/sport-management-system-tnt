@@ -1,4 +1,7 @@
-import classes.*
+import classes.Applications
+import classes.Group
+import classes.IncompleteCompetition
+import classes.Rules
 import parsers.*
 
 
@@ -20,24 +23,6 @@ abstract class Controller(protected val model: Model) {
     abstract fun loadResults()
 }
 
-
-class ShellController(model: Model, private val fileManager: FileManager) : Controller(model) {
-    fun loadGroups(listOfGroups: List<Group>) {
-        model.loadGroups(listOfGroups)
-    }
-
-    override fun uploadApplications() {
-        val listOfTeams = fileManager.applicationsReader.read()
-        model.loadApplications(listOfTeams)
-    }
-
-    override fun loadResults() {
-        val checkpointsResults = fileManager.resultsForCheckpointsReader.read()
-        val participantResults = fileManager.resultsForParticipantsReader.read()
-        val finalResults = checkpointsResults + participantResults
-        model.loadResults(finalResults)
-    }
-}
 
 class GUIController(private val model: Model) {
     private var rules: Rules? = null
