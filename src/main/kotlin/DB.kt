@@ -141,21 +141,13 @@ class DB(name: String) : CompetitorsDB, SortitionDB {
                 )
             }
 
-            val kek = CompetitorsInCompetition.selectAll().groupBy(
-                { it[CompetitorsInCompetition.team] }, {
-                    competitors.find { competitor -> competitor.id == it[CompetitorsInCompetition.id] }!!
-                }
-            ).map { (teamName, comps) ->
-                Team(teamName, comps)
-            }
-
             Applications(CompetitorsInCompetition
                 .selectAll().groupBy(
                     { it[CompetitorsInCompetition.team] }, {
                         competitors.find { competitor -> competitor.id == it[CompetitorsInCompetition.id] }!!
                     }
                 ).map { (teamName, comps) ->
-                    Team(teamName, comps)
+                    Team(teamName, comps.toMutableList())
                 }
             )
         }
@@ -244,7 +236,7 @@ class DB(name: String) : CompetitorsDB, SortitionDB {
                         competitors.find { competitor -> competitor.id == it[CompetitorsInCompetition.id] }!!
                     }
                 ).map { (teamName, comps) ->
-                    Team(teamName, comps)
+                    Team(teamName, comps.toMutableList())
                 }
 
 
@@ -268,7 +260,7 @@ class DB(name: String) : CompetitorsDB, SortitionDB {
                         val tmp1 = it1.split("@@@")
                         val tmp2 = tmp1[1].split("$$$").map { time -> Time(time.toInt()) }.toMutableList()
                         compInComp.find { comp -> comp.id == tmp1[0].toInt() }!! to tmp2
-                    }.toMap()
+                    }.toMap().toMutableMap()
                 )
             }.toMutableList()
 

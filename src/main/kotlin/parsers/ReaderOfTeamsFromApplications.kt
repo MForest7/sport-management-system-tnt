@@ -39,7 +39,7 @@ class ApplicationsReader(override val dir: String) : DirectoryReader<Team, Appli
     override fun readUnit(csvReader: CsvReader): Team {
         val teamName = csvReader.readFirstElementInFirstRow()
         val application = csvReader.readAllExceptFirst()
-        val competitors = application.map(::fromListOfStringToCheckpoints)
+        val competitors = application.map(::fromListOfStringToCheckpoints).toMutableList()
         return Team(teamName, competitors)
     }
 

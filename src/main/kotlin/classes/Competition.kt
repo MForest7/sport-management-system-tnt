@@ -1,7 +1,7 @@
 package classes
 
 class Competition(
-    val checkpoints: MutableList<CheckPoint>,
+    val checkpoints: List<CheckPoint>,
     val competitors: List<CompetitorInCompetition>,
     val numberMatching: Map<String, CompetitorInCompetition>
 ) {
@@ -13,8 +13,15 @@ class Competition(
         val checkpoints = incompleteCompetition.checkpoints.map {
             it.convertIncompleteToCheckpoint(numberMatching)
         }.toMutableList()
-        this.checkpoints.addAll(checkpoints)
-        start = this.checkpoints.first()
+        checkpoints.forEach { checkPoint ->
+            val image = this.checkpoints.find { it.name == checkPoint.name }
+            if (image != null) {
+                checkPoint.timeMatching.forEach { competitor, times ->
+                    val oldValue = image.timeMatching.getOrDefault(competitor, listOf())
+                    image.timeMatching[competitor] = (oldValue + times).sorted().distinct().toMutableList()
+                }
+            }
+        }
     }
 }
 

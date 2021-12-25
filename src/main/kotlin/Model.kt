@@ -1,7 +1,4 @@
-import classes.Applications
-import classes.Competition
-import classes.Group
-import classes.IncompleteCompetition
+import classes.*
 import sortition.Sortition
 import standings.StandingsInGroups
 import standings.StandingsInTeams
@@ -11,7 +8,7 @@ class Model {
 
     private var competition: Competition? = null
     private var applications: Applications? = null
-    private var groups: List<Group>? = null
+    private var rules: Rules? = null
     private var standingsInTeams: StandingsInTeams? = null
     private var standingsInGroups: StandingsInGroups? = null
 
@@ -24,19 +21,20 @@ class Model {
     }
 
     fun loadGroups(groups: List<Group>) {
-        this.groups = groups
-        notifyViewers { it.groupsLoaded() }
+        val newRules = Rules(groups)
+        this.rules = newRules
+        notifyViewers { it.groupsLoaded(newRules) }
     }
 
     fun loadApplications(applications: Applications) {
         this.applications = applications
-        notifyViewers { it.applicationsLoaded() }
+        notifyViewers { it.applicationsLoaded(applications) }
     }
 
     fun generateSortition() {
         val newCompetition = Sortition(
             applications ?: throw Exception("Empty applications!"),
-            groups ?: throw Exception("Available groups not found!")
+            rules ?: throw Exception("Available groups not found!")
         ).generateCompetition()
         competition = newCompetition
         notifyViewers { it.sortitionGenerated(newCompetition) }
@@ -44,7 +42,7 @@ class Model {
 
     fun loadResults(results: IncompleteCompetition) {
         competition?.setCheckpointsFromIncomplete(results) ?: throw Exception("Competition was not generated yet!")
-        notifyViewers { it.resultsLoaded() }
+        notifyViewers { it.resultsLoaded(results) }
     }
 
     fun generateStandingsInTeams() {

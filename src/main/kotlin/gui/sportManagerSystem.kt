@@ -1,23 +1,6 @@
 package gui
 
-import DB
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.awt.ComposeWindow
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
-import classes.CheckPoint
-import classes.Team
-import logger
-import standings.StandingsInTeams
-import standings.timeOf
-import startShell
+//import startShell
 
 
 /*enum class MyButtons {

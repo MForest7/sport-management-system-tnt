@@ -1,47 +1,28 @@
 package gui
 
-import DB
-import DatabaseController
+import GUIController
+import GUIViewer
 import Model
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.unit.dp
-import classes.*
+import classes.Competitor
+import classes.CompetitorInCompetition
+import classes.Group
+import classes.Team
 import gui.Tables.checkpointsTable
-import startShell
 
 object GUI {
     //val db: CompetitionDB = TODO()
 
-    val database = DB("database")
     val model = Model()
-    val controller = DatabaseController(database, model)
+    val controller = GUIController(model)
+    val viewer = GUIViewer()
 
     init {
-        database.cleanCompetitors()
-        database.clearCompetition()
-        getCompetitionForTests().competitors.forEach {
-            val id = database.createEmptyCompetitor(it.team)
-            val competitor = Competitor(
-                it.wishGroup,
-                it.surname,
-                it.name,
-                it.birth,
-                it.title,
-                it.medicalExamination,
-                it.medicalInsurance,
-                id
-            )
-            database.updateCompetitor(competitor)
-        }
-        database.setCompetition(getCompetitionForTests())
-        database.getAllApplications().teams/*.map {
-            it.competitors.map { competitor -> CompetitorWithTeam(it, competitor) }
-        }.flatten().toMutableList()*/.forEach {
-            println(it)
-        }
+        model.addViewer(viewer)
     }
 
     lateinit var myFileChooser: MyFileChooser
@@ -69,15 +50,14 @@ object GUI {
                 ?: currentTab
     }
 
-    private val CHECKPOINTS = TabWithTable(
-        name = "checkpoints",
-        table = checkpointsTable()
-    )
+    private val CHECKPOINTS = Tab.Builder("checkpoints")
+        .withTabs(viewer.rules?.groups?.map { tabOfCheckpointsForGroup(it) } ?: listOf())
+        .build()
 
     private val LOAD_CONFIG = Tab.Builder("Load config")
         .withContent @Composable {
             try {
-                startShell(myFileChooser.pickFile("json"), model)
+                controller.uploadGroups(myFileChooser.pickFile("json"))
             } catch (e: Exception) {
                 MyErrorDialog.exception = Exception(e.message)
             }
@@ -131,40 +111,54 @@ object GUI {
     )*/
 
     private val APPLICATIONS = Tab.Builder("Applications")
-        .withTabs(database.getAllApplications().teams.map { tabOfTeam(it) })
+        .withTabs(viewer.applications?.teams?.map { tabOfTeam(it) } ?: listOf())
+        .withContent {
+            try {
+
+            } catch (e: Exception) {
+                MyErrorDialog.exception = Exception(e.message)
+            }
+        }
         .build()
 
     private val SORTITION = Tab.Builder("Sortition")
-        .withTabs(database.getPossibleGroupNames().map { tabOfStartForGroup(Group(it, mutableListOf())) })
+        .withTabs(viewer.rules?.groups?.map { tabOfStartForGroup(it) } ?: listOf())
         .withContent {
             Button(
                 onClick = {
-                    controller.uploadApplications()
+                    controller.updateApplications()
                     controller.generateSortition()
                 }
             ) {
                 Text("Generate")
             }
+            Button(
+                onClick = {
+
+                }
+            ) {
+                Text("Load sortition")
+            }
         }
         .build()
 
     private val HOME = Tab.Builder("HOME")
-        .withTabs(LOAD_CONFIG, APPLICATIONS, SORTITION)
+        .withTabs(LOAD_CONFIG, APPLICATIONS, SORTITION, CHECKPOINTS)
         .build()
 
     private fun tabOfTeam(team: Team) = TabWithTable<Competitor>(
         name = team.name,
-        table = Tables.teamTable(team)
+        table = Tables.teamTable(team, controller, viewer)
     )
 
     private fun tabOfStartForGroup(group: Group) = TabWithTable<CompetitorInCompetition>(
         name = group.name,
-        table = Tables.groupTable(group)
+        table = Tables.groupTable(group, controller, viewer)
     )
 
-    private fun tabOfCheckpointsForGroup(group: Group) = TabWithTable<CheckPoint>(
+    private fun tabOfCheckpointsForGroup(group: Group) = TabWithTable<CompetitorInCompetition>(
         name = "checkpoints",
-        table = checkpointsTable(group)
+        table = checkpointsTable(group, controller, viewer)
     )
 
     /*fun attachNewTab(parent: Tab?, name: String, content: Tab.() -> Unit) {

@@ -17,9 +17,9 @@ fun getCompetitionForTests(): Competition {
         Group("М12", listOf("1km", "2km", "Finish")),
     )
     val teams = listOf(
-        Team("ПСКОВ,РУСЬ", listOf(competitors[0], competitors[1], competitors[2])),
-        Team("ЦДиЮТиЭ", listOf(competitors[3], competitors[4])),
-        Team("ПСКОВ", listOf(competitors[5], competitors[6]))
+        Team("ПСКОВ,РУСЬ", mutableListOf(competitors[0], competitors[1], competitors[2])),
+        Team("ЦДиЮТиЭ", mutableListOf(competitors[3], competitors[4])),
+        Team("ПСКОВ", mutableListOf(competitors[5], competitors[6]))
     )
     val competitorsInCompetition = listOf(
         CompetitorInCompetition(competitors[0], "7", groups[0], teams[0]),
@@ -31,7 +31,7 @@ fun getCompetitionForTests(): Competition {
         CompetitorInCompetition(competitors[6], "5", groups[1], teams[2]),
     )
     val checkpointStart = CheckPoint(
-        timeMatching = mapOf(
+        timeMatching = mutableMapOf(
             competitorsInCompetition[0] to mutableListOf(Time("12:05:00")),
             competitorsInCompetition[1] to mutableListOf(Time("12:04:00")),
             competitorsInCompetition[2] to mutableListOf(Time("12:02:00")),
@@ -43,7 +43,7 @@ fun getCompetitionForTests(): Competition {
     )
     val checkpoint1km = CheckPoint(
         "1km",
-        timeMatching = mapOf(
+        timeMatching = mutableMapOf(
             competitorsInCompetition[0] to mutableListOf(Time("12:06:00")),
             competitorsInCompetition[1] to mutableListOf(Time("12:05:00")),
             competitorsInCompetition[2] to mutableListOf(Time("12:03:00")),
@@ -55,7 +55,7 @@ fun getCompetitionForTests(): Competition {
     )
     val checkpoint2km = CheckPoint(
         "2km",
-        timeMatching = mapOf(
+        timeMatching = mutableMapOf(
             competitorsInCompetition[0] to mutableListOf(Time("12:07:00")),
             competitorsInCompetition[1] to mutableListOf(Time("12:06:00")),
             competitorsInCompetition[2] to mutableListOf(Time("12:04:00")),
@@ -67,7 +67,7 @@ fun getCompetitionForTests(): Competition {
     )
     val checkpointFinish = CheckPoint(
         "Finish",
-        timeMatching = mapOf(
+        timeMatching = mutableMapOf(
             competitorsInCompetition[0] to mutableListOf(Time("12:08:00")),
             competitorsInCompetition[1] to mutableListOf(Time("12:07:00")),
             competitorsInCompetition[2] to mutableListOf(Time("12:05:00")),

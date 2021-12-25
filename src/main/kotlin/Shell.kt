@@ -1,11 +1,8 @@
-import classes.FileManager
 import mu.KotlinLogging
-import parsers.JsonReader
-import parsers.readGroups
 
 val logger = KotlinLogging.logger { }
 
-fun outputStringWithColor(string: String) {
+/*fun outputStringWithColor(string: String) {
     val color = "\u001B[36m" //cyan
     val reset = "\u001B[0m"
     print(color + string + reset + "\n")
@@ -34,5 +31,5 @@ fun startShell(pathToConfig: String, model: Model) {
     outputStringWithColor("Done!")
 
     logger.info { "End shell" }
-}
+}*/
 

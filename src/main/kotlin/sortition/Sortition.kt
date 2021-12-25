@@ -4,10 +4,10 @@ import classes.*
 
 class Sortition(
     private val applications: Applications,
-    private val groups: List<Group>
+    private val rules: Rules
 ) {
     init {
-        require(groups.isNotEmpty()) { "No available groups!" }
+        require(rules.groups.isNotEmpty()) { "No available groups!" }
     }
 
     fun generateCompetition(): Competition {
@@ -15,7 +15,7 @@ class Sortition(
         val competitorsInCompetition = assignGroupsToNumberedCompetitors(numberedCompetitors)
 
         val competitorToTimeMatching = appointTime(competitorsInCompetition)
-        val checkpoints = mutableListOf(CheckPoint(timeMatching = competitorToTimeMatching.toMutableMap()))
+        val checkpoints = listOf(CheckPoint(timeMatching = competitorToTimeMatching.toMutableMap())) + rules.checkpoints
 
         val invertCompetitorToNumberMatching = competitorsInCompetition.associateBy { competitor -> competitor.number }
         return Competition(checkpoints, competitorsInCompetition, invertCompetitorToNumberMatching)
@@ -39,7 +39,7 @@ class Sortition(
     private fun assignGroupsToNumberedCompetitors(listOfNumberedCompetitors: List<NumberedCompetitor>): List<CompetitorInCompetition> {
         val mappingGroupToCompetitors = listOfNumberedCompetitors.groupBy { numberedCompetitor -> numberedCompetitor.competitor.wishGroup }
         return mappingGroupToCompetitors.map { (wishGroupName, numberedCompetitors) ->
-            val group = groups.firstOrNull { it.name == wishGroupName } ?: groups.random()
+            val group = rules.groups.firstOrNull { it.name == wishGroupName } ?: rules.groups.random()
             numberedCompetitors.map { competitor -> competitor.addGroup(group) }
         }.flatten()
     }
