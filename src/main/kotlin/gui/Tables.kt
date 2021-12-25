@@ -26,12 +26,20 @@ object Tables {
 
     fun teamTable(team: Team, controller: GUIController, viewer: GUIViewer) = MutableTable<Competitor>(
         columns = listOf(
-            Column("surname", true, { surname }, {}),
-            Column("name", true, { name }, {}),
-            Column("birth", true, { birth }, {}),
-            Column("title", true, { title }, {}),
-            Column("medical examination", true, { medicalExamination }, {}),
-            Column("medical insurance", true, { medicalInsurance }, {})
+            Column("surname", true, { surname }, { surname = it; controller.updateApplications() }),
+            Column("name", true, { name }, { name = it; controller.updateApplications() }),
+            Column("birth", true, { birth }, { birth = it; controller.updateApplications() }),
+            Column("title", true, { title }, { title = it; controller.updateApplications() }),
+            Column(
+                "medical examination",
+                true,
+                { medicalExamination },
+                { medicalExamination = it; controller.updateApplications() }),
+            Column(
+                "medical insurance",
+                true,
+                { medicalInsurance },
+                { medicalInsurance = it; controller.updateApplications() })
         ),
         tableData = team.competitors.toMutableList(),
         delete = {
@@ -62,7 +70,7 @@ object Tables {
                 { viewer.competition?.start?.timeMatching?.get(this)?.first()?.stringRepresentation ?: "" },
                 {})
         ),
-        tableData = (viewer.competition?.competitors ?: listOf()).toMutableList(),
+        tableData = (viewer.competition?.competitors?.filter { it.group == group } ?: listOf()).toMutableList(),
     )
 
     private fun columnsByCheckpoints(
@@ -70,13 +78,16 @@ object Tables {
         controller: GUIController,
         viewer: GUIViewer
     ): List<Column<CompetitorInCompetition>> {
+        val competition = viewer.competition
+        require(competition != null) { }
         val checkpoints =
-            group.checkPointNames.mapNotNull { name -> viewer.competition?.checkpoints?.find { it.name == name } }
+            listOf(competition.start) + group.checkPointNames.mapNotNull { name -> competition.checkpoints?.find { it.name == name } }
         val withCount = checkpoints.mapIndexed { index, checkPoint ->
             CheckPointWithCount(checkPoint, checkpoints.take(index).count { it.name == checkPoint.name })
         }
         return withCount.map { checkpoint ->
-            Column(checkpoint.checkPoint.name, true,
+            Column(
+                checkpoint.checkPoint.name, true,
                 { checkpoint.checkPoint.timeMatching[this]?.get(checkpoint.index)?.stringRepresentation ?: "" },
                 {
                     checkpoint.checkPoint.timeMatching[this]?.set(checkpoint.index, Time(it))

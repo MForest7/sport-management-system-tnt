@@ -2,12 +2,12 @@ package classes
 
 open class Competitor(
     val wishGroup: String,
-    val surname: String,
-    val name: String,
-    val birth: String,
-    val title: String,
-    val medicalExamination: String,
-    val medicalInsurance: String,
+    var surname: String,
+    var name: String,
+    var birth: String,
+    var title: String,
+    var medicalExamination: String,
+    var medicalInsurance: String,
     val id: Int = 0
 ) {
     constructor(competitor: Competitor) : this(

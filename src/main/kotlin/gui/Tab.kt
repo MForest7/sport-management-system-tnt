@@ -14,22 +14,25 @@ import androidx.compose.ui.unit.Dp
 
 open class Tab(
     val name: String = "",
-    val nextTabs: MutableList<Tab> = mutableListOf(),
+    var nextTabs: MutableList<Tab> = mutableListOf(),
     var parent: Tab? = null,
-    val content: @Composable() Tab.() -> Any?
+    val content: @Composable() Tab.() -> Any?,
+    var genTabs: (() -> MutableList<Tab>)? = null
 ) {
     data class Builder(
         private var name: String,
         private var tabs: List<Tab> = listOf(),
-        private var content: @Composable Tab.() -> Any? = {}
+        private var content: @Composable Tab.() -> Any? = {},
+        private var genTabs: (() -> MutableList<Tab>)? = null
     ) {
 
         fun withTabs(tabs: List<Tab>) = apply { this.tabs = tabs }
         fun withTabs(vararg tabs: Tab) = apply { this.tabs = tabs.toList() }
+        fun withGenTabs(gen: () -> MutableList<Tab>) = apply { this.genTabs = gen }
         fun withContent(content: @Composable Tab.() -> Any?) = apply { this.content = content }
 
         fun build(): Tab {
-            val tab = Tab(name, tabs.toMutableList(), content = content)
+            val tab = Tab(name, tabs.toMutableList(), content = content, genTabs = genTabs)
             tabs.forEach {
                 it.parent = tab
             }
@@ -37,9 +40,11 @@ open class Tab(
         }
     }
 
-    fun addTab(tab: Tab) {
-        tab.parent = this
-        nextTabs.add(tab)
+    fun addTab(vararg tabs: Tab) {
+        tabs.forEach {
+            it.parent = this
+            nextTabs.add(it)
+        }
     }
 
     init {
@@ -50,6 +55,9 @@ open class Tab(
 
     @Composable
     fun drawHeader(yOffset: Dp, selected: List<Tab>): Tab? {
+        nextTabs = genTabs?.invoke() ?: nextTabs
+        nextTabs.forEach { it.parent = this }
+
         var switch: Tab? by remember { mutableStateOf(null) }
         var refresh: Boolean by remember { mutableStateOf(false) }
         if (refresh) switch = null
@@ -107,11 +115,11 @@ class TabWithTable<T>(
         if (refresh) switch = null
 
         Box(modifier = Modifier.padding(top = yOffset)) {
+            val checkSwitch = content.invoke(this@TabWithTable)
+            if (checkSwitch is Tab) switch = checkSwitch
             val checkUpdate = table.drawHeader()
             table.print()
             if (checkUpdate) switch = update
-            val checkSwitch = content.invoke(this@TabWithTable)
-            if (checkSwitch is Tab) switch = checkSwitch
         }
 
         refresh = (switch != null)

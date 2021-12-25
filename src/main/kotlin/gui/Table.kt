@@ -77,7 +77,7 @@ open class Table<T>(
         }
 
         if (showDelete) {
-            Column(modifier = Modifier.padding(top = 40.dp).verticalScroll(stateVertical)) {
+            Column(modifier = Modifier.padding(top = 80.dp).verticalScroll(stateVertical)) {
                 repeat(size) {
                     var checked by remember { mutableStateOf(false) }
                     Checkbox(
@@ -90,7 +90,7 @@ open class Table<T>(
                                 selected.remove(it)
                             checked = check
                         },
-                        modifier = Modifier.height(60.dp)
+                        modifier = Modifier.height(50.dp)
                     )
                 }
             }
@@ -122,7 +122,7 @@ open class Table<T>(
                         sortBy(index)
                         switch = true
                     },
-                    modifier = Modifier.weight(sqrt(it.name.length.toFloat()))
+                    modifier = Modifier.weight(sqrt(it.name.length.toFloat()) + 1f)
                 ) {
                     Text(it.name)
                 }
@@ -141,12 +141,11 @@ open class Table<T>(
                         TextField(
                             value = curText,
                             onValueChange = { value ->
-                                val oldValue = tableData[index]
                                 tableData[index].(column.set)(value)
                                 curText = value
                             },
                             readOnly = !column.changeable,
-                            modifier = Modifier.weight(sqrt(column.name.length.toFloat()))
+                            modifier = Modifier.weight(sqrt(column.name.length.toFloat()) + 1f).height(50.dp)
                         )
                     }
                 }
@@ -161,7 +160,6 @@ open class Table<T>(
 class MutableTable<T>(
     columns: List<Column<T>>,
     tableData: MutableList<T>,
-    /*private val controller : DatabaseController,*/
     private val delete: (T) -> Unit,
     private val add: () -> T
 ) : Table<T>(

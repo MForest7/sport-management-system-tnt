@@ -32,6 +32,7 @@ class GUIViewer : ModelViewer {
     }
 
     override fun applicationsLoaded(applications: Applications) {
+        println("update applications")
         this.applications = applications
     }
 

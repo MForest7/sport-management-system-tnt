@@ -12,9 +12,9 @@ class MyFileChooser(private val window: ComposeWindow) {
         val fc = JFileChooser()
         fc.currentDirectory = File(System.getProperty("user.dir"))
         fc.fileSelectionMode = JFileChooser.FILES_AND_DIRECTORIES
-        fc.fileFilter = FileNameExtensionFilter("*.$extension", extension)
+        if (extension.isNotBlank())
+            fc.fileFilter = FileNameExtensionFilter("*.$extension", extension)
         fc.showDialog(window, "Attach")
-        println(fc.selectedFile)
         if (fc.selectedFile == null) {
             throw NoChosenFileException("File was not chosen")
         }
