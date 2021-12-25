@@ -3,10 +3,16 @@ package gui
 import GUIController
 import GUIViewer
 import Model
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.height
 import androidx.compose.material.Button
 import androidx.compose.material.Text
+import androidx.compose.material.TextField
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposeWindow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import classes.Competitor
 import classes.CompetitorInCompetition
@@ -34,6 +40,9 @@ object GUI {
 
         var currentTab by remember { mutableStateOf(HOME) }
 
+        controller.updateApplications()
+        controller.updateResults()
+
         Button(
             onClick = { println("Back"); currentTab = currentTab.parent ?: currentTab; println(currentTab.name) },
         ) {
@@ -48,12 +57,9 @@ object GUI {
         currentTab =
             currentTab.drawContent((if (currentTab.nextTabs.isEmpty()) 0 else 40).dp + 40.dp)
                 ?: currentTab
+
         MyErrorDialog.show()
     }
-
-    private val CHECKPOINTS = Tab.Builder("checkpoints")
-        .withTabs(viewer.rules?.groups?.map { tabOfCheckpointsForGroup(it) } ?: listOf())
-        .build()
 
     private val LOAD_CONFIG = Tab.Builder("Load config")
         .withContent @Composable {
@@ -114,33 +120,82 @@ object GUI {
     private val APPLICATIONS = Tab.Builder("Applications")
         .withTabs(viewer.applications?.teams?.map { tabOfTeam(it) } ?: listOf())
         .withContent {
-            try {
+            var switch: Boolean by remember { mutableStateOf(false) }
+            var refresh: Boolean by remember { mutableStateOf(false) }
+            if (refresh) switch = false
 
-            } catch (e: Exception) {
-                MyErrorDialog.exception = Exception(e.message)
+            Button(
+                onClick = {
+                    controller.uploadApplications(myFileChooser.pickFileOrDir())
+                    /*try {
+                    } catch (e: Exception) {
+                        MyErrorDialog.exception = Exception(e.message)
+                    }*/
+                    val tabs = (viewer.applications?.teams?.map { tabOfTeam(it) } ?: listOf<Tab>()).toMutableList()
+                    this.nextTabs = tabs
+                    tabs.forEach {
+                        it.parent = this
+                    }
+                    switch = true
+                },
+            ) {
+                Text("Load applications")
             }
+
+            refresh = (switch)
+            switch
         }
         .build()
 
     private val SORTITION = Tab.Builder("Sortition")
         .withTabs(viewer.rules?.groups?.map { tabOfStartForGroup(it) } ?: listOf())
         .withContent {
-            Button(
-                onClick = {
-                    controller.updateApplications()
-                    controller.generateSortition()
-                }
-            ) {
-                Text("Generate")
-            }
-            Button(
-                onClick = {
+            var switch: Boolean by remember { mutableStateOf(false) }
+            var refresh: Boolean by remember { mutableStateOf(false) }
+            if (refresh) switch = false
 
+            Row() {
+                Button(
+                    onClick = {
+                        controller.updateApplications()
+                        controller.generateSortition()
+                        switch = true
+                    }
+                ) {
+                    Text("Generate")
                 }
-            ) {
-                Text("Load sortition")
+                Button(
+                    onClick = {
+                        try {
+
+                        } catch (e: Exception) {
+                            MyErrorDialog.exception = Exception(e.message)
+                        }
+                    }
+                ) {
+                    Text("Load sortition")
+                }
             }
+
+            if (switch) {
+                val tabs = (viewer.rules?.groups?.map { tabOfStartForGroup(it) } ?: listOf<Tab>()).toMutableList()
+                this.nextTabs = tabs
+                tabs.forEach {
+                    it.parent = this
+                }
+            }
+
+            refresh = (switch)
+            switch
         }
+        .build()
+
+    private val CHECKPOINTS = Tab.Builder("checkpoints")
+        .withGenTabs { (viewer.rules?.groups?.map { tabOfCheckpointsForGroup(it) } ?: listOf()).toMutableList() }
+        .build()
+
+    private val RESULTS_GROUPS = Tab.Builder("Results in groups")
+        .withTabs()
         .build()
 
     private val HOME = Tab.Builder("HOME")
@@ -154,16 +209,32 @@ object GUI {
 
     private fun tabOfStartForGroup(group: Group) = TabWithTable<CompetitorInCompetition>(
         name = group.name,
-        table = Tables.groupTable(group, controller, viewer)
+        table = Tables.groupTable(group, controller, viewer),
+        content = @Composable {
+            TextField(
+                value = group.name,
+                modifier = Modifier.background(Color.Cyan).height(50.dp),
+                onValueChange = {},
+                readOnly = true
+            )
+        }
     )
 
     private fun tabOfCheckpointsForGroup(group: Group) = TabWithTable<CompetitorInCompetition>(
-        name = "checkpoints",
-        table = checkpointsTable(group, controller, viewer)
+        name = group.name,
+        table = checkpointsTable(group, controller, viewer),
+        content = @Composable {
+            TextField(
+                value = group.name,
+                modifier = Modifier.background(Color.Cyan).height(50.dp),
+                onValueChange = {},
+                readOnly = true
+            )
+        }
     )
 
-    /*fun attachNewTab(parent: Tab?, name: String, content: Tab.() -> Unit) {
-        val tab = Tab(name = name, content = content)
-        parent.
-    }*/
+    /*private fun tabOfResultsForGroup(group: Group) = TabWithTable<CompetitorInCompetition>(
+        name = group.name,
+        table = standingsInGroupTable(group, controller, viewer)
+    )*/
 }

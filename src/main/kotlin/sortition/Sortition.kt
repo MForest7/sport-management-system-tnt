@@ -12,7 +12,8 @@ class Sortition(
 
     fun generateCompetition(): Competition {
         val numberedCompetitors = numberAllCompetitors(applications.teams)
-        val competitorsInCompetition = assignGroupsToNumberedCompetitors(numberedCompetitors)
+        val competitorsInCompetition =
+            assignGroupsToNumberedCompetitors(numberedCompetitors).sortedBy { it.number.toInt() }
 
         val competitorToTimeMatching = appointTime(competitorsInCompetition)
         val checkpoints = listOf(CheckPoint(timeMatching = competitorToTimeMatching.toMutableMap())) + rules.checkpoints
