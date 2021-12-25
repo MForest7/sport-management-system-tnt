@@ -154,7 +154,8 @@ class TabWithTable<T>(
         }
 
         Box(modifier = Modifier.padding(start = if (showDelete) 40.dp else 0.dp, top = 40.dp)) {
-            table.draw(stateVertical, showDelete)
+            if (table.draw(stateVertical, showDelete))
+                switch = update
         }
 
         refresh = (switch != null)

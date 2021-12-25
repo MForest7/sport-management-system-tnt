@@ -10,5 +10,5 @@ fun main() = singleWindowApplication(
     state = WindowState(width = 1280.dp, height = 768.dp)
 ) {
     //sportManagerSystemApp(this.window)
-    GUI.run()
+    GUI.run(window)
 }

@@ -6,12 +6,39 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.unit.dp
+import classes.Competitor
 import startShell
 
 object GUI {
     //val db: CompetitionDB = TODO()
 
     val database = DB("database")
+
+    init {
+        database.cleanCompetitors()
+        database.clearCompetition()
+        getCompetitionForTests().competitors.forEach {
+            val id = database.createEmptyCompetitor(it.team)
+            val competitor = Competitor(
+                it.wishGroup,
+                it.surname,
+                it.name,
+                it.birth,
+                it.title,
+                it.medicalExamination,
+                it.medicalInsurance,
+                id
+            )
+            database.updateCompetitor(competitor)
+        }
+        database.setCompetition(getCompetitionForTests())
+        database.getAllApplications().teams/*.map {
+            it.competitors.map { competitor -> CompetitorWithTeam(it, competitor) }
+        }.flatten().toMutableList()*/.forEach {
+            println(it)
+        }
+    }
+
     lateinit var myFileChooser: MyFileChooser
 
     @Composable
@@ -44,14 +71,15 @@ object GUI {
                 MyErrorDialog.exception = Exception(e.message)
             }
         }
+        .build()
 
     private val APPLICATIONS = TabWithTable<CompetitorWithTeam>(
         name = "Applications",
-        table = Tables.applictionsTable()
+        table = Tables.applicationsTable()
     )
 
     private val HOME = Tab.Builder("HOME")
-        .withTabs(APPLICATIONS)
+        .withTabs(LOAD_CONFIG, APPLICATIONS)
         .build()
 
     /*fun attachNewTab(parent: Tab?, name: String, content: Tab.() -> Unit) {

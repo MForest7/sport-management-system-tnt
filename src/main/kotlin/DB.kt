@@ -1,4 +1,5 @@
 import classes.*
+import gui.CompetitorWithTeam
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
@@ -8,8 +9,9 @@ interface CompetitorsDB {
      * id, wishGroup, surname, team, name, birth, title
      */
     fun updateCompetitor(competitor: Competitor)
-    fun createEmptyCompetitor(): Int
+    fun createEmptyCompetitor(team: Team? = null): Int
     fun getAllCompetitors(): List<Competitor>
+    fun getAllApplications(): Applications
     fun cleanCompetitors()
     fun deleteCompetitor(id: Int)
     fun setPossibleGroupNames(groups: List<String>)
@@ -77,7 +79,7 @@ class DB(name: String) : CompetitorsDB, SortitionDB {
         }
     }
 
-    override fun createEmptyCompetitor(): Int {
+    override fun createEmptyCompetitor(teamToAdd: Team?): Int {
         return transaction(db) {
             SchemaUtils.create(Competitors)
             Competitors.insert {
@@ -86,7 +88,7 @@ class DB(name: String) : CompetitorsDB, SortitionDB {
                 it[name] = null
                 it[title] = null
                 it[birth] = null
-                it[team] = null
+                it[team] = teamToAdd?.name
             } get Competitors.id
         }
     }
@@ -105,6 +107,30 @@ class DB(name: String) : CompetitorsDB, SortitionDB {
                     it[Competitors.id]
                 )
             }
+        }
+    }
+
+    override fun getAllApplications(): Applications {
+        return transaction(db) {
+            val competitors = Competitors.selectAll().map {
+                CompetitorWithTeam(
+                    Team(it[Competitors.team] ?: "", listOf()),
+                    Competitor(
+                        it[Competitors.wishGroup] ?: "",
+                        it[Competitors.surname] ?: "",
+                        it[Competitors.name] ?: "",
+                        it[Competitors.birth] ?: "",
+                        it[Competitors.title] ?: "",
+                        "",
+                        "",
+                        it[Competitors.id]
+                    )
+                )
+            }
+            Applications(
+                competitors.groupBy { it.team.name }
+                    .map { (teamName, competitors) -> Team(teamName, competitors.map { it.competitor }) }
+            )
         }
     }
 
