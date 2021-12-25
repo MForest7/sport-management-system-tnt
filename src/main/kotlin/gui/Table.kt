@@ -1,7 +1,9 @@
 package gui
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -20,9 +22,9 @@ class Table<T>(private var data: MutableList<T>, private val default: T) {
         get() = data.size
 
     @Composable
-    fun draw() {
-        Column {
-            data.forEachIndexed { index, it ->
+    fun draw(stateVertical: ScrollState) {
+        Column(modifier = Modifier.verticalScroll(stateVertical)) {
+            data.forEach {
                 TextField(
                     it.toString(),
                     onValueChange = {},

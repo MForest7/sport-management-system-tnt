@@ -32,9 +32,9 @@ val CHEBUREK = Tab.Builder("CHEBUREK")
     }
     .build()
 
-val KEK = TabWithTable<String>(
+val KEK = TabWithTable(
     name = "kek",
-    table = Table<String>(mutableListOf("aboba", "amogus", "sus"), "")
+    table = Table(mutableListOf("aboba", "amogus", "sus"), "")
 )
 
 val LOL = Tab.Builder("LOL")

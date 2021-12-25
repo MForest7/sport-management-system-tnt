@@ -1,6 +1,8 @@
 package gui
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Checkbox
@@ -103,6 +105,7 @@ class TabWithTable<T>(
         val selected by remember { mutableStateOf(mutableSetOf<Int>()) }
 
         val update by remember { mutableStateOf(Update(this)) }
+        val stateVertical = rememberScrollState(0)
 
         Row {
             Button(
@@ -128,7 +131,7 @@ class TabWithTable<T>(
         }
 
         if (showDelete) {
-            Column(modifier = Modifier.padding(top = 40.dp)) {
+            Column(modifier = Modifier.padding(top = 40.dp).verticalScroll(stateVertical)) {
                 repeat(table.size) {
                     var checked by remember { mutableStateOf(false) }
                     Checkbox(
@@ -148,7 +151,7 @@ class TabWithTable<T>(
         }
 
         Box(modifier = Modifier.padding(start = if (showDelete) 40.dp else 0.dp, top = 40.dp)) {
-            table.draw()
+            table.draw(stateVertical)
         }
 
         refresh = (switch != null)
