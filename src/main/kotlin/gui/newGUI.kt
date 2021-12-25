@@ -19,6 +19,7 @@ import classes.CompetitorInCompetition
 import classes.Group
 import classes.Team
 import gui.Tables.checkpointsTable
+import gui.Tables.standingsInGroupTable
 
 object GUI {
     //val db: CompetitionDB = TODO()
@@ -191,16 +192,16 @@ object GUI {
         }
         .build()
 
+    private val RESULTS_GROUPS = Tab.Builder("Results in groups")
+        .withTabs(viewer.rules?.groups?.map { tabOfResultsForGroup(it) } ?: listOf())
+        .build()
+
     private val CHECKPOINTS = Tab.Builder("checkpoints")
         .withGenTabs { (viewer.rules?.groups?.map { tabOfCheckpointsForGroup(it) } ?: listOf()).toMutableList() }
         .build()
 
-    private val RESULTS_GROUPS = Tab.Builder("Results in groups")
-        .withTabs()
-        .build()
-
     private val HOME = Tab.Builder("HOME")
-        .withTabs(LOAD_CONFIG, APPLICATIONS, SORTITION, CHECKPOINTS)
+        .withTabs(LOAD_CONFIG, APPLICATIONS, SORTITION, CHECKPOINTS, RESULTS_GROUPS)
         .build()
 
     private fun tabOfTeam(team: Team) = TabWithTable<Competitor>(
@@ -234,8 +235,16 @@ object GUI {
         }
     )
 
-    /*private fun tabOfResultsForGroup(group: Group) = TabWithTable<CompetitorInCompetition>(
+    private fun tabOfResultsForGroup(group: Group) = TabWithTable(
         name = group.name,
-        table = standingsInGroupTable(group, controller, viewer)
-    )*/
+        table = standingsInGroupTable(group, controller, viewer),
+        content = @Composable {
+            TextField(
+                value = group.name,
+                modifier = Modifier.background(Color.Cyan).height(50.dp),
+                onValueChange = {},
+                readOnly = true
+            )
+        }
+    )
 }

@@ -102,4 +102,21 @@ object Tables {
                 + columnsByCheckpoints(group, controller, viewer),
         tableData = (viewer.competition?.competitors?.filter { it.group == group } ?: listOf()).toMutableList(),
     )
+
+    fun standingsInGroupTable(group: Group, controller: GUIController, viewer: GUIViewer) = Table(
+        columns = listOf(
+            Column("place", false, { place }, {}),
+            Column("number", false, { competitor.number }, {}),
+            Column("surname", false, { competitor.surname }, {}),
+            Column("name", false, { competitor.name }, {}),
+            Column("birth", false, { competitor.birth }, {}),
+            Column("title", false, { competitor.title }, {}),
+            Column("team", false, { competitor.team.name }, {}),
+            Column("time", false, { time }, {}),
+            Column("gap", false, { gap }, {}),
+        ),
+        tableData = (viewer.standingsInGroups?.standings?.flatMap {
+            it.records
+        }?.filter { it.competitor.group == group } ?: listOf()).toMutableList(),
+    )
 }
