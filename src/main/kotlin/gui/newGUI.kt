@@ -210,6 +210,27 @@ object GUI {
 
     private val CHECKPOINTS = Tab.Builder("checkpoints")
         .withGenTabs { (viewer.rules?.groups?.map { tabOfCheckpointsForGroup(it) } ?: listOf()).toMutableList() }
+        .withContent {
+            var switch: Boolean by remember { mutableStateOf(false) }
+            var refresh: Boolean by remember { mutableStateOf(false) }
+            if (refresh) switch = false
+
+            Row() {
+                Button(
+                    onClick = {
+                        MyErrorDialog.tryToDo {
+                            controller.uploadResults(myFileChooser.pickFileOrDir())
+                            switch = true
+                        }
+                    }
+                ) {
+                    Text("Load records")
+                }
+            }
+
+            refresh = (switch)
+            switch
+        }
         .build()
 
     private val HOME = Tab.Builder("HOME")

@@ -59,8 +59,16 @@ class GUIController(private val model: Model) {
 
     fun uploadResults(folder: String) {
         val checkpointNames = rules?.checkpoints?.map { it.name } ?: throw Exception("Rules hasn't been generated")
-        val checkpointsResults = CheckpointsResultsReader(folder, checkpointNames).read()
-        val participantResults = ParticipantsResultsReader(folder, checkpointNames).read()
+        val checkpointsResults = try {
+            CheckpointsResultsReader(folder, checkpointNames).read()
+        } catch (e: Exception) {
+            IncompleteCompetition(listOf())
+        }
+        val participantResults = try {
+            ParticipantsResultsReader(folder, checkpointNames).read()
+        } catch (e: Exception) {
+            IncompleteCompetition(listOf())
+        }
         val finalResults = checkpointsResults + participantResults
         results = finalResults
         model.loadResults(finalResults)
