@@ -46,8 +46,19 @@ class Model {
     }
 
     fun loadResults(results: IncompleteCompetition) {
-        competition?.setCheckpointsFromIncomplete(results) ?: throw Exception("Competition was not generated yet!")
-        notifyViewers { it.resultsLoaded(results) }
+        val newCompetition = competition ?: throw Exception("Competition was not generated yet!")
+        newCompetition.setCheckpointsFromIncomplete(results)
+        competition = newCompetition
+        notifyViewers { it.resultsLoaded(newCompetition) }
+        generateStandingsInGroups()
+        generateStandingsInTeams()
+    }
+
+    fun updateCompetition(competition: Competition) {
+        this.competition = competition
+        notifyViewers { it.resultsLoaded(competition) }
+        generateStandingsInGroups()
+        generateStandingsInTeams()
     }
 
     fun generateStandingsInTeams() {

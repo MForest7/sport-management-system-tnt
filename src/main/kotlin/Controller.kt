@@ -73,7 +73,7 @@ class GUIController(private val model: Model) {
         model.loadApplications(applications)
     }
 
-    fun updateResults() {
-
+    fun updateResults(competition: Competition) {
+        model.updateCompetition(competition)
     }
 }

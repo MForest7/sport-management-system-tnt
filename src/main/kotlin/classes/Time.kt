@@ -11,7 +11,11 @@ class Time(val time: Int) : Comparable<Time> {
         get() = "+" + stringRepresentation.take(4).dropWhile { (it == '0') or (it == ':') } + stringRepresentation.drop(4)
 
     constructor(string: String) : this(
-        string.split(':').map { it.toInt() }.let { it[0]*3600 + it[1]*60 + it[2] }
+        try {
+            string.split(':').map { it.toInt() }.let { it[0] * 3600 + it[1] * 60 + it[2] }
+        } catch (ex: Exception) {
+            0
+        }
     )
 
     operator fun minus(other: Time) = Time(time - other.time)

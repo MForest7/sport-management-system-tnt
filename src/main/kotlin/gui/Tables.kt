@@ -81,7 +81,7 @@ object Tables {
         val competition = viewer.competition
         require(competition != null) { }
         val checkpoints =
-            listOf(competition.start) + group.checkPointNames.mapNotNull { name -> competition.checkpoints?.find { it.name == name } }
+            listOf(competition.start) + group.checkPointNames.mapNotNull { name -> competition.checkpoints.find { it.name == name } }
         val withCount = checkpoints.mapIndexed { index, checkPoint ->
             CheckPointWithCount(checkPoint, checkpoints.take(index).count { it.name == checkPoint.name })
         }
@@ -89,9 +89,14 @@ object Tables {
             Column(
                 checkpoint.checkPoint.name, true,
                 { checkpoint.checkPoint.timeMatching[this]?.get(checkpoint.index)?.stringRepresentation ?: "" },
-                {
-                    checkpoint.checkPoint.timeMatching[this]?.set(checkpoint.index, Time(it))
-                    controller.updateResults()
+                { line ->
+                    val matching = checkpoint.checkPoint.timeMatching[this] ?: mutableListOf()
+                    matching += MutableList<Time>(maxOf(0, checkpoint.index + 1 - matching.size)) { Time(it) }
+                    println(checkpoint.index)
+                    println(matching)
+                    matching[checkpoint.index] = Time(line)
+                    checkpoint.checkPoint.timeMatching[this] = matching
+                    controller.updateResults(competition)
                 }
             )
         }

@@ -1,6 +1,5 @@
 import classes.Applications
 import classes.Competition
-import classes.IncompleteCompetition
 import classes.Rules
 import standings.StandingsInGroups
 import standings.StandingsInTeams
@@ -10,7 +9,7 @@ interface ModelViewer {
     fun applicationsLoaded(applications: Applications)
     fun sortitionGenerated(competition: Competition)
     fun sortitionLoaded(competition: Competition)
-    fun resultsLoaded(incompleteCompetition: IncompleteCompetition)
+    fun resultsLoaded(competition: Competition)
     fun standingsInTeamsGenerated(standingsInTeams: StandingsInTeams)
     fun standingsInGroupsGenerated(standingsInGroups: StandingsInGroups)
 }
@@ -44,8 +43,8 @@ class GUIViewer : ModelViewer {
         this.competition = competition
     }
 
-    override fun resultsLoaded(incompleteCompetition: IncompleteCompetition) {
-        this.competition?.setCheckpointsFromIncomplete(incompleteCompetition)
+    override fun resultsLoaded(competition: Competition) {
+        this.competition = competition
     }
 
     override fun standingsInGroupsGenerated(standingsInGroups: StandingsInGroups) {
