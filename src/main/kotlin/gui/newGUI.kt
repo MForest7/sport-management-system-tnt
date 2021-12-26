@@ -20,6 +20,7 @@ import classes.Group
 import classes.Team
 import gui.Tables.checkpointsTable
 import gui.Tables.standingsInGroupTable
+import gui.Tables.standingsTeams
 import sortition.SortitionPrinter
 
 object GUI {
@@ -205,12 +206,14 @@ object GUI {
         .withTabs(viewer.rules?.groups?.map { tabOfResultsForGroup(it) } ?: listOf())
         .build()
 
+    private val RESULTS_TEAMS = tabOfResultsForTeams()
+
     private val CHECKPOINTS = Tab.Builder("checkpoints")
         .withGenTabs { (viewer.rules?.groups?.map { tabOfCheckpointsForGroup(it) } ?: listOf()).toMutableList() }
         .build()
 
     private val HOME = Tab.Builder("HOME")
-        .withTabs(LOAD_CONFIG, APPLICATIONS, SORTITION, CHECKPOINTS, RESULTS_GROUPS)
+        .withTabs(LOAD_CONFIG, APPLICATIONS, SORTITION, CHECKPOINTS, RESULTS_GROUPS, RESULTS_TEAMS)
         .build()
 
     private fun tabOfTeam(team: Team) = TabWithTable<Competitor>(
@@ -255,5 +258,11 @@ object GUI {
                 readOnly = true
             )
         }
+    )
+
+    private fun tabOfResultsForTeams() = TabWithTable(
+        name = "Team results",
+        table = standingsTeams(controller, viewer),
+        content = {}
     )
 }

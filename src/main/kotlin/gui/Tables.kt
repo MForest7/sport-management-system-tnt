@@ -124,4 +124,13 @@ object Tables {
             it.records
         }?.filter { it.competitor.group == group } ?: listOf()).toMutableList(),
     )
+
+    fun standingsTeams(controller: GUIController, viewer: GUIViewer) = Table(
+        columns = listOf(
+            Column("Team name", false, { team.name }, {}),
+            Column("Place", false, { place.toString() }, {}),
+            Column("Points", false, { points.toString() }, {})
+        ),
+        tableData = (viewer.standingsInTeams?.standings ?: listOf()).toMutableList()
+    )
 }
