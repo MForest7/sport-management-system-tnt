@@ -20,6 +20,7 @@ import classes.Group
 import classes.Team
 import gui.Tables.checkpointsTable
 import gui.Tables.standingsInGroupTable
+import sortition.SortitionPrinter
 
 object GUI {
     val model = Model()
@@ -124,6 +125,18 @@ object GUI {
                     }
                 ) {
                     Text("Load sortition")
+                }
+                Button(
+                    onClick = {
+                        MyErrorDialog.tryToDo {
+                            val sortitionPrinter = SortitionPrinter(myFileChooser.pickFileOrDir(""))
+                            val competition = viewer.competition
+                            require(competition != null) { "competition is null" }
+                            sortitionPrinter.print(competition)
+                        }
+                    }
+                ) {
+                    Text("Export sortition")
                 }
             }
 

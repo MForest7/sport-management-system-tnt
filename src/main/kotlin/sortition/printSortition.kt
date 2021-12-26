@@ -4,8 +4,7 @@ import classes.Competition
 import classes.CompetitorInCompetition
 import classes.CsvWriter
 import classes.Group
-import com.github.doyaaaaaken.kotlincsv.client.ICsvFileWriter
-import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
+import java.io.File
 
 
 class SortitionPrinter(private val dir: String) {
@@ -29,6 +28,7 @@ class SortitionPrinter(private val dir: String) {
         competitors: List<CompetitorInCompetition>,
         competition: Competition
     ) {
+        File(dir).mkdir()
         val writer = CsvWriter(dir + "/" + group.name + ".csv")
         val rows = mutableListOf<List<String>>()
         rows.add(listOf(group.name))
