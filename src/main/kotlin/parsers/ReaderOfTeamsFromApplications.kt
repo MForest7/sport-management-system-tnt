@@ -44,7 +44,7 @@ class ApplicationsReader(override val dir: String) : DirectoryReader<Team, Appli
     }
 
     override fun read(): Applications {
-        return Applications(readUnmerged())
+        return Applications(readUnmerged().toMutableList())
     }
 }
 

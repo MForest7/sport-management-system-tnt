@@ -23,7 +23,7 @@ abstract class Controller(protected val model: Model) {
 
 class GUIController(private val model: Model) {
     private var rules: Rules? = null
-    var applications: Applications = Applications(listOf())
+    var applications: Applications = Applications(mutableListOf())
     var results: IncompleteCompetition? = null
 
     fun uploadGroups(path: String) {
@@ -43,6 +43,11 @@ class GUIController(private val model: Model) {
         val finalRules = rules ?: return
         val competition = SortitionReader(folder, finalRules, applications).read()
         model.uploadSortition(competition)
+    }
+
+    fun addTeam(team: Team) {
+        applications.teams.add(team)
+        updateApplications()
     }
 
     fun generateSortition() {

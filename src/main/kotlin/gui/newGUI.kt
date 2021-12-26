@@ -158,6 +158,7 @@ object GUI {
                     onClick = {
                         if (selected) {
                             val team = Team(text, mutableListOf())
+                            controller.addTeam(team)
                             addTab(
                                 TabWithTable(
                                     name = text,

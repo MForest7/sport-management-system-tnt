@@ -33,6 +33,7 @@ class GUIViewer : ModelViewer {
     override fun applicationsLoaded(applications: Applications) {
         println("update applications")
         this.applications = applications
+        println(this.applications?.teams)
     }
 
     override fun sortitionGenerated(competition: Competition) {

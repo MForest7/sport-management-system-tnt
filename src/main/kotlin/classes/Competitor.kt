@@ -1,7 +1,7 @@
 package classes
 
 open class Competitor(
-    val wishGroup: String,
+    var wishGroup: String,
     var surname: String,
     var name: String,
     var birth: String,

@@ -28,6 +28,7 @@ object Tables {
         columns = listOf(
             Column("surname", true, { surname }, { surname = it; controller.updateApplications() }),
             Column("name", true, { name }, { name = it; controller.updateApplications() }),
+            Column("wish group", true, { wishGroup }, { wishGroup = it; controller.updateApplications() }),
             Column("birth", true, { birth }, { birth = it; controller.updateApplications() }),
             Column("title", true, { title }, { title = it; controller.updateApplications() }),
             Column(

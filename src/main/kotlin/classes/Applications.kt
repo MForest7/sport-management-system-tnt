@@ -1,3 +1,3 @@
 package classes
 
-data class Applications(val teams: List<Team>)
+data class Applications(val teams: MutableList<Team>)

@@ -149,6 +149,7 @@ class DB(name: String) : CompetitorsDB, SortitionDB {
                 ).map { (teamName, comps) ->
                     Team(teamName, comps.toMutableList())
                 }
+                .toMutableList()
             )
         }
     }
