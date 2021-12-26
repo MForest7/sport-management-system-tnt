@@ -17,7 +17,15 @@ import logger
 
 object MyErrorDialog {
     private val openDialog = mutableStateOf(true)
-    var exception: Exception? = null
+    private var exception: Exception? = null
+
+    fun tryToDo(func: () -> (Unit)) {
+        try {
+            func()
+        } catch (e: Exception) {
+            exception = e
+        }
+    }
 
     fun set(e: Exception) {
         exception = e

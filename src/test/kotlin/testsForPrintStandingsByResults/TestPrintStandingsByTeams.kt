@@ -1,9 +1,12 @@
 package testsForPrintStandingsByResults
 
-import classes.*
-import standings.*
+import basicClasses.*
+import classes.AllCheckpointsCalculator
+import standings.StandingsInGroups
+import standings.StandingsInTeams
+import writers.GroupStandingsPrinter
+import writers.TeamsStandingsPrinter
 import java.io.File
-import kotlin.reflect.jvm.internal.impl.descriptors.deserialization.PlatformDependentDeclarationFilter
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 
@@ -12,7 +15,7 @@ internal class TestPrintStandingsByTeams {
 
         val teams = listOf(
             Team(
-                "ПСКОВ,РУСЬ", listOf(
+                "ПСКОВ,РУСЬ", mutableListOf(
                     Competitor("VIP", "НИКИТИН", "ВАЛЕНТИН", "1941", "", "", ""),
                     Competitor("VIP", "НИКИТИНА", "АЛЛА", "1939", "КМС", "", ""),
                     Competitor("VIP", "ТИХОМИРОВ", "ИВАН", "2007", "", "", ""),
@@ -20,10 +23,10 @@ internal class TestPrintStandingsByTeams {
                 )
             ), Team(
                 "ПИТЕР",
-                listOf(Competitor("VIP", "ПУПКИН", "ВАСЯ", "2013", "КМС", "", ""))
+                mutableListOf(Competitor("VIP", "ПУПКИН", "ВАСЯ", "2013", "КМС", "", ""))
             ), Team(
                 "МОСКВА",
-                listOf(Competitor("М14", "ПУПКИН", "ВАСЯ", "2013", "КМС", "", ""))
+                mutableListOf(Competitor("М14", "ПУПКИН", "ВАСЯ", "2013", "КМС", "", ""))
             )
         )
 
@@ -63,10 +66,14 @@ internal class TestPrintStandingsByTeams {
         )
 
         val checkPoints = listOf(
-            CheckPoint("start", competitors.associateWith { listOf(startTimes[it.number.toInt() - 1]) }.toMutableMap()),
+            CheckPoint(
+                "start",
+                competitors.associateWith { mutableListOf(startTimes[it.number.toInt() - 1]) }.toMutableMap()
+            ),
             CheckPoint(
                 "finish",
-                competitors.dropLast(1).associateWith { listOf(finishTimes[it.number.toInt() - 1]) }.toMutableMap()
+                competitors.dropLast(1).associateWith { mutableListOf(finishTimes[it.number.toInt() - 1]) }
+                    .toMutableMap()
             )
         )
 

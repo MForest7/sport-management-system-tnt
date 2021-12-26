@@ -1,10 +1,4 @@
 {
-  "applicationsFolder": "sampleTest/applications",
-  "sortitionFolder": "sampleTest/sortition",
-  "checkpointsFolder": "sampleTest/checkpointsRecord",
-  "participantsFolder": "sampleTest/par",
-  "resultsInTeams": "sampleTest/resultsInTeams.csv",
-  "resultsInGroups": "sampleTest/resultsInGroups.csv",
   "checkPoints": [
     "1km",
     "2km",

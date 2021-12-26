@@ -1,6 +1,6 @@
 package standings
 
-import classes.*
+import basicClasses.*
 import kotlin.math.max
 
 fun Competition.timeOf(competitor: CompetitorInCompetition): Time? {
@@ -28,6 +28,8 @@ class StandingsOfGroup(val competition: Competition, val group: Group, competito
     private val timeOfFirst: Time
 
     init {
+        competition.notFinished.clear()
+
         val (finishedCompetitors, notFinishedCompetitors) = competitors.partition { competition.timeOf(it) != null }
         val finalOrder = finishedCompetitors.sortedBy { competition.timeOf(it) }
         timeOfFirst = if (finalOrder.isNotEmpty()) competition.timeOf(finalOrder.first()) ?: Time(0) else Time(0)

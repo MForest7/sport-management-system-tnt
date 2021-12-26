@@ -8,10 +8,12 @@ import javax.swing.filechooser.FileNameExtensionFilter
 class NoChosenFileException(message: String) : Exception(message)
 
 class MyFileChooser(private val window: ComposeWindow) {
-    fun pickFile(extension: String = ""): String {
+    fun pickFileOrDir(extension: String = ""): String {
         val fc = JFileChooser()
         fc.currentDirectory = File(System.getProperty("user.dir"))
-        fc.fileFilter = FileNameExtensionFilter("*.$extension", extension)
+        fc.fileSelectionMode = JFileChooser.FILES_AND_DIRECTORIES
+        if (extension.isNotBlank())
+            fc.fileFilter = FileNameExtensionFilter("*.$extension", extension)
         fc.showDialog(window, "Attach")
         if (fc.selectedFile == null) {
             throw NoChosenFileException("File was not chosen")
@@ -20,4 +22,5 @@ class MyFileChooser(private val window: ComposeWindow) {
 
         return fc.selectedFile.absolutePath
     }
+
 }
