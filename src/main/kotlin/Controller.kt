@@ -1,24 +1,5 @@
-import classes.*
-import parsers.*
-
-
-abstract class Controller(protected val model: Model) {
-    fun generateSortition() {
-        model.generateSortition()
-    }
-
-    fun generateStandingsInGroups() {
-        model.generateStandingsInGroups()
-    }
-
-    fun generateStandingsInTeams() {
-        model.generateStandingsInTeams()
-    }
-
-    abstract fun uploadApplications()
-
-    abstract fun loadResults()
-}
+import basicClasses.*
+import readers.*
 
 
 class GUIController(private val model: Model) {
@@ -52,14 +33,6 @@ class GUIController(private val model: Model) {
 
     fun generateSortition() {
         model.generateSortition()
-    }
-
-    fun generateStandingsInGroups() {
-        model.generateStandingsInGroups()
-    }
-
-    fun generateStandingsInTeams() {
-        model.generateStandingsInTeams()
     }
 
     fun uploadResults(folder: String) {

@@ -1,6 +1,6 @@
-import classes.Applications
-import classes.Competition
-import classes.Rules
+import basicClasses.Applications
+import basicClasses.Competition
+import basicClasses.Rules
 import standings.StandingsInGroups
 import standings.StandingsInTeams
 
@@ -56,29 +56,3 @@ class GUIViewer : ModelViewer {
         this.standingsInTeams = standingsInTeams
     }
 }
-
-
-/*class ShellViewer(
-    private val fileManager: FileManager
-) : ModelViewer {
-    override fun groupsLoaded() {}
-
-    override fun applicationsLoaded() {}
-
-    override fun sortitionGenerated(competition: Competition) {
-        fileManager.sortitionWriter.print(competition)
-    }
-
-    override fun sortitionLoaded(competition: Competition) {}
-
-    override fun resultsLoaded() {}
-
-    override fun standingsInTeamsGenerated(standingsInTeams: StandingsInTeams) {
-        fileManager.standingsInTeamsWriter.print(standingsInTeams)
-    }
-
-    override fun standingsInGroupsGenerated(standingsInGroups: StandingsInGroups) {
-        fileManager.standingsInGroupsWriter.print(standingsInGroups)
-    }
-}*/
-

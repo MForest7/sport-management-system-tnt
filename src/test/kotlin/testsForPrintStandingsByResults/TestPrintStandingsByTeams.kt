@@ -1,10 +1,11 @@
 package testsForPrintStandingsByResults
 
-import classes.*
-import standings.GroupStandingsPrinter
+import basicClasses.*
+import classes.AllCheckpointsCalculator
 import standings.StandingsInGroups
 import standings.StandingsInTeams
-import standings.TeamsStandingsPrinter
+import writers.GroupStandingsPrinter
+import writers.TeamsStandingsPrinter
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
@@ -14,7 +15,7 @@ internal class TestPrintStandingsByTeams {
 
         val teams = listOf(
             Team(
-                "ПСКОВ,РУСЬ", listOf(
+                "ПСКОВ,РУСЬ", mutableListOf(
                     Competitor("VIP", "НИКИТИН", "ВАЛЕНТИН", "1941", "", "", ""),
                     Competitor("VIP", "НИКИТИНА", "АЛЛА", "1939", "КМС", "", ""),
                     Competitor("VIP", "ТИХОМИРОВ", "ИВАН", "2007", "", "", ""),
@@ -22,10 +23,10 @@ internal class TestPrintStandingsByTeams {
                 )
             ), Team(
                 "ПИТЕР",
-                listOf(Competitor("VIP", "ПУПКИН", "ВАСЯ", "2013", "КМС", "", ""))
+                mutableListOf(Competitor("VIP", "ПУПКИН", "ВАСЯ", "2013", "КМС", "", ""))
             ), Team(
                 "МОСКВА",
-                listOf(Competitor("М14", "ПУПКИН", "ВАСЯ", "2013", "КМС", "", ""))
+                mutableListOf(Competitor("М14", "ПУПКИН", "ВАСЯ", "2013", "КМС", "", ""))
             )
         )
 

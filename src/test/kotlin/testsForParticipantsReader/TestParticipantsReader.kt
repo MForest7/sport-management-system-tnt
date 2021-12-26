@@ -1,13 +1,13 @@
 package testsForParticipantsReader
 
-import classes.IncompleteCheckPointRecord
-import classes.IncompleteCheckpoint
-import classes.IncompleteCompetition
-import classes.Time
+import basicClasses.IncompleteCheckPointRecord
+import basicClasses.IncompleteCheckpoint
+import basicClasses.IncompleteCompetition
+import basicClasses.Time
 import org.junit.Test
-import parsers.DirectoryReaderException
-import parsers.ParticipantsResultsReader
-import parsers.ParticipantsResultsReaderExceptionSameNumber
+import readers.DirectoryReaderException
+import readers.ParticipantsResultsReader
+import readers.ParticipantsResultsReaderExceptionSameNumber
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 

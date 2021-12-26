@@ -2,29 +2,15 @@ package gui
 
 import GUIController
 import GUIViewer
-import classes.*
-
-//data class CompetitorWithTeam(val team: Team, val competitor: Competitor)
+import basicClasses.*
+import standings.RecordInStandings
+import standings.RecordWithTeam
 
 data class CheckPointWithCount(val checkPoint: CheckPoint, val index: Int)
 
 object Tables {
-    /*fun applicationsTable() = Table<CompetitorWithTeam>(
-        columns = listOf(
-            Column("team", false, { team.name }, {}),
-            Column("surname", false, { competitor.surname }, {}),
-            Column("name", false, { competitor.name }, {}),
-            Column("birth", false, { competitor.birth }, {}),
-            Column("title", false, { competitor.title }, {}),
-            Column("medical examination", false, { competitor.medicalExamination }, {}),
-            Column("medical insurance", false, { competitor.medicalInsurance }, {})
-        ),
-        tableData = GUI.database.getAllApplications().teams.map {
-            it.competitors.map { competitor -> CompetitorWithTeam(it, competitor) }
-        }.flatten().toMutableList()
-    )*/
 
-    fun teamTable(team: Team, controller: GUIController, viewer: GUIViewer) = MutableTable<Competitor>(
+    fun teamTable(team: Team, controller: GUIController) = MutableTable(
         columns = listOf(
             Column("surname", true, { surname }, { surname = it; controller.updateApplications() }),
             Column("name", true, { name }, { name = it; controller.updateApplications() }),
@@ -55,7 +41,7 @@ object Tables {
         }
     )
 
-    fun groupTable(group: Group, controller: GUIController, viewer: GUIViewer) = Table<CompetitorInCompetition>(
+    fun groupTable(group: Group, viewer: GUIViewer) = Table(
         columns = listOf(
             Column("number", false, { number }, {}),
             Column("team", false, { team.name }, {}),
@@ -92,9 +78,7 @@ object Tables {
                 { checkpoint.checkPoint.timeMatching[this]?.get(checkpoint.index)?.stringRepresentation ?: "" },
                 { line ->
                     val matching = checkpoint.checkPoint.timeMatching[this] ?: mutableListOf()
-                    matching += MutableList<Time>(maxOf(0, checkpoint.index + 1 - matching.size)) { Time(it) }
-                    println(checkpoint.index)
-                    println(matching)
+                    matching += MutableList(maxOf(0, checkpoint.index + 1 - matching.size)) { Time(it) }
                     matching[checkpoint.index] = Time(line)
                     checkpoint.checkPoint.timeMatching[this] = matching
                     controller.updateResults(competition)
@@ -103,13 +87,13 @@ object Tables {
         }
     }
 
-    fun checkpointsTable(group: Group, controller: GUIController, viewer: GUIViewer) = Table<CompetitorInCompetition>(
+    fun checkpointsTable(group: Group, controller: GUIController, viewer: GUIViewer) = Table(
         columns = listOf(Column<CompetitorInCompetition>("name", false, { name }, {}))
                 + columnsByCheckpoints(group, controller, viewer),
         tableData = (viewer.competition?.competitors?.filter { it.group == group } ?: listOf()).toMutableList(),
     )
 
-    fun standingsInGroupTable(group: Group, controller: GUIController, viewer: GUIViewer) = Table(
+    fun standingsInGroupTable(group: Group, viewer: GUIViewer): Table<RecordInStandings> = Table(
         columns = listOf(
             Column("place", false, { place }, {}),
             Column("number", false, { competitor.number }, {}),
@@ -126,7 +110,7 @@ object Tables {
         }?.filter { it.competitor.group == group } ?: listOf()).toMutableList(),
     )
 
-    fun standingsTeams(controller: GUIController, viewer: GUIViewer) = Table(
+    fun standingsTeams(viewer: GUIViewer): Table<RecordWithTeam> = Table(
         columns = listOf(
             Column("Team name", false, { team.name }, {}),
             Column("Place", false, { place.toString() }, {}),
@@ -135,7 +119,7 @@ object Tables {
         tableData = (viewer.standingsInTeams?.standings ?: listOf()).toMutableList()
     )
 
-    fun showConfig(controller: GUIController, viewer: GUIViewer) = Table<Group>(
+    fun showConfig(viewer: GUIViewer) = Table(
         columns = listOf(
             Column<Group>(
                 "Group name",
@@ -143,7 +127,7 @@ object Tables {
                 { name },
                 {})
         ) + (0 until (viewer.rules?.groups?.maxOfOrNull { it.checkPointNames.size } ?: 0)).map { index ->
-            Column<Group>(
+            Column(
                 "",
                 false, {
                     if (index < checkPointNames.size) {

@@ -1,11 +1,8 @@
 package testsForCsvReader
 
-import classes.CsvReader
-import classes.CsvReaderEmptyFileException
-import classes.CsvReaderException
 import org.junit.Test
-import java.lang.Exception
-import kotlin.test.assertIs
+import readers.CsvReader
+import readers.CsvReaderEmptyFileException
 
 
 internal class TestCsvReader {

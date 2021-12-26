@@ -1,6 +1,6 @@
 package sortition
 
-import classes.*
+import basicClasses.*
 
 class Sortition(
     private val applications: Applications,

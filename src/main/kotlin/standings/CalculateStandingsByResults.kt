@@ -1,6 +1,6 @@
 package standings
 
-import classes.*
+import basicClasses.*
 import kotlin.math.max
 
 fun Competition.timeOf(competitor: CompetitorInCompetition): Time? {

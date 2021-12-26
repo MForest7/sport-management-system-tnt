@@ -1,4 +1,4 @@
-import classes.*
+import basicClasses.*
 import sortition.Sortition
 import standings.StandingsInGroups
 import standings.StandingsInTeams
@@ -65,7 +65,7 @@ class Model {
         generateStandingsInTeams()
     }
 
-    fun generateStandingsInTeams() {
+    private fun generateStandingsInTeams() {
         val newStandings = StandingsInTeams(
             competition ?: throw Exception("Competition was not generated yet!")
         )
@@ -73,7 +73,7 @@ class Model {
         notifyViewers { it.standingsInTeamsGenerated(newStandings) }
     }
 
-    fun generateStandingsInGroups() {
+    private fun generateStandingsInGroups() {
         val newStandings = StandingsInGroups(
             competition ?: throw Exception("Competition was not generated yet!")
         )

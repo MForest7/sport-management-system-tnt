@@ -1,8 +1,9 @@
 package testsForPrintStandingsByResults
 
-import classes.*
-import standings.GroupStandingsPrinter
+import basicClasses.*
+import classes.AllCheckpointsCalculator
 import standings.StandingsInGroups
+import writers.GroupStandingsPrinter
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
@@ -11,18 +12,18 @@ internal class TestPrintStandingsByGroups {
     private fun generateCompetition(): Competition {
         val teams = listOf(
             Team(
-                "ПСКОВ,РУСЬ", listOf(
+                "ПСКОВ,РУСЬ", mutableListOf(
                     Competitor("VIP", "НИКИТИН", "ВАЛЕНТИН", "1941", "", "", "", 1),
-                    Competitor("VIP", "НИКИТИНА", "АЛЛА", "1939", "КМС", "", "",2 ),
-                    Competitor("VIP", "ТИХОМИРОВ", "ИВАН", "2007", "", "", "",3),
-                    Competitor("М14", "ЖЕЛЕЗНЫЙ", "МИХАИЛ", "2007", "", "", "",4)
+                    Competitor("VIP", "НИКИТИНА", "АЛЛА", "1939", "КМС", "", "", 2),
+                    Competitor("VIP", "ТИХОМИРОВ", "ИВАН", "2007", "", "", "", 3),
+                    Competitor("М14", "ЖЕЛЕЗНЫЙ", "МИХАИЛ", "2007", "", "", "", 4)
                 )
             ), Team(
                 "ПИТЕР",
-                listOf(Competitor("VIP", "ПУПКИН", "ВАСЯ", "2013", "КМС", "", "",5))
+                mutableListOf(Competitor("VIP", "ПУПКИН", "ВАСЯ", "2013", "КМС", "", "", 5))
             ), Team(
                 "МОСКВА",
-                listOf(Competitor("М14", "ПУПКИН", "ВАСЯ", "2013", "КМС", "", "",6))
+                mutableListOf(Competitor("М14", "ПУПКИН", "ВАСЯ", "2013", "КМС", "", "", 6))
             )
         )
 
@@ -58,10 +59,14 @@ internal class TestPrintStandingsByGroups {
         )
 
         val checkPoints = listOf(
-            CheckPoint("start", competitors.associateWith { mutableListOf(startTimes[it.number.toInt() - 1]) }),
+            CheckPoint(
+                "start",
+                competitors.associateWith { mutableListOf(startTimes[it.number.toInt() - 1]) }.toMutableMap()
+            ),
             CheckPoint(
                 "finish",
                 competitors.dropLast(1).associateWith { mutableListOf(finishTimes[it.number.toInt() - 1]) }
+                    .toMutableMap()
             )
         )
 

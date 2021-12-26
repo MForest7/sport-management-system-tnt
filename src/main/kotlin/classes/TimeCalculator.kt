@@ -1,5 +1,10 @@
 package classes
 
+import basicClasses.CheckPoint
+import basicClasses.Competition
+import basicClasses.CompetitorInCompetition
+import basicClasses.Time
+
 interface TimeCalculator {
     fun getTime(competition: Competition, competitor: CompetitorInCompetition): Time?
 }
@@ -19,16 +24,5 @@ object AllCheckpointsCalculator : TimeCalculator {
             nextTime
         }
         return finishTime - startTime
-    }
-}
-
-class KCheckpointsCalculator(val minCheckpoints: Int) : TimeCalculator {
-    override fun getTime(competition: Competition, competitor: CompetitorInCompetition): Time? {
-        val checkPointsOrder = competitor.group.checkPointNames
-            .map { name -> competition.checkpoints.find { it.name == name } }.filterIsInstance<CheckPoint>()
-            .filter { checkpoint -> !checkpoint.timeMatching[competitor].isNullOrEmpty() }
-            .sortedBy { checkPoint -> checkPoint.timeMatching[competitor]?.minOf { it } }
-        if (checkPointsOrder.size <= minCheckpoints) return null
-        return checkPointsOrder[minCheckpoints].timeMatching[competitor]?.minOf { it }
     }
 }

@@ -16,7 +16,7 @@ open class Tab(
     val name: String = "",
     var nextTabs: MutableList<Tab> = mutableListOf(),
     var parent: Tab? = null,
-    val content: @Composable() Tab.() -> Any?,
+    val content: @Composable Tab.() -> Any?,
     var genTabs: (() -> MutableList<Tab>)? = null
 ) {
     data class Builder(
@@ -51,7 +51,7 @@ open class Tab(
         nextTabs.forEach { it.parent = this }
     }
 
-    fun getStack(): List<Tab> = (parent?.getStack() ?: listOf<Tab>()) + listOf(this)
+    fun getStack(): List<Tab> = (parent?.getStack() ?: listOf()) + listOf(this)
 
     @Composable
     fun drawHeader(yOffset: Dp, selected: List<Tab>): Tab? {
@@ -118,7 +118,6 @@ class TabWithTable<T>(
             val checkSwitch = content.invoke(this@TabWithTable)
             if (checkSwitch is Tab) switch = checkSwitch
             val checkUpdate = table.drawHeader()
-            table.print()
             if (checkUpdate) switch = update
         }
 

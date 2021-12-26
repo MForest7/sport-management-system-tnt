@@ -1,13 +1,12 @@
 package testsForReaderResultForEachCheckPoint
 
 
-import classes.IncompleteCheckPointRecord
-import classes.Time
-import classes.IncompleteCheckpoint
-import parsers.CheckpointsResultsReader
+import basicClasses.IncompleteCheckPointRecord
+import basicClasses.IncompleteCheckpoint
+import basicClasses.Time
+import readers.CheckpointsResultsReader
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
-import kotlin.test.assertEquals
 
 
 class TestMultipleCheckPoints {
