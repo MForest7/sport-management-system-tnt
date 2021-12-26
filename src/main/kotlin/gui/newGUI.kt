@@ -22,8 +22,6 @@ import gui.Tables.checkpointsTable
 import gui.Tables.standingsInGroupTable
 
 object GUI {
-    //val db: CompetitionDB = TODO()
-
     val model = Model()
     val controller = GUIController(model)
     val viewer = GUIViewer()
@@ -41,8 +39,10 @@ object GUI {
 
         var currentTab by remember { mutableStateOf(HOME) }
 
-        controller.updateApplications()
-        controller.updateResults()
+        MyErrorDialog.tryToDo {
+            controller.updateApplications()
+            controller.updateResults()
+        }
 
         Button(
             onClick = { println("Back"); currentTab = currentTab.parent ?: currentTab; println(currentTab.name) },
@@ -51,9 +51,6 @@ object GUI {
         }
 
         println(currentTab.getStack().map { it.name })
-        /*currentTab.getStack().forEachIndexed { index, it ->
-            currentTab = it.drawHeader((index * 40 + 40).dp, currentTab.getStack()) ?: currentTab
-        }*/
         currentTab = currentTab.drawHeader((40).dp, currentTab.getStack()) ?: currentTab
         currentTab =
             currentTab.drawContent((if (currentTab.nextTabs.isEmpty()) 0 else 40).dp + 40.dp)
@@ -64,59 +61,12 @@ object GUI {
 
     private val LOAD_CONFIG = Tab.Builder("Load config")
         .withContent @Composable {
-            try {
+            MyErrorDialog.tryToDo {
                 controller.uploadGroups(myFileChooser.pickFileOrDir("json"))
-            } catch (e: Exception) {
-                MyErrorDialog.exception = Exception(e.message)
             }
             parent
         }
         .build()
-
-    /*private val APPLICATIONS: TabWithTable<CompetitorWithTeam> = TabWithTable(
-        name = "Applications",
-        nextTabs = database.getAllApplications().teams.map { tabOfTeam(it) }.toMutableList(),
-        table = Tables.applicationsTable(),
-        content = @Composable {
-            var selected by remember { mutableStateOf(false) }
-            var text by remember { mutableStateOf("") }
-
-            var switch: Tab? by remember { mutableStateOf(null) }
-            var refresh: Boolean by remember { mutableStateOf(false) }
-            val update by remember { mutableStateOf(Update(this)) }
-            if (refresh) switch = null
-
-            Button(
-                onClick = {
-                    if (selected) {
-                        val team = Team(text, listOf())
-                        addTab(TabWithTable(
-                            name = text,
-                            table = Tables.teamTable(team)
-                        ))
-                        switch = update
-                    }
-                    selected = !selected
-                },
-                modifier = Modifier.width(150.dp),
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Green)
-            ) {
-                Text("New Team")
-            }
-
-            if (selected) {
-                TextField(
-                    value = text,
-                    onValueChange = { text = it },
-                    readOnly = false,
-                    modifier = Modifier.padding(start = 150.dp).height(50.dp)
-                )
-            }
-
-            refresh = (switch != null)
-            switch
-        }
-    )*/
 
     private val APPLICATIONS = Tab.Builder("Applications")
         .withTabs(viewer.applications?.teams?.map { tabOfTeam(it) } ?: listOf())
@@ -127,11 +77,9 @@ object GUI {
 
             Button(
                 onClick = {
-                    controller.uploadApplications(myFileChooser.pickFileOrDir())
-                    /*try {
-                    } catch (e: Exception) {
-                        MyErrorDialog.exception = Exception(e.message)
-                    }*/
+                    MyErrorDialog.tryToDo {
+                        controller.uploadApplications(myFileChooser.pickFileOrDir())
+                    }
                     val tabs = (viewer.applications?.teams?.map { tabOfTeam(it) } ?: listOf<Tab>()).toMutableList()
                     this.nextTabs = tabs
                     tabs.forEach {
@@ -158,20 +106,20 @@ object GUI {
             Row() {
                 Button(
                     onClick = {
-                        controller.updateApplications()
-                        controller.generateSortition()
-                        switch = true
+                        MyErrorDialog.tryToDo {
+                            controller.updateApplications()
+                            controller.generateSortition()
+                            switch = true
+                        }
                     }
                 ) {
                     Text("Generate")
                 }
                 Button(
                     onClick = {
-                        try {
+                        MyErrorDialog.tryToDo {
                             controller.uploadSortition(myFileChooser.pickFileOrDir())
                             switch = true
-                        } catch (e: Exception) {
-                            MyErrorDialog.exception = Exception(e.message)
                         }
                     }
                 ) {
