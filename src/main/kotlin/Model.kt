@@ -38,11 +38,15 @@ class Model {
         ).generateCompetition()
         competition = newCompetition
         notifyViewers { it.sortitionGenerated(newCompetition) }
+        generateStandingsInGroups()
+        generateStandingsInTeams()
     }
 
     fun uploadSortition(sortition: Competition) {
         competition = sortition
         notifyViewers { it.sortitionGenerated(sortition) }
+        generateStandingsInGroups()
+        generateStandingsInTeams()
     }
 
     fun loadResults(results: IncompleteCompetition) {

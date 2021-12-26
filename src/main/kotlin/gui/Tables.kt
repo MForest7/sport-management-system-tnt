@@ -78,8 +78,8 @@ object Tables {
         controller: GUIController,
         viewer: GUIViewer
     ): List<Column<CompetitorInCompetition>> {
-        val competition = viewer.competition
-        require(competition != null) { }
+        val competition = viewer.competition ?: return listOf()
+
         val checkpoints =
             listOf(competition.start) + group.checkPointNames.mapNotNull { name -> competition.checkpoints.find { it.name == name } }
         val withCount = checkpoints.mapIndexed { index, checkPoint ->
@@ -143,7 +143,7 @@ object Tables {
                 {})
         ) + (0 until (viewer.rules?.groups?.maxOfOrNull { it.checkPointNames.size } ?: 0)).map { index ->
             Column<Group>(
-                "Checkpoint",
+                "",
                 false, {
                     if (index < checkPointNames.size) {
                         checkPointNames[index]

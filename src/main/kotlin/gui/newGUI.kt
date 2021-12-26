@@ -6,7 +6,9 @@ import Model
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.*
@@ -65,19 +67,9 @@ object GUI {
         MyErrorDialog.show()
     }
 
-    private val LOAD_CONFIG = Tab.Builder("Load config")
-        .withContent @Composable {
-            MyErrorDialog.tryToDo {
-                controller.uploadGroups(myFileChooser.pickFileOrDir("json"))
-            }
-            parent
-        }
-        .build()
-
-    private val SHOW_CONFIG = TabWithTable(
-        name = "Show Config",
-        table = showConfig(controller, viewer),
-        content = {}
+    private val SHOW_CONFIG = Tab(
+        name = "Show config",
+        content = { showConfig(controller, viewer).drawHeader() }
     )
 
 
@@ -126,27 +118,73 @@ object GUI {
         }
     )*/
 
+    private val RESULTS_GROUPS: Tab = Tab.Builder("Results in groups")
+        .withGenTabs { (viewer.rules?.groups?.map { tabOfResultsForGroup(it) } ?: listOf()).toMutableList() }
+        .build()
+
+    private var RESULTS_TEAMS = Tab(
+        name = "Results of teams",
+        content = { tabOfResultsForTeams().drawContent(0.dp) }
+    )
+
     private val APPLICATIONS = Tab.Builder("Applications")
         .withTabs(viewer.applications?.teams?.map { tabOfTeam(it) } ?: listOf())
         .withContent {
+            var selected by remember { mutableStateOf(false) }
+            var text by remember { mutableStateOf("") }
+
             var switch: Boolean by remember { mutableStateOf(false) }
             var refresh: Boolean by remember { mutableStateOf(false) }
             if (refresh) switch = false
 
-            Button(
-                onClick = {
-                    MyErrorDialog.tryToDo {
-                        controller.uploadApplications(myFileChooser.pickFileOrDir())
-                    }
-                    val tabs = (viewer.applications?.teams?.map { tabOfTeam(it) } ?: listOf<Tab>()).toMutableList()
-                    this.nextTabs = tabs
-                    tabs.forEach {
-                        it.parent = this
-                    }
-                    switch = true
-                },
-            ) {
-                Text("Load applications")
+            Row() {
+                Button(
+                    onClick = {
+                        MyErrorDialog.tryToDo {
+                            controller.uploadApplications(myFileChooser.pickFileOrDir())
+                        }
+                        val tabs = (viewer.applications?.teams?.map { tabOfTeam(it) } ?: listOf<Tab>()).toMutableList()
+                        this@withContent.nextTabs = tabs
+                        tabs.forEach {
+                            it.parent = this@withContent
+                        }
+                        switch = true
+                    },
+                ) {
+                    Text("Load applications")
+                }
+
+                Button(
+                    onClick = {
+                        if (selected) {
+                            val team = Team(text, mutableListOf())
+                            addTab(
+                                TabWithTable(
+                                    name = text,
+                                    table = Tables.teamTable(team, controller, viewer)
+                                )
+                            )
+                            switch = true
+                        }
+                        selected = !selected
+                    },
+                    modifier = Modifier.width(250.dp),
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.Green)
+                ) {
+                    Text("New Team")
+                }
+                if (selected) {
+                    TextField(
+                        value = text,
+                        onValueChange = { text = it },
+                        readOnly = false,
+                        modifier = Modifier.height(50.dp)
+                    )
+                }
+            }
+
+            if (switch) {
+                setNextTabs(RESULTS_GROUPS, (viewer.rules?.groups?.map { tabOfResultsForGroup(it) } ?: listOf()))
             }
 
             refresh = (switch)
@@ -198,11 +236,11 @@ object GUI {
             }
 
             if (switch) {
-                val tabs = (viewer.rules?.groups?.map { tabOfStartForGroup(it) } ?: listOf<Tab>()).toMutableList()
-                this.nextTabs = tabs
-                tabs.forEach {
-                    it.parent = this
-                }
+                setNextTabs(
+                    this,
+                    (viewer.rules?.groups?.map { tabOfStartForGroup(it) } ?: listOf<Tab>()).toMutableList())
+                setNextTabs(CHECKPOINTS, (viewer.rules?.groups?.map { tabOfCheckpointsForGroup(it) } ?: listOf()))
+                RESULTS_TEAMS = tabOfResultsForTeams()
             }
 
             refresh = (switch)
@@ -210,14 +248,8 @@ object GUI {
         }
         .build()
 
-    private val RESULTS_GROUPS = Tab.Builder("Results in groups")
-        .withTabs(viewer.rules?.groups?.map { tabOfResultsForGroup(it) } ?: listOf())
-        .build()
-
-    private val RESULTS_TEAMS = tabOfResultsForTeams()
-
     private val CHECKPOINTS = Tab.Builder("checkpoints")
-        .withGenTabs { (viewer.rules?.groups?.map { tabOfCheckpointsForGroup(it) } ?: listOf()).toMutableList() }
+        .withTabs((viewer.rules?.groups?.map { tabOfCheckpointsForGroup(it) } ?: listOf()).toMutableList())
         .withContent {
             var switch: Boolean by remember { mutableStateOf(false) }
             var refresh: Boolean by remember { mutableStateOf(false) }
@@ -238,6 +270,18 @@ object GUI {
 
             refresh = (switch)
             switch
+        }
+        .build()
+
+    private val LOAD_CONFIG = Tab.Builder("Load config")
+        .withContent @Composable {
+            MyErrorDialog.tryToDo {
+                controller.uploadGroups(myFileChooser.pickFileOrDir("json"))
+                setNextTabs(CHECKPOINTS, (viewer.rules?.groups?.map { tabOfCheckpointsForGroup(it) } ?: listOf()))
+                setNextTabs(SORTITION, (viewer.rules?.groups?.map { tabOfStartForGroup(it) } ?: listOf()))
+                setNextTabs(RESULTS_GROUPS, (viewer.rules?.groups?.map { tabOfResultsForGroup(it) } ?: listOf()))
+            }
+            parent
         }
         .build()
 
@@ -273,6 +317,7 @@ object GUI {
                 onValueChange = {},
                 readOnly = true
             )
+            println(viewer.standingsInGroups)
         }
     )
 
@@ -286,7 +331,7 @@ object GUI {
                 onValueChange = {},
                 readOnly = true
             )
-        }
+        },
     )
 
     private fun tabOfResultsForTeams() = TabWithTable(
@@ -294,4 +339,11 @@ object GUI {
         table = standingsTeams(controller, viewer),
         content = {}
     )
+
+    private fun setNextTabs(tab: Tab, nextTabs: List<Tab>) {
+        tab.nextTabs = nextTabs.toMutableList()
+        nextTabs.forEach {
+            it.parent = tab
+        }
+    }
 }
