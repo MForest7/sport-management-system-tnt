@@ -67,8 +67,6 @@ object GUI {
         .withContent @Composable {
             MyErrorDialog.tryToDo {
                 controller.uploadGroups(myFileChooser.pickFileOrDir("json"))
-            } catch (e: Exception) {
-                MyErrorDialog.exception = Exception(e.message)
             }
             parent
         }
@@ -171,8 +169,6 @@ object GUI {
                         MyErrorDialog.tryToDo {
                             controller.uploadSortition(myFileChooser.pickFileOrDir())
                             switch = true
-                        } catch (e: Exception) {
-                            MyErrorDialog.exception = Exception(e.message)
                         }
                     }
                 ) {
@@ -211,10 +207,6 @@ object GUI {
 
     private val CHECKPOINTS = Tab.Builder("checkpoints")
         .withGenTabs { (viewer.rules?.groups?.map { tabOfCheckpointsForGroup(it) } ?: listOf()).toMutableList() }
-        .build()
-
-    private val RESULTS_GROUPS = Tab.Builder("Results in groups")
-        .withTabs()
         .build()
 
     private val HOME = Tab.Builder("HOME")

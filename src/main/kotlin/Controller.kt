@@ -1,7 +1,4 @@
-import classes.Applications
-import classes.Group
-import classes.IncompleteCompetition
-import classes.Rules
+import classes.*
 import parsers.*
 
 
