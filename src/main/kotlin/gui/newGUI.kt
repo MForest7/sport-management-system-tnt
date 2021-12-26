@@ -19,6 +19,7 @@ import classes.CompetitorInCompetition
 import classes.Group
 import classes.Team
 import gui.Tables.checkpointsTable
+import gui.Tables.showConfig
 import gui.Tables.standingsInGroupTable
 import gui.Tables.standingsTeams
 import sortition.SortitionPrinter
@@ -72,6 +73,13 @@ object GUI {
             parent
         }
         .build()
+
+    private val SHOW_CONFIG = TabWithTable(
+        name = "Show Config",
+        table = showConfig(controller, viewer),
+        content = {}
+    )
+
 
     /*private val APPLICATIONS: TabWithTable<CompetitorWithTeam> = TabWithTable(
         name = "Applications",
@@ -234,7 +242,7 @@ object GUI {
         .build()
 
     private val HOME = Tab.Builder("HOME")
-        .withTabs(LOAD_CONFIG, APPLICATIONS, SORTITION, CHECKPOINTS, RESULTS_GROUPS, RESULTS_TEAMS)
+        .withTabs(LOAD_CONFIG, SHOW_CONFIG, APPLICATIONS, SORTITION, CHECKPOINTS, RESULTS_GROUPS, RESULTS_TEAMS)
         .build()
 
     private fun tabOfTeam(team: Team) = TabWithTable<Competitor>(

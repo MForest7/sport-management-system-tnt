@@ -133,4 +133,25 @@ object Tables {
         ),
         tableData = (viewer.standingsInTeams?.standings ?: listOf()).toMutableList()
     )
+
+    fun showConfig(controller: GUIController, viewer: GUIViewer) = Table<Group>(
+        columns = listOf(
+            Column<Group>(
+                "Group name",
+                false,
+                { name },
+                {})
+        ) + (0 until (viewer.rules?.groups?.maxOfOrNull { it.checkPointNames.size } ?: 0)).map { index ->
+            Column<Group>(
+                "Checkpoint",
+                false, {
+                    if (index < checkPointNames.size) {
+                        checkPointNames[index]
+                    } else {
+                        ""
+                    }
+                }, {})
+        },
+        tableData = (viewer.rules?.groups ?: listOf()).toMutableList()
+    )
 }
