@@ -1,7 +1,7 @@
-package basicClasses
+package competition
 
-import classes.AllCheckpointsCalculator
-import classes.TimeCalculator
+import writers.AllCheckpointsCalculator
+import writers.TimeCalculator
 
 data class Group(
     val name: String,

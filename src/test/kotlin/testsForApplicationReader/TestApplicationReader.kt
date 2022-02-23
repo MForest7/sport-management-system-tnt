@@ -1,10 +1,10 @@
 package testsForApplicationReader
 
-import basicClasses.Applications
-import basicClasses.Competitor
-import basicClasses.Team
+import competition.Applications
+import competition.competitors.Competitor
+import competition.teams.ApplicationsReader
+import competition.teams.Team
 import org.junit.Test
-import readers.ApplicationsReader
 import java.io.File
 import kotlin.test.assertEquals
 

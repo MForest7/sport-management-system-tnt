@@ -16,13 +16,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import basicClasses.Group
-import basicClasses.Team
+import competition.Group
+import competition.sortition.SortitionPrinter
+import competition.teams.Team
 import gui.Tables.checkpointsTable
 import gui.Tables.showConfig
 import gui.Tables.standingsInGroupTable
 import gui.Tables.standingsTeams
-import writers.SortitionPrinter
 
 object GUI {
     private val model = Model()
@@ -140,7 +140,7 @@ object GUI {
         }
         .build()
 
-    private val SORTITION = Tab.Builder("Sortition")
+    private val SORTITION = Tab.Builder("competition/sortition")
         .withTabs(viewer.rules?.groups?.map { tabOfStartForGroup(it) } ?: listOf())
         .withContent {
             var switch: Boolean by remember { mutableStateOf(false) }

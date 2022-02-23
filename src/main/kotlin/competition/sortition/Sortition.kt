@@ -1,6 +1,14 @@
-package sortition
+package competition.sortition
 
-import basicClasses.*
+import competition.Applications
+import competition.Competition
+import competition.Group
+import competition.Rules
+import competition.checkpoints.CheckPoint
+import competition.competitors.Competitor
+import competition.competitors.CompetitorInCompetition
+import competition.teams.Team
+import competition.time.Time
 
 class Sortition(
     private val applications: Applications,

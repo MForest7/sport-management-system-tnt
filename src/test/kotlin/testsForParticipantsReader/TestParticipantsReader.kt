@@ -1,15 +1,17 @@
 package testsForParticipantsReader
 
-import basicClasses.IncompleteCheckPointRecord
-import basicClasses.IncompleteCheckpoint
-import basicClasses.IncompleteCompetition
-import basicClasses.Time
+import competition.checkpoints.IncompleteCheckPointRecord
+import competition.checkpoints.IncompleteCheckpoint
+import competition.checkpoints.IncompleteCompetition
+import competition.competitors.ParticipantsResultsReader
+import competition.competitors.ParticipantsResultsReaderExceptionSameNumber
+import competition.time.Time
 import org.junit.Test
 import readers.DirectoryReaderException
-import readers.ParticipantsResultsReader
-import readers.ParticipantsResultsReaderExceptionSameNumber
 import java.io.File
-import kotlin.test.*
+import kotlin.test.BeforeTest
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 internal class TestParticipantsReader {
     private val dirPath =

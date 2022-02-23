@@ -1,9 +1,9 @@
-package classes
+package writers
 
-import basicClasses.CheckPoint
-import basicClasses.Competition
-import basicClasses.CompetitorInCompetition
-import basicClasses.Time
+import competition.Competition
+import competition.checkpoints.CheckPoint
+import competition.competitors.CompetitorInCompetition
+import competition.time.Time
 
 interface TimeCalculator {
     fun getTime(competition: Competition, competitor: CompetitorInCompetition): Time?

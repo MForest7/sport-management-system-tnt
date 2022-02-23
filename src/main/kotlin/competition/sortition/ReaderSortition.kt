@@ -1,6 +1,13 @@
-package readers
+package competition.sortition
 
-import basicClasses.*
+import competition.Applications
+import competition.Competition
+import competition.Rules
+import competition.checkpoints.CheckPoint
+import competition.competitors.CompetitorInCompetition
+import competition.time.Time
+import readers.CsvReader
+import readers.DirectoryReader
 
 data class CompetitorRaw(
     val number: String,

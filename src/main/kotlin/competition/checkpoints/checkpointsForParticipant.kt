@@ -1,4 +1,6 @@
-package basicClasses
+package competition.checkpoints
+
+import competition.time.Time
 
 data class CheckpointForParticipantRecord(val nameCheckPoint: String, val time: Time)
 

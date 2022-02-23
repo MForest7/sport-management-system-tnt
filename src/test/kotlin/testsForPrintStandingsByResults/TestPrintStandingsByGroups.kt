@@ -1,9 +1,15 @@
 package testsForPrintStandingsByResults
 
-import basicClasses.*
-import classes.AllCheckpointsCalculator
-import standings.StandingsInGroups
-import writers.GroupStandingsPrinter
+import competition.Competition
+import competition.Group
+import competition.checkpoints.CheckPoint
+import competition.competitors.Competitor
+import competition.competitors.CompetitorInCompetition
+import competition.standings.GroupStandingsPrinter
+import competition.standings.StandingsInGroups
+import competition.teams.Team
+import competition.time.Time
+import writers.AllCheckpointsCalculator
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertContentEquals

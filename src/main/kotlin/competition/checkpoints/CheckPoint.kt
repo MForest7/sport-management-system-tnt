@@ -1,4 +1,7 @@
-package basicClasses
+package competition.checkpoints
+
+import competition.competitors.CompetitorInCompetition
+import competition.time.Time
 
 data class CheckPoint(
     var name: String = "",

@@ -1,4 +1,4 @@
-package basicClasses
+package competition.competitors
 
 open class Competitor(
     var wishGroup: String,

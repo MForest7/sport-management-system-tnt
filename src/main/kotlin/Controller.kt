@@ -1,5 +1,14 @@
-import basicClasses.*
-import readers.*
+import competition.Applications
+import competition.Competition
+import competition.Group
+import competition.Rules
+import competition.checkpoints.CheckpointsResultsReader
+import competition.checkpoints.IncompleteCompetition
+import competition.competitors.ParticipantsResultsReader
+import competition.config.JsonReader
+import competition.sortition.SortitionReader
+import competition.teams.ApplicationsReader
+import competition.teams.Team
 
 
 class GUIController(private val model: Model) {

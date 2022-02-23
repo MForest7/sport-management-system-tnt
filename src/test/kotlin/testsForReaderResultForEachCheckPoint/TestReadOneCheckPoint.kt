@@ -1,9 +1,9 @@
 package testsForReaderResultForEachCheckPoint
 
 
-import basicClasses.IncompleteCheckPointRecord
-import basicClasses.Time
-import readers.CheckpointsResultsReader
+import competition.checkpoints.CheckpointsResultsReader
+import competition.checkpoints.IncompleteCheckPointRecord
+import competition.time.Time
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals

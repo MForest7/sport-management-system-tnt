@@ -1,9 +1,13 @@
 package testSortition
 
 
-import basicClasses.*
-import classes.AllCheckpointsCalculator
-import sortition.Sortition
+import competition.Applications
+import competition.Group
+import competition.Rules
+import competition.competitors.Competitor
+import competition.sortition.Sortition
+import competition.teams.Team
+import writers.AllCheckpointsCalculator
 import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertContentEquals

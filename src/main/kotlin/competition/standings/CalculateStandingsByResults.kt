@@ -1,6 +1,10 @@
-package standings
+package competition.standings
 
-import basicClasses.*
+import competition.Competition
+import competition.Group
+import competition.competitors.CompetitorInCompetition
+import competition.teams.Team
+import competition.time.Time
 import kotlin.math.max
 
 fun Competition.timeOf(competitor: CompetitorInCompetition): Time? {

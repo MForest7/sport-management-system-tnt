@@ -1,7 +1,11 @@
-import basicClasses.*
-import sortition.Sortition
-import standings.StandingsInGroups
-import standings.StandingsInTeams
+import competition.Applications
+import competition.Competition
+import competition.Group
+import competition.Rules
+import competition.checkpoints.IncompleteCompetition
+import competition.sortition.Sortition
+import competition.standings.StandingsInGroups
+import competition.standings.StandingsInTeams
 
 class Model {
     private val viewers = mutableSetOf<ModelViewer>()

@@ -1,7 +1,7 @@
 package testsForCsvWriter
 
-import classes.CsvWriter
 import org.junit.Test
+import writers.CsvWriter
 import kotlin.test.assertEquals
 
 internal class TestCsvWriter {

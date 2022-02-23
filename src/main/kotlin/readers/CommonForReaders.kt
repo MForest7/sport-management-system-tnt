@@ -1,8 +1,8 @@
 package readers
 
-import basicClasses.CheckpointForParticipantRecord
-import basicClasses.IncompleteCheckPointRecord
-import basicClasses.Time
+import competition.checkpoints.CheckpointForParticipantRecord
+import competition.checkpoints.IncompleteCheckPointRecord
+import competition.time.Time
 import java.io.File
 
 

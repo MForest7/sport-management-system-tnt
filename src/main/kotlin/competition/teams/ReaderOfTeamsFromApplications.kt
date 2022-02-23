@@ -1,9 +1,10 @@
-package readers
+package competition.teams
 
-import basicClasses.Applications
-import basicClasses.Competitor
-import basicClasses.Team
+import competition.Applications
+import competition.competitors.Competitor
 import logger
+import readers.CsvReader
+import readers.DirectoryReader
 import kotlin.reflect.full.memberProperties
 
 

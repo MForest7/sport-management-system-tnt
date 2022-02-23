@@ -1,4 +1,4 @@
-package classes
+package competition.config
 
 import kotlinx.serialization.Serializable
 

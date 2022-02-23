@@ -1,9 +1,10 @@
-package readers
+package competition.checkpoints
 
 
-import basicClasses.IncompleteCheckpoint
-import basicClasses.IncompleteCompetition
 import logger
+import readers.CsvReader
+import readers.DirectoryReader
+import readers.convertRecordsToCheckpointRecords
 
 
 class CheckpointsResultsReader(

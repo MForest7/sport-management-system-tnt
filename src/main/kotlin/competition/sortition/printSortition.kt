@@ -1,9 +1,9 @@
-package writers
+package competition.sortition
 
-import basicClasses.Competition
-import basicClasses.CompetitorInCompetition
-import basicClasses.Group
-import classes.CsvWriter
+import competition.Competition
+import competition.Group
+import competition.competitors.CompetitorInCompetition
+import writers.CsvWriter
 import java.io.File
 
 

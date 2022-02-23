@@ -1,4 +1,9 @@
-package basicClasses
+package competition
+
+import competition.checkpoints.CheckPoint
+import competition.checkpoints.IncompleteCompetition
+import competition.competitors.CompetitorInCompetition
+import competition.time.Time
 
 class Competition(
     val checkpoints: List<CheckPoint>,

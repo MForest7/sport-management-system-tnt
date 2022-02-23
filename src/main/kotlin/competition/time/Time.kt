@@ -1,4 +1,4 @@
-package basicClasses
+package competition.time
 
 class Time(val time: Int) : Comparable<Time> {
     override operator fun compareTo(other: Time) = time.compareTo(other.time)

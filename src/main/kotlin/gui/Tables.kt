@@ -2,9 +2,14 @@ package gui
 
 import GUIController
 import GUIViewer
-import basicClasses.*
-import standings.RecordInStandings
-import standings.RecordWithTeam
+import competition.Group
+import competition.checkpoints.CheckPoint
+import competition.competitors.Competitor
+import competition.competitors.CompetitorInCompetition
+import competition.standings.RecordInStandings
+import competition.standings.RecordWithTeam
+import competition.teams.Team
+import competition.time.Time
 
 data class CheckPointWithCount(val checkPoint: CheckPoint, val index: Int)
 

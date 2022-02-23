@@ -1,6 +1,5 @@
-package readers
+package competition.config
 
-import classes.Config
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import java.io.File

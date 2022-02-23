@@ -1,8 +1,8 @@
-import basicClasses.Applications
-import basicClasses.Competition
-import basicClasses.Rules
-import standings.StandingsInGroups
-import standings.StandingsInTeams
+import competition.Applications
+import competition.Competition
+import competition.Rules
+import competition.standings.StandingsInGroups
+import competition.standings.StandingsInTeams
 
 interface ModelViewer {
     fun groupsLoaded(rules: Rules)

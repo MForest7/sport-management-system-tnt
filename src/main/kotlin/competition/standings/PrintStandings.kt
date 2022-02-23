@@ -1,9 +1,6 @@
-package writers
+package competition.standings
 
-import classes.CsvWriter
-import standings.StandingsInGroups
-import standings.StandingsInTeams
-import standings.StandingsOfGroup
+import writers.CsvWriter
 
 
 class GroupStandingsPrinter(val file: String) {

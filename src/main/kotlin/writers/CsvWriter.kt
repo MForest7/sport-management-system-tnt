@@ -1,4 +1,4 @@
-package classes
+package writers
 
 import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
 

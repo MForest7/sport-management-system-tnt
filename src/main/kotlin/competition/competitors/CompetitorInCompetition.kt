@@ -1,4 +1,7 @@
-package basicClasses
+package competition.competitors
+
+import competition.Group
+import competition.teams.Team
 
 open class CompetitorInCompetition(
     competitor: Competitor,

@@ -1,10 +1,13 @@
-package readers
+package competition.competitors
 
-import basicClasses.CheckpointsForParticipant
-import basicClasses.IncompleteCheckPointRecord
-import basicClasses.IncompleteCheckpoint
-import basicClasses.IncompleteCompetition
+import competition.checkpoints.CheckpointsForParticipant
+import competition.checkpoints.IncompleteCheckPointRecord
+import competition.checkpoints.IncompleteCheckpoint
+import competition.checkpoints.IncompleteCompetition
 import logger
+import readers.CsvReader
+import readers.DirectoryReader
+import readers.convertRecordsToParticipantRecords
 
 open class ParticipantsResultsReaderException(message: String) :
     Exception(message)
