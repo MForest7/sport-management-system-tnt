@@ -8,12 +8,17 @@ import org.junit.Test
 import readers.DirectoryReaderException
 import readers.ParticipantsResultsReader
 import readers.ParticipantsResultsReaderExceptionSameNumber
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
+import java.io.File
+import kotlin.test.*
 
 internal class TestParticipantsReader {
     private val dirPath =
         "testData/testDataFolderReaderResultForEachParticipant/testReadListOfIncompleteCheckpointsFromDirectoryWithParticipantsResults/"
+
+    @BeforeTest
+    fun createEmptyDir() {
+        File(dirPath + "testEmptyDirectory/").mkdir()
+    }
 
     @Test
     fun testThreeParticipants() {
